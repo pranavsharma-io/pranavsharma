@@ -1,535 +1,491 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+/* =========================================
+   PRANAV SHARMA PORTFOLIO - STYLES
+   Lightweight, consistent, clean
+   ========================================= */
+
+/* --- Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 /* =========================================
-   1. ROOT VARIABLES & THEMES
+   1. CSS VARIABLES & THEMES
    ========================================= */
 :root {
-    --font-main: 'Inter', sans-serif;
+    --font-main: 'Plus Jakarta Sans', sans-serif;
     --card-radius: 20px;
-    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease: cubic-bezier(0.25, 1, 0.5, 1);
+    --transition: 0.35s var(--ease);
 }
 
-/* --- Dark Theme (Applied from Source) --- */
 html[data-theme="dark"] {
-    --bg-color: #000;
-    --text-primary: #fff;
-    --text-secondary: rgba(255, 255, 255, 0.65);
-
-    /* Gradients from source theme */
-    --highlight-grad: linear-gradient(45deg, #ff6e7f, #bfe9ff);
-    --button-grad: linear-gradient(135deg, #6366f1, #4f46e5);
-
-    /* Solid color for smaller highlights, taken from the gradient */
-    --highlight-color: #bfe9ff;
-
-    /* Glassmorphism settings from source theme */
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --shadow-color: rgba(0, 0, 0, 0.3);
-
-    /* Orb colors matching the new palette */
-    --orb-color-1: #ff6e7f; /* Pink/Red from highlight gradient */
-    --orb-color-2: #bfe9ff; /* Light Blue from highlight gradient */
-    --orb-color-3: #6366f1; /* Indigo from button gradient */
+    --bg:            #080b10;
+    --bg-2:          #0d1117;
+    --text:          #e8edf5;
+    --text-muted:    rgba(232,237,245,0.55);
+    --accent:        #7c8cff;
+    --accent-2:      #ff6b8a;
+    --grad:          linear-gradient(135deg, #7c8cff, #ff6b8a);
+    --glass:         rgba(255,255,255,0.06);
+    --glass-border:  rgba(255,255,255,0.12);
+    --shadow:        rgba(0,0,0,0.45);
+    --header-bg:     rgba(8,11,16,0.75);
+    --orb1: #7c8cff;
+    --orb2: #ff6b8a;
+    --orb3: #4fd1c5;
 }
 
-/* --- Light Theme (Original) --- */
-/* --- Light Theme (Original) --- */
 html[data-theme="light"] {
-    --bg-color: #f4f7fa;
-    --text-primary: #1a202c;
-    --text-secondary: #4a5568;
-    
-    /* --- NEW: Defining gradients and colors for light theme --- */
-    --highlight-grad: linear-gradient(45deg, #6a11cb, #2575fc); /* Purple to Blue Gradient */
-    --button-grad: linear-gradient(135deg, #6a11cb, #2575fc);
-    --button-text-color: #ffffff; /* White text for buttons */
-
-    --highlight-color: #2575fc; /* Solid blue for smaller highlights */
-    --glass-bg: rgba(255, 255, 255, 0.6);
-    --glass-border: rgba(0, 0, 0, 0.1);
-    --shadow-color: rgba(100, 100, 150, 0.15);
-    
-    /* --- NEW: Brighter orb colors for light theme --- */
-    --orb-color-1: hsl(220, 100%, 80%); /* Light Blue */
-    --orb-color-2: hsl(300, 100%, 85%); /* Light Pink */
-    --orb-color-3: hsl(40, 100%, 75%);  /* Light Orange */
-}
-
-/* Find the .contact-form button rule and change the 'color' property */
-.contact-form button {
-    background: var(--button-grad);
-    /* CHANGE THIS LINE */
-    color: var(--button-text-color); 
-    border: none;
-    border-radius: 12px;
-    padding: 0.75rem;
-    font-family: var(--font-main);
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    --bg:            #f0f4fc;
+    --bg-2:          #e8edf8;
+    --text:          #111827;
+    --text-muted:    #4b5563;
+    --accent:        #4f46e5;
+    --accent-2:      #e83e6c;
+    --grad:          linear-gradient(135deg, #4f46e5, #e83e6c);
+    --glass:         rgba(255,255,255,0.70);
+    --glass-border:  rgba(99,102,241,0.18);
+    --shadow:        rgba(79,70,229,0.12);
+    --header-bg:     rgba(240,244,252,0.80);
+    --orb1: #c4b5fd;
+    --orb2: #fbcfe8;
+    --orb3: #99f6e4;
 }
 
 /* =========================================
-   2. GLOBAL STYLES & RESET
+   2. RESET & BASE
    ========================================= */
-* {
-    margin: 0;
-    padding: 0;
+*, *::before, *::after {
+    margin: 0; padding: 0;
     box-sizing: border-box;
 }
 
-/* Find this existing rule in your styles.css */
+html { scroll-behavior: smooth; }
+
 body {
     font-family: var(--font-main);
-    background-color: var(--bg-color);
-    color: var(--text-primary);
+    background-color: var(--bg);
+    color: var(--text);
     line-height: 1.7;
     overflow-x: hidden;
-    /* --- ADD THIS LINE TO LOCK SCROLLING --- */
-    overflow-y: hidden; 
+    overflow-y: auto;
     transition: background-color 0.4s ease, color 0.4s ease;
-    scroll-behavior: smooth;
-}
-
-
-
-h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--glass-border);
-    padding-bottom: 0.75rem;
+    min-height: 100vh;
 }
 
 a {
-    color: var(--highlight-color);
+    color: var(--accent);
     text-decoration: none;
-    transition: filter 0.3s ease;
+    transition: opacity var(--transition);
 }
+a:hover { opacity: 0.8; }
 
-a:hover {
-    filter: brightness(1.2);
-}
-
-.highlight {
-    background: var(--highlight-grad);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 600;
+h3 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    color: var(--text);
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 0.65rem;
 }
 
 /* =========================================
-   3. ANIMATIONS & BACKGROUND
+   3. BACKGROUND ORBS
    ========================================= */
-@keyframes load-in {
-    from { opacity: 0; transform: translateY(20px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
+@keyframes orb1 { 0%,100%{ transform:translate(-15vw,-15vh) scale(0.85); } 50%{ transform:translate(15vw,15vh) scale(1.15); } }
+@keyframes orb2 { 0%,100%{ transform:translate(20vw,20vh) scale(0.75); } 50%{ transform:translate(-20vw,-20vh) scale(1.05); } }
+@keyframes orb3 { 0%,100%{ transform:translate(-8vw,18vh) scale(0.9); } 50%{ transform:translate(8vw,-18vh) scale(0.7); } }
 
-@keyframes orb-animate-1 { 0%, 100% { transform: translate(-20vw, -20vh) scale(0.8); } 50% { transform: translate(20vw, 20vh) scale(1.2); } }
-@keyframes orb-animate-2 { 0%, 100% { transform: translate(30vw, 30vh) scale(0.7); } 50% { transform: translate(-30vw, -30vh) scale(1); } }
-@keyframes orb-animate-3 { 0%, 100% { transform: translate(-10vw, 25vh) scale(0.9); } 50% { transform: translate(10vw, -25vh) scale(0.7); } }
-
-/* Find this existing rule */
 .background-orbs {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: -1;
-    /* --- MAKE SURE THESE TWO LINES ARE HERE --- */
-    opacity: 0;
-    transition: opacity 1.5s ease-in;
+    position: fixed; inset: 0;
+    overflow: hidden; z-index: -1;
+    pointer-events: none;
 }
-
 .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(150px);
-    opacity: 0.5;
-    width: 50vmax; height: 50vmax;
-    top: -25vmax; left: -25vmax;
+    position: absolute; border-radius: 50%;
+    filter: blur(120px); opacity: 0.4;
+    width: 45vmax; height: 45vmax;
+    top: -22vmax; left: -22vmax;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
     animation-direction: alternate;
 }
-.orb:nth-child(1) { background: var(--orb-color-1); animation-name: orb-animate-1; animation-duration: 25s; }
-.orb:nth-child(2) { background: var(--orb-color-2); animation-name: orb-animate-2; animation-duration: 30s; opacity: 0.4; }
-.orb:nth-child(3) { background: var(--orb-color-3); animation-name: orb-animate-3; animation-duration: 22s; opacity: 0.3; }
+.orb:nth-child(1){ background:var(--orb1); animation:orb1 22s infinite; }
+.orb:nth-child(2){ background:var(--orb2); animation:orb2 28s infinite; opacity:0.3; }
+.orb:nth-child(3){ background:var(--orb3); animation:orb3 19s infinite; opacity:0.25; }
 
 /* =========================================
-   4. HEADER & THEME TOGGLE
+   4. HEADER
    ========================================= */
 .sticky-header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    padding: 1rem 5%;
-    background: rgba(0,0,0,0.3);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    position: sticky; top: 0; z-index: 100;
+    padding: 0.9rem 5%;
+    background: var(--header-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--glass-border);
 }
-
 .header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    max-width: 860px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 1rem;
 }
-
 .header-title {
-    font-size: 1.5rem;
-    font-weight: 900;
-    text-transform: uppercase;
+    font-size: 1.35rem; font-weight: 800;
     letter-spacing: -0.5px;
-    background: var(--highlight-grad);
+    background: var(--grad);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+    cursor: pointer;
+    white-space: nowrap;
+}
+.social-links {
+    display: flex; align-items: center; gap: 0.25rem;
+    flex: 1; justify-content: center;
+}
+.social-links a {
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    transition: all var(--transition);
+}
+.social-links a:hover {
+    color: var(--accent);
+    background: var(--glass);
+    opacity: 1;
+    transform: translateY(-2px);
 }
 
+/* Theme toggle */
 .theme-button {
-    background-color: var(--glass-bg);
+    background: var(--glass);
     border: 1px solid var(--glass-border);
-    color: var(--text-secondary);
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s ease;
+    color: var(--text-muted);
+    width: 38px; height: 38px;
+    border-radius: 50%; cursor: pointer;
+    font-size: 1rem;
+    display: flex; justify-content: center; align-items: center;
+    transition: all var(--transition);
+    flex-shrink: 0;
 }
 .theme-button:hover {
-    background-color: var(--glass-border);
-    color: var(--text-primary);
-    transform: scale(1.1) rotate(15deg);
+    background: var(--glass-border);
+    color: var(--text);
+    transform: scale(1.1) rotate(20deg);
 }
-html[data-theme="dark"] .fa-sun { display: block; }
+html[data-theme="dark"] .fa-sun  { display: block; }
 html[data-theme="dark"] .fa-moon { display: none; }
-html[data-theme="light"] .fa-sun { display: none; }
+html[data-theme="light"] .fa-sun  { display: none; }
 html[data-theme="light"] .fa-moon { display: block; }
 
 /* =========================================
-   5. CORE LAYOUT & GLASS CARD
+   5. LAYOUT & GLASS CARDS
    ========================================= */
+@keyframes fadein {
+    from { opacity:0; transform:translateY(18px) scale(0.98); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+}
+
 .portfolio-container {
-    max-width: 800px;
-    margin: 2.5rem auto;
-    padding: 0 20px;
-    display: grid;
-    gap: 2rem;
+    max-width: 860px;
+    margin: 2rem auto 3rem;
+    padding: 0 1.25rem;
+    display: grid; gap: 1.75rem;
 }
 
 .glass-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: var(--glass);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border: 1px solid var(--glass-border);
     border-radius: var(--card-radius);
     padding: 2rem;
-    box-shadow: 0 8px 32px 0 var(--shadow-color);
-    animation: load-in 0.7s var(--ease-out-quart) both;
+    box-shadow: 0 8px 32px var(--shadow);
+    animation: fadein 0.6s var(--ease) both;
 }
-#about { animation-delay: 0.1s; }
-#journey { animation-delay: 0.2s; }
-#projects { animation-delay: 0.3s; }
-#ai-catalogue { animation-delay: 0.4s; }
-#achievements { animation-delay: 0.5s; }
-#gallery { animation-delay: 0.6s; }
+#about      { animation-delay: 0.05s; }
+#projects   { animation-delay: 0.12s; }
+#certificates { animation-delay: 0.19s; }
+#gallery    { animation-delay: 0.26s; }
 
 /* =========================================
-   6. CARD-SPECIFIC STYLES
+   6. PROFILE CARD
    ========================================= */
-
-/* --- Profile Card --- */
 .profile-card { text-align: center; }
+
 .profile-img {
-    width: 130px; height: 130px;
+    width: 120px; height: 120px;
     border-radius: 50%;
     border: 3px solid var(--glass-border);
-    margin: 0 auto 1.5rem;
-    box-shadow: 0 0 20px var(--shadow-color), 0 0 30px -10px var(--highlight-color);
+    margin: 0 auto 1.25rem;
+    box-shadow: 0 0 0 6px var(--glass), 0 0 25px var(--shadow);
     object-fit: cover;
+    display: block;
 }
-.profile-name { font-size: 2.25rem; font-weight: 700; margin-bottom: 0.5rem; }
-.profile-bio { font-size: 1.1rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 1rem; }
-.typing-container { font-size: 1.1rem; color: var(--text-secondary); min-height: 1.7em; }
+.profile-name {
+    font-size: 2rem; font-weight: 800;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+}
+.profile-bio {
+    font-size: 1rem; color: var(--text-muted);
+    max-width: 480px; margin: 0 auto 0.75rem;
+}
+.typing-container {
+    font-size: 1rem; color: var(--text-muted);
+    min-height: 1.7em; margin-bottom: 0.25rem;
+}
+.highlight {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+@keyframes blink { 50%{ opacity:0; } }
 #typing-text::after {
-    content: '|';
+    content:'|';
     animation: blink 0.7s infinite;
     font-weight: 200;
-    color: var(--highlight-color);
+    color: var(--accent);
 }
-@keyframes blink { 50% { opacity: 0; } }
 
-/* --- Contact Form --- */
-.contact-area { margin-top: 2rem; border-top: 1px solid var(--glass-border); padding-top: 1.5rem; }
-.contact-prompt { color: var(--text-secondary); margin-bottom: 1rem; }
-.contact-form { display: grid; gap: 0.75rem; }
-.contact-form input, .contact-form textarea {
+/* Contact Form */
+.contact-area {
+    margin-top: 1.75rem;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 1.25rem;
+    text-align: left;
+}
+.contact-prompt { color: var(--text-muted); margin-bottom: 0.85rem; font-size: 0.95rem; }
+.contact-form { display: grid; gap: 0.65rem; }
+.contact-form input,
+.contact-form textarea {
     width: 100%;
-    background: transparent;
+    background: var(--glass);
     border: 1px solid var(--glass-border);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 0.85rem 1rem;
     font-family: var(--font-main);
-    color: var(--text-primary);
-    font-size: 1rem;
-    transition: all 0.3s ease;
+    color: var(--text);
+    font-size: 0.95rem;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    resize: vertical;
 }
-/* REPLACE WITH THIS RULE */
-.contact-form input::placeholder, .contact-form textarea::placeholder {
-    color: var(--text-secondary);
-    opacity: 0.7; /* Making it slightly transparent like a placeholder */
-}
-}
-.contact-form input:focus, .contact-form textarea:focus {
+.contact-form input::placeholder,
+.contact-form textarea::placeholder { color: var(--text-muted); }
+.contact-form input:focus,
+.contact-form textarea:focus {
     outline: none;
-    border-color: var(--highlight-color);
-    box-shadow: 0 0 15px -2px var(--highlight-color);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,140,255,0.15);
+}
+.contact-form button {
+    background: var(--grad);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 0.8rem;
+    font-family: var(--font-main);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    letter-spacing: 0.3px;
 }
 .contact-form button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 20px -2px rgba(79, 70, 229, 0.5);
-    filter: brightness(1.1);
+    box-shadow: 0 6px 20px rgba(124,140,255,0.35);
+    filter: brightness(1.08);
 }
 
-/* --- Learning Journey (Timeline) --- */
-.timeline { position: relative; padding-left: 20px; }
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 10px; bottom: 10px;
-    width: 2px;
-    background: var(--glass-border);
-    border-radius: 2px;
-}
-.timeline-item { position: relative; padding-left: 2.5rem; margin-bottom: 2rem; }
-.timeline-item:last-child { margin-bottom: 0; }
-.timeline-dot {
-    position: absolute;
-    left: -9px; top: 5px;
-    width: 20px; height: 20px;
-    background-color: var(--bg-color);
-    border: 3px solid var(--highlight-color);
-    border-radius: 50%;
-    z-index: 1;
-    box-shadow: 0 0 10px var(--highlight-color);
-}
-.timeline-date { font-weight: 600; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.25rem; }
-.timeline-content h4 { font-weight: 600; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.5rem; border: none; padding: 0;}
-.timeline-content p { color: var(--text-secondary); }
-
-/* --- Projects & AI Catalogue List --- */
-.projects-list { list-style: none; display: grid; gap: 0.75rem; }
+/* =========================================
+   7. PROJECTS LIST
+   ========================================= */
+.projects-list { list-style: none; display: grid; gap: 0.6rem; }
 .projects-list li a {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    text-decoration: none;
-    color: var(--text-primary);
-    background: transparent;
+    display: flex; align-items: center;
+    padding: 0.7rem 1rem;
+    color: var(--text);
     border: 1px solid var(--glass-border);
     border-radius: 12px;
-    transition: all 0.3s ease;
+    transition: all var(--transition);
+    background: transparent;
 }
 .projects-list li a:hover {
-    background: var(--glass-bg);
-    border-color: var(--highlight-color);
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px var(--shadow-color);
+    background: var(--glass);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--shadow);
+    opacity: 1;
 }
 .projects-list .icon {
-    margin-right: 1rem;
-    color: var(--highlight-color);
-    width: 20px;
-    text-align: center;
+    margin-right: 0.85rem;
+    color: var(--accent);
+    width: 18px; text-align: center;
+    font-size: 0.95rem;
 }
-.projects-list span { flex-grow: 1; font-weight: 500; }
+.projects-list span { flex-grow: 1; font-weight: 500; font-size: 0.95rem; }
 .projects-list .link-icon {
-    margin-left: 1rem;
-    color: var(--text-secondary);
-    opacity: 0.7;
-    transition: transform 0.3s ease;
+    margin-left: 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    transition: transform var(--transition), color var(--transition);
 }
 .projects-list li a:hover .link-icon {
-    transform: translate(3px, -3px);
-    opacity: 1;
-    color: var(--highlight-color);
+    transform: translate(2px,-2px);
+    color: var(--accent);
 }
 
-/* --- Achievements List --- */
-.achievements-list { list-style: none; display: grid; gap: 1rem; }
-.achievements-list li {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    color: var(--text-secondary);
+/* =========================================
+   8. CERTIFICATES SECTION
+   ========================================= */
+.certificates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
 }
-.achievements-list .icon {
-    color: var(--highlight-color);
-    font-size: 1.2rem;
+.cert-card {
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--glass);
+    transition: all var(--transition);
 }
-.achievements-list span { font-weight: 500; color: var(--text-primary); }
-.achievements-list .details { opacity: 0.8; font-size: 0.9em; }
+.cert-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px var(--shadow);
+    border-color: var(--accent);
+}
+.cert-card a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+.cert-img-wrap {
+    width: 100%;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: var(--bg-2);
+    display: flex; align-items: center; justify-content: center;
+}
+.cert-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s var(--ease);
+    display: block;
+}
+.cert-card:hover .cert-img-wrap img { transform: scale(1.04); }
+.cert-info {
+    padding: 0.9rem 1rem;
+    display: flex; flex-direction: column; gap: 0.25rem;
+}
+.cert-info .cert-title {
+    font-weight: 700; font-size: 0.95rem; color: var(--text);
+}
+.cert-info .cert-issuer {
+    font-size: 0.82rem; color: var(--accent); font-weight: 600;
+}
+.cert-info .cert-link-hint {
+    font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem;
+    display: flex; align-items: center; gap: 0.35rem;
+}
+/* Placeholder when image fails */
+.cert-img-wrap .cert-fallback {
+    font-size: 3rem; color: var(--text-muted);
+}
 
-/* --- Photo Gallery --- */
+/* =========================================
+   9. GALLERY (hidden but kept)
+   ========================================= */
 .photo-gallery-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1rem;
 }
 .photo-gallery-grid img {
-    width: 100%;
-    border-radius: 15px;
+    width: 100%; border-radius: 12px;
     border: 1px solid var(--glass-border);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
+    transition: transform var(--transition), box-shadow var(--transition);
+    cursor: pointer; display: block;
 }
 .photo-gallery-grid img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 25px var(--shadow-color);
+    transform: scale(1.04);
+    box-shadow: 0 8px 24px var(--shadow);
 }
 
 /* =========================================
-   7. FOOTER
+   10. FOOTER
    ========================================= */
 .site-footer {
     text-align: center;
-    padding: 3rem 1rem 2rem;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    background: rgba(0,0,0,0.2);
+    padding: 2.5rem 1rem 2rem;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    background: var(--glass);
     border-top: 1px solid var(--glass-border);
-    margin-top: 2rem;
+    margin-top: 1rem;
 }
-
-.social-links a {
-    color: var(--text-secondary);
-    font-size: 1.5rem;
-    margin: 0 0.75rem;
-    transition: all 0.3s ease;
-}
-.social-links a:hover {
-    color: var(--highlight-color);
-    transform: translateY(-5px);
-    filter: none; /* Override general 'a:hover' filter */
-}
-.site-footer .fa-heart { color: #ff6e7f; }
+.site-footer .fa-heart { color: #ff6b8a; }
+.last-updated { margin-top: 0.25rem; opacity: 0.6; font-size: 0.8rem; }
 
 /* =========================================
-   8. MODAL
+   11. MODAL
    ========================================= */
 .modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.4);
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
     backdrop-filter: blur(10px);
     z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    pointer-events: none;
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0; pointer-events: none;
     transition: opacity 0.3s ease;
 }
-.modal-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
 .modal-content {
-    background: var(--glass-bg);
-    padding: 2rem;
-    border-radius: var(--card-radius);
+    background: var(--bg-2);
     border: 1px solid var(--glass-border);
-    box-shadow: 0 8px 32px 0 var(--shadow-color);
+    border-radius: var(--card-radius);
+    padding: 2rem;
     text-align: center;
-    max-width: 400px;
-    width: 90%;
-    transform: scale(0.95);
-    transition: transform 0.3s ease;
+    max-width: 380px; width: 90%;
+    box-shadow: 0 20px 60px var(--shadow);
+    transform: scale(0.94);
+    transition: transform 0.3s var(--ease);
 }
-.modal-overlay.active .modal-content {
-    transform: scale(1);
-}
-.modal-icon { font-size: 3rem; margin-bottom: 1rem; color: var(--highlight-color); }
-.modal-message { font-size: 1.1rem; margin-bottom: 1.5rem; }
+.modal-overlay.active .modal-content { transform: scale(1); }
+.modal-icon { font-size: 2.75rem; margin-bottom: 0.85rem; color: var(--accent); }
+.modal-message { font-size: 1.05rem; margin-bottom: 1.4rem; }
 .modal-button {
-    background: var(--button-grad);
-    color: var(--text-primary);
-    border: none;
-    border-radius: 10px;
+    background: var(--grad);
+    color: #fff;
+    border: none; border-radius: 10px;
     padding: 0.6rem 2rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: Fall 0.3s ease;
+    font-weight: 700; cursor: pointer;
+    transition: all var(--transition);
 }
 .modal-button:hover {
     filter: brightness(1.1);
-    box-shadow: 0 4px 20px -2px rgba(79, 70, 229, 0.5);
+    box-shadow: 0 4px 18px rgba(124,140,255,0.4);
 }
 
 /* =========================================
-   9. RESPONSIVE DESIGN
+   12. RESPONSIVE
    ========================================= */
-@media (max-width: 768px) {
-    body {
-        line-height: 1.6;
-    }
-    .portfolio-container {
-        margin-top: 1.5rem;
-        gap: 1.5rem;
-    }
-    .glass-card {
-        padding: 1.5rem;
-    }
-    h3 {
-        font-size: 1.25rem;
-    }
-    .profile-img {
-        width: 100px;
-        height: 100px;
-    }
-    .profile-name {
-        font-size: 1.75rem;
-    }
-}
-/* =========================================
-   10. INTRO ANIMATION STYLES
-   ========================================= */
-#container {
-    transition: opacity 1.5s ease-in-out;
+@media (max-width: 640px) {
+    .portfolio-container { margin: 1.25rem auto 2rem; gap: 1.25rem; }
+    .glass-card { padding: 1.4rem; }
+    h3 { font-size: 1.15rem; }
+    .profile-name { font-size: 1.65rem; }
+    .profile-img { width: 100px; height: 100px; }
+    .sticky-header { padding: 0.75rem 4%; }
+    .header-title { font-size: 1.1rem; }
+    .social-links a { font-size: 1.1rem; }
+    .certificates-grid { grid-template-columns: 1fr; }
 }
 
-.main-content {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 1.5s ease-in;
-}
-
-.main-content.visible {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-/* --- ADD THIS NEW RULE AT THE END OF THE FILE (if it's not already there) --- */
-.background-orbs.visible {
-    opacity: 0.5; /* This restores the original opacity */
-}
-/* --- ADD THIS NEW CLASS AT THE END OF YOUR CSS FILE --- */
-/* This class will be added via JS to re-enable scrolling */
-body.scroll-enabled {
-    overflow-y: auto;
+@media (max-width: 400px) {
+    .social-links { gap: 0; }
+    .social-links a { width: 30px; font-size: 1rem; }
 }
