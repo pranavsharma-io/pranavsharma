@@ -1,282 +1,657 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pranav Sharma — Portfolio</title>
-    <meta name="description" content="Pranav Sharma — developer, builder, Generative AI explorer.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pranav Sharma — Portfolio</title>
+<meta name="description" content="Pranav Sharma — developer, builder, Generative AI explorer.">
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Theme before paint: zero flash -->
+<script>
+(function(){
+  var t=localStorage.getItem('theme')||
+        (window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
 
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<!-- Font Awesome only (no Google Fonts = instant load) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="styles.css">
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════ */
+:root{
+  --r:20px;
+  --ease:cubic-bezier(.25,1,.5,1);
+  --tr:.32s var(--ease);
+  /* system font stack = zero extra requests */
+  --f:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
 
-    <!-- Theme: apply before paint to avoid flash -->
-    <script>
-        (function(){
-            var saved = localStorage.getItem('theme');
-            var sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', saved || sys);
-        })();
-    </script>
+html[data-theme="dark"]{
+  --bg:#07090f;
+  --bg2:#0e111a;
+  --tx:#dde4f0;
+  --tx2:rgba(221,228,240,.52);
+  --ac:#818cf8;   /* indigo */
+  --ac2:#f472b6;  /* pink   */
+  --gr:linear-gradient(135deg,#818cf8,#f472b6);
+  --gl:rgba(255,255,255,.05);
+  --gb:rgba(255,255,255,.10);
+  --sh:rgba(0,0,0,.5);
+  --hb:rgba(7,9,15,.78);
+  --o1:#818cf8;--o2:#f472b6;--o3:#34d399;
+}
+html[data-theme="light"]{
+  --bg:#f1f5fb;
+  --bg2:#e4eaf7;
+  --tx:#111827;
+  --tx2:#5b687a;
+  --ac:#4f46e5;
+  --ac2:#db2777;
+  --gr:linear-gradient(135deg,#4f46e5,#db2777);
+  --gl:rgba(255,255,255,.72);
+  --gb:rgba(79,70,229,.14);
+  --sh:rgba(79,70,229,.10);
+  --hb:rgba(241,245,251,.82);
+  --o1:#c4b5fd;--o2:#fbcfe8;--o3:#6ee7b7;
+}
+
+/* ═══════════════════════════════════════════
+   RESET
+═══════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--f);
+  background:var(--bg);
+  color:var(--tx);
+  line-height:1.7;
+  overflow-x:hidden;
+  min-height:100vh;
+  transition:background .35s,color .35s;
+}
+a{color:var(--ac);text-decoration:none;transition:opacity var(--tr)}
+a:hover{opacity:.75}
+img{display:block;max-width:100%}
+
+/* ═══════════════════════════════════════════
+   BACKGROUND ORBS
+═══════════════════════════════════════════ */
+@keyframes o1{0%,100%{transform:translate(-18vw,-18vh) scale(.85)}50%{transform:translate(18vw,18vh) scale(1.15)}}
+@keyframes o2{0%,100%{transform:translate(22vw,22vh) scale(.72)}50%{transform:translate(-22vw,-22vh) scale(1.05)}}
+@keyframes o3{0%,100%{transform:translate(-10vw,20vh) scale(.9)}50%{transform:translate(10vw,-20vh) scale(.7)}}
+.orbs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.orb{
+  position:absolute;border-radius:50%;
+  filter:blur(110px);
+  width:44vmax;height:44vmax;
+  top:-22vmax;left:-22vmax;
+  animation-iteration-count:infinite;
+  animation-timing-function:ease-in-out;
+  animation-direction:alternate;
+}
+.orb:nth-child(1){background:var(--o1);animation:o1 21s infinite;opacity:.38}
+.orb:nth-child(2){background:var(--o2);animation:o2 27s infinite;opacity:.28}
+.orb:nth-child(3){background:var(--o3);animation:o3 18s infinite;opacity:.22}
+
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
+.hdr{
+  position:sticky;top:0;z-index:100;
+  padding:.85rem 5%;
+  background:var(--hb);
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--gb);
+}
+.hdr-in{
+  max-width:880px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+}
+.logo{
+  font-size:1.25rem;font-weight:800;letter-spacing:-.4px;cursor:pointer;
+  background:var(--gr);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;white-space:nowrap;flex-shrink:0;
+}
+.socials{display:flex;align-items:center;gap:.15rem;flex:1;justify-content:center}
+.socials a{
+  color:var(--tx2);font-size:1.2rem;
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:all var(--tr);
+}
+.socials a:hover{color:var(--ac);background:var(--gl);opacity:1;transform:translateY(-2px)}
+.theme-btn{
+  background:var(--gl);border:1px solid var(--gb);
+  color:var(--tx2);width:36px;height:36px;
+  border-radius:50%;cursor:pointer;font-size:.95rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:all var(--tr);flex-shrink:0;
+}
+.theme-btn:hover{color:var(--tx);transform:scale(1.1) rotate(20deg);background:var(--gb)}
+html[data-theme="dark"] .fa-sun{display:block}
+html[data-theme="dark"] .fa-moon{display:none}
+html[data-theme="light"] .fa-sun{display:none}
+html[data-theme="light"] .fa-moon{display:block}
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+@keyframes fin{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.wrap{max-width:880px;margin:2rem auto 3rem;padding:0 1.25rem;display:grid;gap:1.75rem}
+.card{
+  background:var(--gl);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--gb);
+  border-radius:var(--r);padding:2rem;
+  box-shadow:0 8px 32px var(--sh);
+  animation:fin .55s var(--ease) both;
+}
+#about{animation-delay:.04s}
+#contact{animation-delay:.1s}
+#projects{animation-delay:.16s}
+#certificates{animation-delay:.22s}
+
+.sec-title{
+  font-size:1.05rem;font-weight:700;
+  margin-bottom:1.25rem;
+  border-bottom:1px solid var(--gb);
+  padding-bottom:.6rem;display:flex;align-items:center;gap:.5rem;
+}
+.sec-title i{color:var(--ac);font-size:.9rem}
+
+/* ═══════════════════════════════════════════
+   PROFILE
+═══════════════════════════════════════════ */
+.profile{text-align:center}
+.avatar{
+  width:112px;height:112px;border-radius:50%;
+  object-fit:cover;margin:0 auto 1.25rem;
+  border:3px solid var(--gb);
+  box-shadow:0 0 0 6px var(--gl),0 0 24px var(--sh);
+}
+.profile-name{font-size:1.9rem;font-weight:800;letter-spacing:-.5px;margin-bottom:.4rem}
+.profile-bio{font-size:.97rem;color:var(--tx2);max-width:460px;margin:0 auto .7rem}
+.typing-line{font-size:.97rem;color:var(--tx2);min-height:1.7em}
+.hl{
+  background:var(--gr);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;font-weight:700;
+}
+@keyframes blink{50%{opacity:0}}
+#tw::after{content:'|';animation:blink .7s infinite;font-weight:200;color:var(--ac)}
+
+/* ═══════════════════════════════════════════
+   CONTACT SECTION (separate card)
+═══════════════════════════════════════════ */
+.contact-head{
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;gap:.3rem;margin-bottom:1.5rem;
+}
+.contact-head h2{font-size:1.45rem;font-weight:800;letter-spacing:-.4px}
+.contact-head p{color:var(--tx2);font-size:.95rem}
+
+.cform{display:grid;gap:.65rem;max-width:520px;margin:0 auto}
+.cform-row{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+.cform input,.cform textarea,.cform select{
+  width:100%;background:var(--bg2);
+  border:1px solid var(--gb);border-radius:12px;
+  padding:.85rem 1rem;
+  font-family:var(--f);color:var(--tx);font-size:.95rem;
+  transition:border-color var(--tr),box-shadow var(--tr);
+  outline:none;
+}
+.cform textarea{resize:vertical;min-height:110px}
+.cform input::placeholder,.cform textarea::placeholder{color:var(--tx2)}
+.cform input:focus,.cform textarea:focus{
+  border-color:var(--ac);
+  box-shadow:0 0 0 3px rgba(129,140,248,.18);
+}
+.cform-btn{
+  background:var(--gr);color:#fff;
+  border:none;border-radius:12px;
+  padding:.85rem 1rem;
+  font-family:var(--f);font-weight:700;font-size:.97rem;
+  cursor:pointer;transition:all var(--tr);letter-spacing:.2px;
+}
+.cform-btn:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(129,140,248,.35);filter:brightness(1.07)}
+.cform-btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
+
+/* quick contact chips below form */
+.quick-contact{
+  display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:1.1rem;
+}
+.qc-chip{
+  display:inline-flex;align-items:center;gap:.45rem;
+  padding:.45rem 1rem;border-radius:50px;
+  border:1px solid var(--gb);background:var(--gl);
+  color:var(--tx2);font-size:.85rem;font-weight:500;
+  transition:all var(--tr);
+}
+.qc-chip:hover{border-color:var(--ac);color:var(--ac);background:var(--gl);opacity:1;transform:translateY(-1px)}
+.qc-chip i{font-size:.9rem}
+
+/* ═══════════════════════════════════════════
+   PROJECT CARDS GRID
+═══════════════════════════════════════════ */
+.proj-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:1rem;
+}
+.proj-card{
+  border:1px solid var(--gb);border-radius:16px;
+  background:var(--bg2);
+  padding:1.4rem 1.25rem 1.1rem;
+  display:flex;flex-direction:column;gap:.55rem;
+  transition:all var(--tr);position:relative;overflow:hidden;
+}
+.proj-card::before{
+  content:'';position:absolute;inset:0;
+  background:var(--gr);opacity:0;transition:opacity var(--tr);z-index:0;
+}
+.proj-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px var(--sh);border-color:var(--ac)}
+.proj-card:hover::before{opacity:.06}
+.proj-card > *{position:relative;z-index:1}
+
+.proj-icon{
+  width:42px;height:42px;border-radius:11px;
+  background:var(--gl);border:1px solid var(--gb);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;color:var(--ac);
+  flex-shrink:0;
+}
+.proj-name{font-weight:700;font-size:1rem;color:var(--tx)}
+.proj-desc{font-size:.84rem;color:var(--tx2);line-height:1.55;flex:1}
+.proj-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.2rem}
+.tag{
+  font-size:.72rem;font-weight:600;padding:.2rem .55rem;
+  border-radius:50px;border:1px solid var(--gb);
+  color:var(--tx2);letter-spacing:.2px;
+}
+.proj-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:.35rem;
+}
+.proj-link{
+  display:inline-flex;align-items:center;gap:.35rem;
+  font-size:.82rem;font-weight:600;color:var(--ac);
+  transition:gap var(--tr);
+}
+.proj-link:hover{gap:.55rem;opacity:1}
+.proj-link i{font-size:.75rem}
+.proj-badge{
+  font-size:.7rem;font-weight:700;padding:.18rem .5rem;
+  border-radius:50px;background:var(--gr);color:#fff;letter-spacing:.3px;
+}
+
+/* ═══════════════════════════════════════════
+   CERT CARDS
+═══════════════════════════════════════════ */
+.cert-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:1rem;
+}
+.cert-card{
+  border:1px solid var(--gb);border-radius:16px;
+  overflow:hidden;background:var(--bg2);
+  transition:all var(--tr);
+}
+.cert-card:hover{transform:translateY(-4px);box-shadow:0 12px 28px var(--sh);border-color:var(--ac)}
+.cert-card a{display:block;color:inherit}
+.cert-img{
+  width:100%;aspect-ratio:16/9;overflow:hidden;
+  background:var(--bg);display:flex;align-items:center;justify-content:center;
+}
+.cert-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s var(--ease)}
+.cert-card:hover .cert-img img{transform:scale(1.04)}
+.cert-img .cert-ico{font-size:2.5rem;color:var(--tx2)}
+.cert-body{padding:.9rem 1rem .85rem}
+.cert-title{font-weight:700;font-size:.95rem;margin-bottom:.2rem}
+.cert-by{font-size:.8rem;color:var(--ac);font-weight:600}
+.cert-cta{margin-top:.5rem;font-size:.78rem;color:var(--tx2);display:flex;align-items:center;gap:.3rem}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer{
+  text-align:center;padding:2.25rem 1rem 1.75rem;
+  color:var(--tx2);font-size:.87rem;
+  background:var(--gl);
+  border-top:1px solid var(--gb);
+}
+footer .fa-heart{color:#f472b6}
+.last-upd{margin-top:.2rem;opacity:.55;font-size:.78rem}
+
+/* ═══════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════ */
+.modal-ov{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);
+  backdrop-filter:blur(12px);z-index:1000;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.modal-ov.on{opacity:1;pointer-events:auto}
+.modal-box{
+  background:var(--bg2);border:1px solid var(--gb);
+  border-radius:var(--r);padding:2rem;text-align:center;
+  max-width:360px;width:90%;
+  box-shadow:0 24px 60px var(--sh);
+  transform:scale(.94);transition:transform .3s var(--ease);
+}
+.modal-ov.on .modal-box{transform:scale(1)}
+.modal-ico{font-size:2.6rem;margin-bottom:.75rem;color:var(--ac)}
+.modal-msg{font-size:1rem;margin-bottom:1.3rem;color:var(--tx)}
+.modal-ok{
+  background:var(--gr);color:#fff;border:none;
+  border-radius:10px;padding:.6rem 2rem;
+  font-weight:700;cursor:pointer;transition:all var(--tr);
+}
+.modal-ok:hover{filter:brightness(1.1);box-shadow:0 4px 18px rgba(129,140,248,.4)}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media(max-width:600px){
+  .wrap{margin:1.25rem auto 2rem;gap:1.25rem}
+  .card{padding:1.4rem}
+  .profile-name{font-size:1.6rem}
+  .avatar{width:96px;height:96px}
+  .proj-grid,.cert-grid{grid-template-columns:1fr}
+  .cform-row{grid-template-columns:1fr}
+  .logo{font-size:1.1rem}
+}
+</style>
 </head>
 <body>
 
-    <!-- Background ambient orbs -->
-    <div class="background-orbs" aria-hidden="true">
-        <div class="orb"></div>
-        <div class="orb"></div>
-        <div class="orb"></div>
+<div class="orbs" aria-hidden="true">
+  <div class="orb"></div><div class="orb"></div><div class="orb"></div>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">Pranav Sharma</div>
+
+    <nav class="socials" aria-label="Social links">
+      <a href="https://www.instagram.com/pranavsharma.io/" target="_blank" rel="noopener" aria-label="Instagram">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="https://github.com/pranavsharma-io" target="_blank" rel="noopener" aria-label="GitHub">
+        <i class="fab fa-github"></i>
+      </a>
+      <a href="https://www.t.me/pranavsharmahere" target="_blank" rel="noopener" aria-label="Telegram">
+        <i class="fab fa-telegram"></i>
+      </a>
+      <a href="mailto:contactpranavsharma@icloud.com" aria-label="Email">
+        <i class="far fa-envelope"></i>
+      </a>
+    </nav>
+
+    <button id="theme-toggle" class="theme-btn" aria-label="Toggle theme">
+      <i class="fas fa-sun" aria-hidden="true"></i>
+      <i class="fas fa-moon" aria-hidden="true"></i>
+    </button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="wrap">
+
+  <!-- ABOUT -->
+  <section id="about" class="card profile">
+    <img src="user.png" alt="Pranav Sharma" class="avatar" loading="eager">
+    <h1 class="profile-name">Hi, I'm Pranav Sharma</h1>
+    <p class="profile-bio">I build intuitive digital experiences and explore the frontiers of technology. Currently diving deep into Generative AI.</p>
+    <p class="typing-line">I am <span id="tw" class="hl"></span></p>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="card">
+    <div class="contact-head">
+      <h2>Get In Touch</h2>
+      <p>Have a question or want to collaborate? Drop a message below.</p>
     </div>
 
-    <!-- ===== HEADER ===== -->
-    <header class="sticky-header">
-        <div class="header-content">
-            <h1 class="header-title" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-                Pranav Sharma
-            </h1>
+    <form id="cform" class="cform" novalidate>
+      <div class="cform-row">
+        <input type="text" id="fname" placeholder="Your Name" required autocomplete="name">
+        <input type="email" id="femail" placeholder="Your Email" required autocomplete="email">
+      </div>
+      <input type="text" id="fsubject" placeholder="Subject">
+      <textarea id="fmsg" placeholder="Your Message…" required></textarea>
+      <button type="submit" class="cform-btn" id="send-btn">
+        <i class="fas fa-paper-plane" style="margin-right:.45rem"></i>Send Message
+      </button>
+    </form>
 
-            <nav class="social-links" aria-label="Social links">
-                <a href="https://www.instagram.com/itz_me_pranav_sharma/" target="_blank" rel="noopener" aria-label="Instagram personal">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a href="https://www.instagram.com/pranav.lab/" target="_blank" rel="noopener" aria-label="Instagram lab">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a href="https://www.t.me/pranavsharmahere" target="_blank" rel="noopener" aria-label="Telegram">
-                    <i class="fab fa-telegram"></i>
-                </a>
-                <a href="mailto:contactpranavsharma@icloud.com" aria-label="Email">
-                    <i class="far fa-envelope"></i>
-                </a>
-            </nav>
+    <div class="quick-contact">
+      <a href="mailto:contactpranavsharma@icloud.com" class="qc-chip">
+        <i class="far fa-envelope"></i> contactpranavsharma@icloud.com
+      </a>
+      <a href="https://www.t.me/pranavsharmahere" target="_blank" rel="noopener" class="qc-chip">
+        <i class="fab fa-telegram"></i> @pranavsharmahere
+      </a>
+      <a href="https://github.com/pranavsharma-io" target="_blank" rel="noopener" class="qc-chip">
+        <i class="fab fa-github"></i> pranavsharma-io
+      </a>
+    </div>
+  </section>
 
-            <button id="theme-toggle" class="theme-button" aria-label="Toggle dark/light theme">
-                <i class="fas fa-sun"  aria-hidden="true"></i>
-                <i class="fas fa-moon" aria-hidden="true"></i>
-            </button>
+  <!-- PROJECTS -->
+  <section id="projects" class="card">
+    <div class="sec-title"><i class="fas fa-rocket"></i> My Projects</div>
+    <div class="proj-grid">
+
+      <div class="proj-card">
+        <div class="proj-icon"><i class="fas fa-gamepad"></i></div>
+        <div class="proj-name">Tic-Tac-Toe</div>
+        <div class="proj-desc">Classic game with smart AI opponent. Clean UI, instant moves, fully browser-based.</div>
+        <div class="proj-tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JS</span></div>
+        <div class="proj-footer">
+          <a href="https://tictactoebypranavsharma.pages.dev/" target="_blank" rel="noopener" class="proj-link">
+            Play <i class="fas fa-arrow-up-right-from-square"></i>
+          </a>
         </div>
-    </header>
+      </div>
 
-    <!-- ===== MAIN ===== -->
-    <main class="portfolio-container">
+      <div class="proj-card">
+        <div class="proj-icon"><i class="fas fa-tower-broadcast"></i></div>
+        <div class="proj-name">Tic-Tac-Toe Live</div>
+        <div class="proj-desc">Real-time multiplayer version. Play against friends online with live WebSocket sync.</div>
+        <div class="proj-tags"><span class="tag">Node.js</span><span class="tag">WebSocket</span></div>
+        <div class="proj-footer">
+          <a href="https://tictactoe-live-by-pranav-sharma-ren.onrender.com/" target="_blank" rel="noopener" class="proj-link">
+            Play Live <i class="fas fa-arrow-up-right-from-square"></i>
+          </a>
+          <span class="proj-badge">Live</span>
+        </div>
+      </div>
 
-        <!-- ABOUT / PROFILE -->
-        <section id="about" class="glass-card profile-card">
-            <img src="user.png" alt="Pranav Sharma" class="profile-img" loading="eager">
-            <h2 class="profile-name">Hi, I'm Pranav Sharma</h2>
-            <p class="profile-bio">
-                I build intuitive digital experiences and explore the frontiers of technology.
-                Currently diving deep into Generative AI.
-            </p>
-            <p class="typing-container">I am <span id="typing-text" class="highlight"></span></p>
+      <div class="proj-card">
+        <div class="proj-icon"><i class="fas fa-link"></i></div>
+        <div class="proj-name">URL Shortener</div>
+        <div class="proj-desc">Shorten long URLs instantly. Custom slugs, click tracking, clean minimal interface.</div>
+        <div class="proj-tags"><span class="tag">Cloudflare</span><span class="tag">Workers</span></div>
+        <div class="proj-footer">
+          <a href="https://urlshortenerz.pages.dev/" target="_blank" rel="noopener" class="proj-link">
+            Open <i class="fas fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
 
-            <div class="contact-area">
-                <p class="contact-prompt">Have a question or want to collaborate? Reach out!</p>
-                <form id="contact-form" class="contact-form" novalidate>
-                    <input type="email" id="email" placeholder="Your Email" required autocomplete="email">
-                    <textarea id="message" placeholder="Your Message" rows="3" required></textarea>
-                    <button type="submit">Send Message</button>
-                </form>
-            </div>
-        </section>
+      <div class="proj-card">
+        <div class="proj-icon"><i class="fas fa-shield-halved"></i></div>
+        <div class="proj-name">Sentinel Scan</div>
+        <div class="proj-desc">Android security scanner app. Scans installed apps and detects potential threats on-device.</div>
+        <div class="proj-tags"><span class="tag">Android</span><span class="tag">Java</span></div>
+        <div class="proj-footer">
+          <a href="https://pranav-sharma.pages.dev/assets/sentinel-scan-by-pranav-sharma.apk" target="_blank" rel="noopener" class="proj-link">
+            Download APK <i class="fas fa-download"></i>
+          </a>
+          <span class="proj-badge">APK</span>
+        </div>
+      </div>
 
-        <!-- PROJECTS -->
-        <section id="projects" class="glass-card">
-            <h3><i class="fas fa-rocket" style="margin-right:.5rem;color:var(--accent);font-size:1rem;"></i>My Projects</h3>
-            <ul class="projects-list">
-                <li>
-                    <a href="https://tictactoebypranavsharma.pages.dev/" target="_blank" rel="noopener">
-                        <i class="fas fa-gamepad icon"></i>
-                        <span>Tic-Tac-Toe</span>
-                        <i class="fas fa-arrow-up-right-from-square link-icon"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://tictactoe-live-by-pranav-sharma-ren.onrender.com/" target="_blank" rel="noopener">
-                        <i class="fas fa-gamepad icon"></i>
-                        <span>Tic-Tac-Toe Live</span>
-                        <i class="fas fa-arrow-up-right-from-square link-icon"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="birthday/index.html" target="_blank" rel="noopener">
-                        <i class="fas fa-database icon"></i>
-                        <span>Birthday Data</span>
-                        <i class="fas fa-arrow-up-right-from-square link-icon"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="attractor/index.html" target="_blank" rel="noopener">
-                        <i class="fa-solid fa-less-than-equal icon"></i>
-                        <span>Attractor</span>
-                        <i class="fas fa-arrow-up-right-from-square link-icon"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="circle/index.html" target="_blank" rel="noopener">
-                        <i class="fas fa-circle icon"></i>
-                        <span>Circle Escape</span>
-                        <i class="fas fa-arrow-up-right-from-square link-icon"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://pranav-sharma.pages.dev/assets/sentinel-scan-by-pranav-sharma.apk" target="_blank" rel="noopener">
-                        <i class="fas fa-shield-halved icon"></i>
-                        <span>Sentinel Scan APK</span>
-                        <i class="fas fa-arrow-up-right-from-square link-icon"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://t.me/+PjSHW-vMVlNjMWNl" target="_blank" rel="noopener">
-                        <i class="fas fa-satellite icon"></i>
-                        <span>NASA Cosmic Archive Bot</span>
-                        <i class="fas fa-arrow-up-right-from-square link-icon"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://urlshortenerz.pages.dev/" target="_blank" rel="noopener">
-                        <i class="fa-solid fa-scissors icon"></i>
-                        <span>URL Shortener</span>
-                        <i class="fas fa-arrow-up-right-from-square link-icon"></i>
-                    </a>
-                </li>
-            </ul>
-        </section>
+      <div class="proj-card">
+        <div class="proj-icon"><i class="fas fa-satellite"></i></div>
+        <div class="proj-name">NASA Cosmic Archive</div>
+        <div class="proj-desc">Telegram bot that delivers daily NASA astronomy pictures with descriptions right in chat.</div>
+        <div class="proj-tags"><span class="tag">Python</span><span class="tag">Telegram API</span></div>
+        <div class="proj-footer">
+          <a href="https://t.me/+PjSHW-vMVlNjMWNl" target="_blank" rel="noopener" class="proj-link">
+            Join Bot <i class="fas fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
 
-        <!-- CERTIFICATES -->
-        <section id="certificates" class="glass-card">
-            <h3><i class="fas fa-certificate" style="margin-right:.5rem;color:var(--accent);font-size:1rem;"></i>Certificates</h3>
-            <div class="certificates-grid">
+      <div class="proj-card">
+        <div class="proj-icon"><i class="fa-solid fa-less-than-equal"></i></div>
+        <div class="proj-name">Attractor</div>
+        <div class="proj-desc">Interactive strange attractor visualizer. Real-time particle simulation with dynamic chaos equations.</div>
+        <div class="proj-tags"><span class="tag">Canvas</span><span class="tag">Math</span><span class="tag">JS</span></div>
+        <div class="proj-footer">
+          <a href="attractor/index.html" target="_blank" rel="noopener" class="proj-link">
+            Explore <i class="fas fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
 
-                <!-- freeCodeCamp Scientific Computing -->
-                <div class="cert-card">
-                    <a href="https://www.freecodecamp.org/certification/pranavsharmahere/scientific-computing-with-python-v7"
-                       target="_blank" rel="noopener" aria-label="View freeCodeCamp Scientific Computing with Python certificate">
-                        <div class="cert-img-wrap">
-                            <img src="certificate.jpg"
-                                 alt="freeCodeCamp — Scientific Computing with Python certificate"
-                                 loading="lazy"
-                                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                            <span class="cert-fallback" style="display:none"><i class="fas fa-certificate"></i></span>
-                        </div>
-                        <div class="cert-info">
-                            <span class="cert-title">Scientific Computing with Python</span>
-                            <span class="cert-issuer">freeCodeCamp</span>
-                            <span class="cert-link-hint">
-                                <i class="fas fa-external-link-alt"></i> View certificate
-                            </span>
-                        </div>
-                    </a>
-                </div>
+      <div class="proj-card">
+        <div class="proj-icon"><i class="fas fa-circle-dot"></i></div>
+        <div class="proj-name">Circle Escape</div>
+        <div class="proj-desc">Minimalist browser game where you dodge expanding circles. Reflex-based, endlessly replayable.</div>
+        <div class="proj-tags"><span class="tag">Canvas</span><span class="tag">Game</span></div>
+        <div class="proj-footer">
+          <a href="circle/index.html" target="_blank" rel="noopener" class="proj-link">
+            Play <i class="fas fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
 
-                <!-- Add more cert-cards here in the future -->
+      <div class="proj-card">
+        <div class="proj-icon"><i class="fas fa-cake-candles"></i></div>
+        <div class="proj-name">Birthday Data</div>
+        <div class="proj-desc">Track and visualize birthdays. Stores data locally, shows upcoming events in a clean calendar view.</div>
+        <div class="proj-tags"><span class="tag">HTML</span><span class="tag">LocalStorage</span></div>
+        <div class="proj-footer">
+          <a href="birthday/index.html" target="_blank" rel="noopener" class="proj-link">
+            Open <i class="fas fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
 
-            </div>
-        </section>
+    </div>
+  </section>
 
-    </main>
+  <!-- CERTIFICATES -->
+  <section id="certificates" class="card">
+    <div class="sec-title"><i class="fas fa-certificate"></i> Certificates</div>
+    <div class="cert-grid">
 
-    <!-- ===== FOOTER ===== -->
-    <footer class="site-footer">
-        <p>Made with <i class="fas fa-heart" aria-hidden="true"></i> by Pranav Sharma</p>
-        <p class="last-updated">Last Updated: 26 Apr 2026</p>
-    </footer>
+      <div class="cert-card">
+        <a href="https://www.freecodecamp.org/certification/pranavsharmahere/scientific-computing-with-python-v7"
+           target="_blank" rel="noopener" aria-label="View certificate">
+          <div class="cert-img">
+            <img src="certificate.jpg"
+                 alt="Scientific Computing with Python certificate"
+                 loading="lazy"
+                 onerror="this.style.display='none';this.parentElement.querySelector('.cert-ico').style.display='block'">
+            <i class="fas fa-certificate cert-ico" style="display:none"></i>
+          </div>
+          <div class="cert-body">
+            <div class="cert-title">Scientific Computing with Python</div>
+            <div class="cert-by">freeCodeCamp</div>
+            <div class="cert-cta"><i class="fas fa-external-link-alt"></i> View Certificate</div>
+          </div>
+        </a>
+      </div>
 
-    <!-- Status Modal -->
-    <div id="status-modal" class="modal-overlay" role="dialog" aria-modal="true"></div>
+    </div>
+  </section>
 
-    <!-- ===== SCRIPTS ===== -->
-    <script>
-    // ─── THEME TOGGLE ───────────────────────────────────────────
-    const html   = document.documentElement;
-    const toggleBtn = document.getElementById('theme-toggle');
+</main>
 
-    function applyTheme(t) {
-        html.setAttribute('data-theme', t);
-        localStorage.setItem('theme', t);
-    }
+<footer>
+  <p>Made with <i class="fas fa-heart" aria-hidden="true"></i> by Pranav Sharma</p>
+  <p class="last-upd">Last Updated: 26 Apr 2026</p>
+</footer>
 
-    toggleBtn.addEventListener('click', () => {
-        applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+<div id="modal" class="modal-ov" role="dialog" aria-modal="true"></div>
+
+<script>
+// ── THEME ──────────────────────────────────
+const html = document.documentElement;
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  const t = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', t);
+  localStorage.setItem('theme', t);
+});
+
+// ── TYPING ─────────────────────────────────
+const roles = ['a Developer 👨‍💻','an AI Explorer 🤖','a Problem Solver 🧩','a Builder 🚀'];
+let ri=0,ci=0,del=false;
+const tw = document.getElementById('tw');
+function type(){
+  const w=roles[ri];
+  if(!del){ tw.textContent=w.slice(0,++ci); if(ci===w.length){del=true;setTimeout(type,1600);return} }
+  else{ tw.textContent=w.slice(0,--ci); if(ci===0){del=false;ri=(ri+1)%roles.length} }
+  setTimeout(type,del?52:88);
+}
+type();
+
+// ── MODAL ──────────────────────────────────
+function modal(icon, msg, color='var(--ac)'){
+  const m=document.getElementById('modal');
+  m.innerHTML=`<div class="modal-box">
+    <div class="modal-ico"><i class="${icon}" style="color:${color}"></i></div>
+    <p class="modal-msg">${msg}</p>
+    <button class="modal-ok" onclick="document.getElementById('modal').classList.remove('on')">Got it</button>
+  </div>`;
+  m.classList.add('on');
+  m.onclick=e=>{ if(e.target===m) m.classList.remove('on'); };
+}
+
+// ── CONTACT FORM ───────────────────────────
+document.getElementById('cform').addEventListener('submit', async e => {
+  e.preventDefault();
+  const name    = document.getElementById('fname').value.trim();
+  const email   = document.getElementById('femail').value.trim();
+  const subject = document.getElementById('fsubject').value.trim();
+  const msg     = document.getElementById('fmsg').value.trim();
+
+  if(!name || !email || !msg){
+    modal('fas fa-exclamation-circle','Please fill in Name, Email, and Message.','#f472b6');
+    return;
+  }
+
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:.45rem"></i>Sending…';
+
+  try {
+    const res = await fetch('https://formspree.io/f/xwkgzlqo', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', Accept:'application/json'},
+      body: JSON.stringify({name, email, subject, message:msg})
     });
-
-    // ─── TYPING ANIMATION ────────────────────────────────────────
-    const roles = [
-        'a Developer 👨‍💻',
-        'an AI Explorer 🤖',
-        'a Problem Solver 🧩',
-        'a Builder 🚀'
-    ];
-    let ri = 0, ci = 0, deleting = false;
-    const el = document.getElementById('typing-text');
-
-    function type() {
-        const word = roles[ri];
-        if (!deleting) {
-            el.textContent = word.slice(0, ++ci);
-            if (ci === word.length) {
-                deleting = true;
-                setTimeout(type, 1600);
-                return;
-            }
-        } else {
-            el.textContent = word.slice(0, --ci);
-            if (ci === 0) {
-                deleting = false;
-                ri = (ri + 1) % roles.length;
-            }
-        }
-        setTimeout(type, deleting ? 55 : 90);
-    }
-    type();
-
-    // ─── CONTACT FORM ────────────────────────────────────────────
-    function showModal(icon, msg) {
-        const overlay = document.getElementById('status-modal');
-        overlay.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-icon"><i class="${icon}"></i></div>
-                <p class="modal-message">${msg}</p>
-                <button class="modal-button" onclick="document.getElementById('status-modal').classList.remove('active')">OK</button>
-            </div>`;
-        overlay.classList.add('active');
-        overlay.addEventListener('click', e => {
-            if (e.target === overlay) overlay.classList.remove('active');
-        }, { once: true });
-    }
-
-    document.getElementById('contact-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email   = document.getElementById('email').value.trim();
-        const message = document.getElementById('message').value.trim();
-        if (!email || !message) {
-            showModal('fas fa-exclamation-circle', 'Please fill in both fields.');
-            return;
-        }
-        try {
-            const res = await fetch('https://formspree.io/f/xwkgzlqo', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                body: JSON.stringify({ email, message })
-            });
-            if (res.ok) {
-                showModal('fas fa-check-circle', 'Message sent! I\'ll get back to you soon.');
-                e.target.reset();
-            } else {
-                throw new Error('Server error');
-            }
-        } catch {
-            showModal('fas fa-times-circle', 'Could not send. Please email me directly.');
-        }
-    });
-    </script>
-
+    if(res.ok){
+      modal('fas fa-check-circle',"Message sent! I'll get back to you soon 🙌");
+      e.target.reset();
+    } else { throw 0; }
+  } catch {
+    modal('fas fa-times-circle','Could not send. Email me directly at contactpranavsharma@icloud.com','#f472b6');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-paper-plane" style="margin-right:.45rem"></i>Send Message';
+  }
+});
+</script>
 </body>
 </html>
