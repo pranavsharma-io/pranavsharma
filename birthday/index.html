@@ -1,484 +1,675 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Birthday Data — DAV Jehanabad</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* ══ TOKENS ══ */
-:root{
-  --r:16px;
-  --ease:cubic-bezier(.25,1,.5,1);
-  --tr:.3s var(--ease);
-  --f:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-}
-html[data-theme="dark"]{
-  --bg:#07090f;
-  --bg2:#0e111a;
-  --bg3:#141824;
-  --tx:#dde4f0;
-  --tx2:rgba(221,228,240,.52);
-  --ac:#818cf8;
-  --ac2:#f472b6;
-  --gr:linear-gradient(135deg,#818cf8,#f472b6);
-  --gl:rgba(255,255,255,.05);
-  --gb:rgba(255,255,255,.10);
-  --sh:rgba(0,0,0,.5);
-  --hb:rgba(7,9,15,.82);
-  --o1:#818cf8;--o2:#f472b6;--o3:#34d399;
-  --row-even:#0d1020;
-  --row-hover:rgba(129,140,248,.10);
-  --row-today:rgba(244,114,182,.08);
-  --row-today-border:#f472b6;
-  --th-bg:#0e111a;
-  --td-border:rgba(255,255,255,.06);
-}
-html[data-theme="light"]{
-  --bg:#f1f5fb;
-  --bg2:#e4eaf7;
-  --bg3:#dde6f5;
-  --tx:#111827;
-  --tx2:#5b687a;
-  --ac:#4f46e5;
-  --ac2:#db2777;
-  --gr:linear-gradient(135deg,#4f46e5,#db2777);
-  --gl:rgba(255,255,255,.72);
-  --gb:rgba(79,70,229,.14);
-  --sh:rgba(79,70,229,.10);
-  --hb:rgba(241,245,251,.88);
-  --o1:#c4b5fd;--o2:#fbcfe8;--o3:#6ee7b7;
-  --row-even:#edf2fc;
-  --row-hover:rgba(79,70,229,.08);
-  --row-today:rgba(219,39,119,.06);
-  --row-today-border:#db2777;
-  --th-bg:#dde6f5;
-  --td-border:rgba(0,0,0,.08);
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #ffffff;
+  --bg2:       #f3f2f1;
+  --bg3:       #edebe9;
+  --bg4:       #e1dfdd;
+  --tx:        #201f1e;
+  --tx2:       #605e5c;
+  --tx3:       #a19f9d;
+  --border:    #d2d0ce;
+  --border2:   #c8c6c4;
+  --accent:    #0078d4;
+  --accent2:   #106ebe;
+  --accent-bg: #deecf9;
+  --accent-lite:#eff6fc;
+  --today-bg:  #fff4ce;
+  --today-bdr: #c7a100;
+  --danger:    #a4262c;
+  --success:   #107c10;
+  --warn:      #797673;
+  --font: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'Cascadia Code', 'Consolas', monospace;
+  --r: 2px;
+  --shadow: 0 1.6px 3.6px rgba(0,0,0,.13), 0 0.3px 0.9px rgba(0,0,0,.11);
+  --shadow2: 0 3.2px 7.2px rgba(0,0,0,.13), 0 0.6px 1.8px rgba(0,0,0,.11);
 }
 
-/* ══ RESET ══ */
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:var(--f);background:var(--bg);color:var(--tx);line-height:1.6;overflow-x:hidden;transition:background .35s,color .35s}
-a{color:var(--ac);text-decoration:none}
-button{font-family:var(--f)}
+body {
+  font-family: var(--font);
+  background: var(--bg2);
+  color: var(--tx);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
 
-/* ══ ORBS ══ */
-@keyframes o1{0%,100%{transform:translate(-18vw,-18vh) scale(.85)}50%{transform:translate(18vw,18vh) scale(1.15)}}
-@keyframes o2{0%,100%{transform:translate(22vw,22vh) scale(.72)}50%{transform:translate(-22vw,-22vh) scale(1.05)}}
-@keyframes o3{0%,100%{transform:translate(-10vw,20vh) scale(.9)}50%{transform:translate(10vw,-20vh) scale(.7)}}
-.orbs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
-.orb{position:absolute;border-radius:50%;filter:blur(110px);width:44vmax;height:44vmax;top:-22vmax;left:-22vmax;animation-iteration-count:infinite;animation-timing-function:ease-in-out;animation-direction:alternate}
-.orb:nth-child(1){background:var(--o1);animation:o1 21s infinite;opacity:.25}
-.orb:nth-child(2){background:var(--o2);animation:o2 27s infinite;opacity:.18}
-.orb:nth-child(3){background:var(--o3);animation:o3 18s infinite;opacity:.14}
+a { color: var(--accent); text-decoration: none; }
+button { font-family: var(--font); cursor: pointer; }
 
-/* ══ HEADER ══ */
-.hdr{position:sticky;top:0;z-index:100;padding:.7rem 1.5rem;background:var(--hb);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid var(--gb)}
-.hdr-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:.75rem}
-.logo{font-size:1.1rem;font-weight:800;background:var(--gr);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;flex-shrink:0}
-.logo span{-webkit-text-fill-color:var(--tx2);font-weight:400;font-size:.85rem;margin-left:.4rem}
-.hdr-gap{flex:1}
-.theme-btn{background:var(--gl);border:1px solid var(--gb);color:var(--tx2);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:all var(--tr);flex-shrink:0}
-.theme-btn:hover{color:var(--tx);transform:scale(1.1) rotate(20deg);background:var(--gb)}
-html[data-theme="dark"] .fa-sun{display:block}
-html[data-theme="dark"] .fa-moon{display:none}
-html[data-theme="light"] .fa-sun{display:none}
-html[data-theme="light"] .fa-moon{display:block}
-.hdr-count{font-size:.8rem;color:var(--tx2);white-space:nowrap}
-.hdr-count b{color:var(--tx)}
+/* ── TITLE BAR ── */
+.titlebar {
+  height: 32px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 10px;
+}
+.titlebar-app {
+  font-size: 12px;
+  color: rgba(255,255,255,0.9);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.titlebar-sep { width: 1px; height: 12px; background: rgba(255,255,255,0.3); }
+.titlebar-doc {
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 400;
+}
+.titlebar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.titlebar-btn {
+  width: 46px;
+  height: 32px;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.85);
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .12s;
+}
+.titlebar-btn:hover { background: rgba(255,255,255,0.1); }
 
-/* ══ NAV TABS ══ */
-.nav-tabs{display:flex;gap:.4rem;background:var(--hb);backdrop-filter:blur(16px);border-bottom:1px solid var(--gb);padding:.5rem 1.5rem;position:sticky;top:53px;z-index:99;overflow-x:auto}
-.nav-tabs::-webkit-scrollbar{height:3px}
-.nav-tabs::-webkit-scrollbar-thumb{background:var(--gb);border-radius:2px}
-.ntab{display:flex;align-items:center;gap:.4rem;padding:.38rem .85rem;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:600;color:var(--tx2);border:1px solid transparent;white-space:nowrap;transition:all var(--tr);background:none}
-.ntab:hover{color:var(--tx);background:var(--gl)}
-.ntab.active{background:var(--gl);border-color:var(--gb);color:var(--ac)}
-.ntab i{font-size:.78rem}
+/* ── RIBBON ── */
+.ribbon {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.ribbon-tabs {
+  display: flex;
+  padding: 0 0;
+  border-bottom: 1px solid var(--border);
+}
+.rtab {
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--tx2);
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  transition: color .1s, border-color .1s, background .1s;
+}
+.rtab:hover { color: var(--tx); background: var(--bg2); }
+.rtab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
 
-/* ══ MAIN WRAP ══ */
-.wrap{max-width:1200px;margin:1.25rem auto;padding:0 1.25rem;display:flex;flex-direction:column;gap:1rem}
+.ribbon-body {
+  padding: 6px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  background: var(--bg);
+}
 
-/* ══ TOOLBAR CARD ══ */
-.toolbar-card{background:var(--gl);backdrop-filter:blur(20px);border:1px solid var(--gb);border-radius:var(--r);padding:.85rem 1.25rem;display:flex;flex-wrap:wrap;align-items:center;gap:.6rem}
-.tb-label{font-size:.78rem;color:var(--tx2);white-space:nowrap}
-.tb-input,.tb-select{background:var(--bg2);border:1px solid var(--gb);border-radius:8px;padding:.35rem .7rem;font-family:var(--f);color:var(--tx);font-size:.8rem;transition:border-color var(--tr),box-shadow var(--tr);outline:none;height:32px}
-.tb-input{width:200px}
-.tb-input::placeholder{color:var(--tx2)}
-.tb-input:focus,.tb-select:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(129,140,248,.15)}
-.tb-select{cursor:pointer}
-.tb-select option{background:var(--bg2);color:var(--tx)}
-.tb-btn{display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .8rem;border-radius:8px;border:1px solid var(--gb);background:var(--gl);color:var(--tx2);font-size:.8rem;font-weight:600;cursor:pointer;transition:all var(--tr);height:32px;white-space:nowrap}
-.tb-btn:hover{border-color:var(--ac);color:var(--ac);background:var(--gl)}
-.tb-btn.primary{background:var(--gr);color:#fff;border-color:transparent}
-.tb-btn.primary:hover{filter:brightness(1.1);box-shadow:0 4px 14px rgba(129,140,248,.3)}
-.tb-sep{width:1px;background:var(--gb);height:20px;flex-shrink:0}
-.tb-right{margin-left:auto;display:flex;align-items:center;gap:.6rem}
+/* ── FLUENT INPUTS ── */
+input[type=text], input[type=number], select {
+  height: 28px;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 0 8px;
+  font-size: 13px;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--tx);
+  outline: none;
+  transition: border-color .12s, box-shadow .12s;
+}
+input[type=text]:hover, select:hover { border-color: var(--tx3); }
+input[type=text]:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+input[type=text]::placeholder { color: var(--tx3); font-size: 12px; }
+input[type=text] { width: 200px; }
 
-/* ══ PANELS ══ */
-.panel{display:none}
-.panel.active{display:block}
+.ribbon-label {
+  font-size: 11px;
+  color: var(--tx2);
+  letter-spacing: 0.02em;
+}
+.ribbon-sep { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; margin: 0 2px; }
 
-/* ══ TABLE CARD ══ */
-.table-card{background:var(--gl);backdrop-filter:blur(20px);border:1px solid var(--gb);border-radius:var(--r);overflow:hidden}
+/* Fluent buttons */
+.btn {
+  height: 28px;
+  padding: 0 12px;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--bg);
+  color: var(--tx);
+  font-size: 13px;
+  font-weight: 400;
+  font-family: var(--font);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .1s, border-color .1s, color .1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.btn:hover { background: var(--bg2); border-color: var(--border2); }
+.btn:active { background: var(--bg3); }
+.btn.primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.btn.primary:hover { background: var(--accent2); border-color: var(--accent2); }
+.btn.primary:active { background: #005a9e; }
 
-#loading-state{padding:2.5rem;text-align:center;color:var(--tx2);display:flex;flex-direction:column;align-items:center;gap:.75rem}
-.spinner{width:28px;height:28px;border:3px solid var(--gb);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* icon button */
+.icon-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--r);
+  background: none;
+  color: var(--tx2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background .1s, border-color .1s;
+}
+.icon-btn:hover { background: var(--bg2); border-color: var(--border); }
 
-.table-wrap{overflow:auto;max-height:calc(100vh - 280px)}
-.table-wrap::-webkit-scrollbar{width:6px;height:6px}
-.table-wrap::-webkit-scrollbar-track{background:transparent}
-.table-wrap::-webkit-scrollbar-thumb{background:var(--gb);border-radius:3px}
+/* ── MAIN CONTENT ── */
+.workspace {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 12px 16px;
+}
+.panel { display: none; }
+.panel.active { display: block; }
 
-table.dt{width:100%;border-collapse:collapse;font-size:.82rem}
-table.dt thead th{background:var(--th-bg);border-bottom:1px solid var(--gb);padding:.55rem .8rem;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:5;cursor:pointer;user-select:none;color:var(--tx2);font-weight:600;font-size:.76rem;text-transform:uppercase;letter-spacing:.4px}
-table.dt thead th:hover{color:var(--tx)}
-table.dt thead th i.sort-ic{font-size:.65rem;margin-left:.3rem;opacity:.4}
-table.dt thead th.sa i.sort-ic{opacity:1;color:var(--ac)}
-table.dt td{border-bottom:1px solid var(--td-border);padding:.5rem .8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
-table.dt tbody tr:nth-child(even){background:var(--row-even)}
-table.dt tbody tr:hover{background:var(--row-hover) !important}
-table.dt tbody tr.is-today{background:var(--row-today) !important}
-table.dt tbody tr.is-today td:first-child{border-left:3px solid var(--row-today-border)}
-table.dt .col-chk{width:36px;text-align:center}
-table.dt input[type=checkbox]{cursor:pointer;accent-color:var(--ac)}
+/* ── COMMAND BAR ── */
+.cmdbar {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 8px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+  box-shadow: var(--shadow);
+}
 
-.badge{display:inline-flex;align-items:center;padding:.15rem .5rem;border-radius:5px;font-size:.72rem;font-weight:600;letter-spacing:.2px}
-.b-name{background:rgba(129,140,248,.12);color:var(--ac);border:1px solid rgba(129,140,248,.2)}
-.b-class{background:rgba(52,211,153,.10);color:#34d399;border:1px solid rgba(52,211,153,.2)}
-.b-sec{background:rgba(244,114,182,.10);color:var(--ac2);border:1px solid rgba(244,114,182,.2)}
-.b-today{background:rgba(244,114,182,.18);color:var(--ac2);border:1px solid rgba(244,114,182,.35);font-weight:700}
-.no-results{padding:2.5rem;text-align:center;color:var(--tx2);font-style:italic}
+/* ── DETAILS LIST (TABLE) ── */
+.details-wrap {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.table-scroll {
+  overflow: auto;
+  max-height: calc(100vh - 260px);
+}
+.table-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+.table-scroll::-webkit-scrollbar-track { background: var(--bg2); }
+.table-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.table-scroll::-webkit-scrollbar-thumb:hover { background: var(--tx3); }
 
-/* ══ PAGINATION ══ */
-.pager{display:flex;align-items:center;gap:.5rem;padding:.75rem 1rem;border-top:1px solid var(--gb);flex-wrap:wrap}
-.pager-info{font-size:.79rem;color:var(--tx2);margin-right:.25rem}
-.pager-info b{color:var(--tx)}
-.pg-btn{padding:.28rem .65rem;border-radius:7px;border:1px solid var(--gb);background:var(--gl);color:var(--tx2);font-size:.78rem;cursor:pointer;transition:all var(--tr)}
-.pg-btn:hover:not(:disabled){border-color:var(--ac);color:var(--ac)}
-.pg-btn:disabled{opacity:.35;cursor:default}
-.pg-jump{margin-left:auto;display:flex;align-items:center;gap:.4rem;font-size:.79rem;color:var(--tx2)}
-.pg-jump input{width:44px;text-align:center;background:var(--bg2);border:1px solid var(--gb);border-radius:7px;color:var(--tx);padding:.28rem .4rem;font-size:.78rem;outline:none}
-.pg-jump input:focus{border-color:var(--ac)}
-.per-page-wrap{display:flex;align-items:center;gap:.4rem;font-size:.79rem;color:var(--tx2);margin-left:.5rem}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
 
-/* ══ SIBLINGS PANEL ══ */
-.siblings-wrap{display:flex;flex-direction:column;gap:1rem}
-.sib-search{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
-.family-card{background:var(--gl);border:1px solid var(--gb);border-radius:var(--r);overflow:hidden}
-.family-head{background:var(--bg2);padding:.7rem 1rem;display:flex;align-items:center;gap:.65rem;cursor:pointer;transition:background var(--tr)}
-.family-head:hover{background:var(--row-hover)}
-.family-name{font-weight:700;font-size:.9rem;color:var(--tx);flex:1}
-.family-meta{font-size:.75rem;color:var(--tx2)}
-.family-badge{background:var(--gr);color:#fff;border-radius:50px;padding:.15rem .65rem;font-size:.72rem;font-weight:700}
-.family-body{padding:.75rem;overflow-x:auto}
-.family-table{width:100%;border-collapse:collapse;font-size:.8rem}
-.family-table th{background:var(--th-bg);border-bottom:1px solid var(--gb);padding:.4rem .65rem;text-align:left;color:var(--tx2);font-size:.73rem;text-transform:uppercase;letter-spacing:.4px}
-.family-table td{border-bottom:1px solid var(--td-border);padding:.4rem .65rem}
-.family-table tr:last-child td{border-bottom:none}
-.family-table tr:hover td{background:var(--row-hover)}
+thead th {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tx2);
+  cursor: pointer;
+  user-select: none;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  transition: background .1s, color .1s;
+  letter-spacing: 0.01em;
+}
+thead th:hover { background: var(--bg3); color: var(--tx); }
+thead th.sorted { color: var(--accent); background: var(--accent-lite); }
 
-/* ══ TODAY PANEL ══ */
-.today-banner{background:linear-gradient(135deg,rgba(244,114,182,.12),rgba(129,140,248,.08));border:1px solid rgba(244,114,182,.2);border-radius:var(--r);padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.85rem}
-.today-banner .t-icon{font-size:1.8rem}
-.today-banner h2{font-size:1.1rem;font-weight:800;background:var(--gr);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.today-banner p{font-size:.83rem;color:var(--tx2);margin-top:.15rem}
+td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--bg2) !important; }
+tbody tr.today-row td { background: var(--today-bg) !important; }
+tbody tr.today-row td:first-child { border-left: 3px solid var(--today-bdr); }
 
-/* ══ STATS PANEL ══ */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
-.stat-card{background:var(--gl);border:1px solid var(--gb);border-radius:var(--r);overflow:hidden}
-.stat-head{padding:.65rem 1rem;border-bottom:1px solid var(--gb);font-size:.78rem;font-weight:700;color:var(--tx2);display:flex;align-items:center;gap:.45rem;text-transform:uppercase;letter-spacing:.4px}
-.stat-head i{color:var(--ac)}
-.stat-body{padding:.85rem 1rem}
-.stat-kv{display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--td-border);font-size:.82rem}
-.stat-kv:last-child{border-bottom:none}
-.stat-kv .k{color:var(--tx2)}
-.stat-kv .v{font-weight:700;color:var(--tx)}
-.bar-row{display:flex;align-items:center;gap:.55rem;margin-bottom:.45rem}
-.bar-label{width:70px;font-size:.75rem;color:var(--tx2);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
-.bar-track{flex:1;background:var(--bg2);border-radius:4px;height:7px;overflow:hidden}
-.bar-fill{height:100%;background:var(--gr);border-radius:4px;transition:width .5s var(--ease)}
-.bar-count{width:28px;font-size:.75rem;color:var(--tx2);text-align:right;flex-shrink:0}
+/* Fluent badges */
+.pill {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.pill-blue  { background: var(--accent-lite); color: var(--accent); border: 1px solid #b3d6f0; }
+.pill-green { background: #dff6dd; color: #107c10; border: 1px solid #9fd89f; }
+.pill-purple{ background: #f4f0fa; color: #7520a8; border: 1px solid #cbb9e8; }
+.pill-warn  { background: var(--today-bg); color: var(--today-bdr); border: 1px solid #f4d451; font-weight: 700; }
+.pill-gray  { background: var(--bg3); color: var(--tx2); border: 1px solid var(--border2); }
 
-/* ══ ABOUT MODAL ══ */
-.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(12px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
-.modal-ov.open{opacity:1;pointer-events:auto}
-.modal-box{background:var(--bg2);border:1px solid var(--gb);border-radius:var(--r);padding:1.75rem;max-width:480px;width:90%;box-shadow:0 24px 60px var(--sh);transform:scale(.95);transition:transform .3s var(--ease)}
-.modal-ov.open .modal-box{transform:scale(1)}
-.modal-title{font-size:1.1rem;font-weight:800;background:var(--gr);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:1rem}
-.modal-body-txt h3{font-size:.82rem;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:.4px;margin:1rem 0 .3rem}
-.modal-body-txt p,.modal-body-txt li{font-size:.85rem;color:var(--tx2);line-height:1.6;margin-bottom:.3rem}
-.modal-body-txt ol{padding-left:1.1rem}
-.modal-footer{margin-top:1.25rem;display:flex;justify-content:flex-end}
+/* Sort indicator */
+.sort-icon { font-size: 10px; margin-left: 4px; opacity: 0.5; }
+thead th.sorted .sort-icon { opacity: 1; }
 
-/* ══ STATUSBAR ══ */
-.statusbar{font-size:.73rem;color:var(--tx2);padding:.5rem 1rem;border-top:1px solid var(--gb);display:flex;flex-wrap:wrap;gap:.75rem}
-.status-dot{width:6px;height:6px;border-radius:50%;background:#34d399;display:inline-block;margin-right:.3rem}
-.status-dot.err{background:#f87171}
+/* ── STATUS BAR ── */
+.statusbar {
+  background: var(--accent);
+  color: rgba(255,255,255,0.85);
+  font-size: 12px;
+  padding: 3px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+.statusbar-item { display: flex; align-items: center; gap: 5px; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: #6ccb6c; flex-shrink: 0; }
+.status-dot.err { background: #ff7070; }
 
-/* ══ SIDEBAR (inline filters, collapsible) ══ */
-.layout{display:grid;grid-template-columns:200px 1fr;gap:1rem}
-.sidebar{display:flex;flex-direction:column;gap:.65rem}
-.sb-card{background:var(--gl);border:1px solid var(--gb);border-radius:var(--r);overflow:hidden;font-size:.79rem}
-.sb-head{padding:.55rem .85rem;background:var(--bg2);font-weight:700;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:space-between;text-transform:uppercase;font-size:.72rem;letter-spacing:.4px;transition:background var(--tr)}
-.sb-head:hover{background:var(--row-hover)}
-.sb-body{padding:.35rem 0}
-.sb-item{padding:.32rem .85rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;color:var(--tx2);transition:all var(--tr)}
-.sb-item:hover{color:var(--tx);background:var(--gl)}
-.sb-item.active{color:var(--ac);font-weight:700}
-.sb-cnt{font-size:.68rem;background:var(--bg2);border:1px solid var(--gb);border-radius:50px;padding:.05rem .42rem;color:var(--tx2)}
-.sb-item.active .sb-cnt{background:rgba(129,140,248,.15);border-color:rgba(129,140,248,.3);color:var(--ac)}
-.sb-opts{padding:.5rem .85rem;display:flex;flex-direction:column;gap:.45rem}
-.sb-opts label{font-size:.72rem;color:var(--tx2);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+/* ── PAGER ── */
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+  flex-wrap: wrap;
+}
+.pager-info { font-size: 12px; color: var(--tx2); margin: 0 4px; }
+.pg-btn {
+  height: 26px;
+  min-width: 26px;
+  padding: 0 6px;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--bg);
+  color: var(--tx2);
+  font-size: 12px;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all .1s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.pg-btn:hover:not(:disabled) { background: var(--accent-lite); border-color: var(--accent); color: var(--accent); }
+.pg-btn:disabled { opacity: .4; cursor: default; }
+.pg-btn.active-pg { background: var(--accent); color: #fff; border-color: var(--accent); }
+.pager-right { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--tx2); }
+.pg-jump-input { width: 44px; height: 26px; text-align: center; }
 
-@keyframes fin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.table-card,.toolbar-card,.today-banner,.stat-card{animation:fin .4s var(--ease) both}
+/* ── LOADING ── */
+#loading-state {
+  padding: 48px;
+  text-align: center;
+  color: var(--tx2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+}
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-@media(max-width:700px){
-  .layout{grid-template-columns:1fr}
-  .sidebar{display:none}
-  .tb-input{width:140px}
-  .hdr-in{gap:.5rem}
+/* ── TODAY PANEL ── */
+.today-header {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--today-bdr);
+  border-radius: var(--r);
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+}
+.today-header h2 { font-size: 15px; font-weight: 700; color: var(--tx); letter-spacing: -0.01em; }
+.today-header p { font-size: 12px; color: var(--tx2); margin-top: 2px; }
+
+/* ── SIBLINGS ── */
+.family-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 6px;
+  box-shadow: var(--shadow);
+  transition: box-shadow .15s;
+}
+.family-card:hover { box-shadow: var(--shadow2); }
+.family-head {
+  background: var(--bg);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: background .1s;
+  user-select: none;
+}
+.family-head:hover { background: var(--bg2); }
+.family-head.open { border-bottom-color: var(--border); }
+.family-name { font-weight: 600; font-size: 13px; flex: 1; color: var(--tx); }
+.family-meta { font-size: 11px; color: var(--tx3); }
+.fam-badge {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 2px;
+  padding: 1px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.chevron { font-size: 10px; color: var(--tx3); transition: transform .15s; }
+.chevron.open { transform: rotate(90deg); }
+.family-body { overflow-x: auto; display: none; }
+.family-body.open { display: block; }
+
+/* ── STATS ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+}
+.stat-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.stat-head {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--tx2);
+  background: var(--bg2);
+}
+.stat-body { padding: 10px 12px; }
+.stat-kv {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.stat-kv:last-child { border-bottom: none; }
+.stat-kv .k { color: var(--tx2); }
+.stat-kv .v { font-weight: 700; color: var(--tx); font-variant-numeric: tabular-nums; }
+
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.bar-label { width: 80px; font-size: 12px; color: var(--tx2); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; }
+.bar-track { flex: 1; background: var(--bg3); border-radius: 1px; height: 6px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--accent); border-radius: 1px; transition: width .4s cubic-bezier(.4,0,.2,1); }
+.bar-count { width: 32px; font-size: 11px; color: var(--tx3); text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+
+.sn-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.sn-table th {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 10px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--tx2);
+  cursor: pointer;
+  user-select: none;
+  transition: color .1s;
+}
+.sn-table th:hover { color: var(--tx); }
+.sn-table th.sorted { color: var(--accent); }
+.sn-table td { border-bottom: 1px solid var(--border); padding: 5px 10px; }
+.sn-table tr:last-child td { border-bottom: none; }
+.sn-table tr:hover td { background: var(--bg2) !important; }
+
+/* ── NO RESULTS ── */
+.no-results { padding: 32px; text-align: center; color: var(--tx3); font-size: 13px; }
+
+/* ── CHECKBOX ── */
+.col-chk { width: 36px; text-align: center; }
+input[type=checkbox] { cursor: pointer; accent-color: var(--accent); width: 14px; height: 14px; }
+
+/* ── SEARCH HIGHLIGHT ── */
+mark { background: #fff4c2; color: var(--tx); border-radius: 1px; padding: 0 1px; }
+
+/* ── TRANSITIONS ── */
+.panel.active { animation: fadeIn .15s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 600px) {
+  input[type=text] { width: 150px; }
+  .workspace { padding: 8px 8px; }
 }
 </style>
 </head>
 <body>
 
-<div class="orbs" aria-hidden="true">
-  <div class="orb"></div><div class="orb"></div><div class="orb"></div>
+<!-- TITLE BAR -->
+<div class="titlebar">
+  <span class="titlebar-app">Birthday Data</span>
+  <span class="titlebar-sep"></span>
+  <span class="titlebar-doc">DAV Public School, Jehanabad</span>
+  <div class="titlebar-actions">
+    <button class="titlebar-btn" id="theme-toggle" title="Toggle theme">&#9788;</button>
+  </div>
 </div>
 
-<!-- HEADER -->
-<header class="hdr">
-  <div class="hdr-in">
-    <div class="logo">🎂 Birthday Data <span>/ DAV Jehanabad</span></div>
-    <div class="hdr-gap"></div>
-    <span class="hdr-count" id="hdr-count">Loading…</span>
-    <button class="theme-btn" id="theme-toggle" aria-label="Toggle theme">
-      <i class="fas fa-sun"></i>
-      <i class="fas fa-moon"></i>
-    </button>
+<!-- RIBBON TABS -->
+<div class="ribbon">
+  <div class="ribbon-tabs">
+    <button class="rtab active" id="ntab-browse"   onclick="switchTab('browse')">Browse</button>
+    <button class="rtab"        id="ntab-siblings" onclick="switchTab('siblings')">Siblings</button>
+    <button class="rtab"        id="ntab-today"    onclick="switchTab('today')">Today</button>
+    <button class="rtab"        id="ntab-stats"    onclick="switchTab('stats')">Statistics</button>
   </div>
-</header>
+</div>
 
-<!-- NAV TABS -->
-<nav class="nav-tabs">
-  <button class="ntab active" id="ntab-browse" onclick="switchTab('browse')"><i class="fas fa-table"></i> Browse</button>
-  <button class="ntab" id="ntab-siblings" onclick="switchTab('siblings')"><i class="fas fa-users"></i> Find Siblings</button>
-  <button class="ntab" id="ntab-today" onclick="switchTab('today')"><i class="fas fa-cake-candles"></i> Today's Birthdays</button>
-  <button class="ntab" id="ntab-stats" onclick="switchTab('stats')"><i class="fas fa-chart-bar"></i> Statistics</button>
-  <button class="ntab" id="ntab-about" onclick="document.getElementById('aboutModal').classList.add('open')" style="margin-left:auto"><i class="fas fa-circle-info"></i> About</button>
-</nav>
+<div class="workspace">
 
-<div class="wrap">
-
-  <!-- ══ BROWSE PANEL ══ -->
+  <!-- BROWSE -->
   <div class="panel active" id="panel-browse">
-
-    <!-- TOOLBAR -->
-    <div class="toolbar-card">
-      <i class="fas fa-magnifying-glass" style="color:var(--tx2);font-size:.82rem"></i>
-      <input type="text" class="tb-input" id="searchInput" placeholder="Name, class, section, parent…" oninput="applyFilters()">
-      <div class="tb-sep"></div>
-      <span class="tb-label">Month</span>
-      <select class="tb-select" id="filterMonth" onchange="applyFilters()" style="width:76px">
+    <div class="cmdbar">
+      <input type="text" id="searchInput" placeholder="Search name, class, section, parent..." oninput="applyFilters()" style="width:240px">
+      <div class="ribbon-sep"></div>
+      <span class="ribbon-label">Month</span>
+      <select id="filterMonth" onchange="applyFilters()" style="width:75px">
         <option value="">All</option>
         <option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option>
         <option>May</option><option>Jun</option><option>Jul</option><option>Aug</option>
         <option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option>
       </select>
-      <span class="tb-label">Class</span>
-      <select class="tb-select" id="filterClass" onchange="applyFilters()" style="width:90px">
-        <option value="">All</option>
+      <span class="ribbon-label">Class</span>
+      <select id="filterClass" onchange="applyFilters()" style="width:95px"><option value="">All</option></select>
+      <span class="ribbon-label">Section</span>
+      <select id="filterSection" onchange="applyFilters()" style="width:70px"><option value="">All</option></select>
+      <div class="ribbon-sep"></div>
+      <button class="btn" onclick="clearFilters()">Clear</button>
+      <button class="btn primary" onclick="switchTab('today')">Today's Birthdays</button>
+      <div class="ribbon-sep"></div>
+      <span class="ribbon-label">Duplicates</span>
+      <select style="width:80px" onchange="showDups=this.value==='yes';buildFiltered();renderPage()">
+        <option value="no">Hidden</option><option value="yes">Show</option>
       </select>
-      <span class="tb-label">Section</span>
-      <select class="tb-select" id="filterSection" onchange="applyFilters()" style="width:74px">
-        <option value="">All</option>
-      </select>
-      <button class="tb-btn" onclick="clearFilters()"><i class="fas fa-xmark"></i> Clear</button>
-      <button class="tb-btn primary" onclick="switchTab('today')"><i class="fas fa-cake-candles"></i> Today</button>
     </div>
 
-    <!-- LAYOUT: sidebar + table -->
-    <div class="layout">
-      <aside class="sidebar">
-        <div class="sb-card">
-          <div class="sb-head" onclick="toggleSb('sb-class')"><span>📚 Class</span><i class="fas fa-chevron-down" style="font-size:.65rem"></i></div>
-          <div class="sb-body" id="sb-class"></div>
-        </div>
-        <div class="sb-card">
-          <div class="sb-head" onclick="toggleSb('sb-month')"><span>📅 Month</span><i class="fas fa-chevron-down" style="font-size:.65rem"></i></div>
-          <div class="sb-body" id="sb-month"></div>
-        </div>
-        <div class="sb-card">
-          <div class="sb-head" onclick="toggleSb('sb-sec')"><span>🏫 Section</span><i class="fas fa-chevron-down" style="font-size:.65rem"></i></div>
-          <div class="sb-body" id="sb-sec"></div>
-        </div>
-        <div class="sb-card">
-          <div class="sb-head">⚙️ Options</div>
-          <div class="sb-opts">
-            <label>Highlight Today</label>
-            <select class="tb-select" style="width:100%" onchange="showTodayHL=this.value==='yes';renderPage()">
-              <option value="yes">Yes</option><option value="no">No</option>
-            </select>
-            <label>Duplicates</label>
-            <select class="tb-select" style="width:100%" onchange="showDups=this.value==='yes';buildFiltered();renderPage()">
-              <option value="no">Hidden</option><option value="yes">Show</option>
-            </select>
-          </div>
-        </div>
-      </aside>
-
-      <div>
-        <div class="table-card">
-          <div id="loading-state">
-            <div class="spinner"></div>
-            <span>Fetching birthday data…</span>
-          </div>
-          <div class="table-wrap" id="table-wrap" style="display:none">
-            <table class="dt" id="datatable">
-              <thead>
-                <tr>
-                  <th class="col-chk"><input type="checkbox" id="checkAll" onchange="toggleAll(this)"></th>
-                  <th onclick="sortBy('date')">Date <i class="fas fa-sort sort-ic" id="si-date"></i></th>
-                  <th onclick="sortBy('name')">Student Name <i class="fas fa-sort sort-ic" id="si-name"></i></th>
-                  <th onclick="sortBy('father')">Father <i class="fas fa-sort sort-ic" id="si-father"></i></th>
-                  <th onclick="sortBy('mother')">Mother <i class="fas fa-sort sort-ic" id="si-mother"></i></th>
-                  <th onclick="sortBy('cls')">Class <i class="fas fa-sort sort-ic" id="si-cls"></i></th>
-                  <th onclick="sortBy('sec')">Sec <i class="fas fa-sort sort-ic" id="si-sec"></i></th>
-                </tr>
-              </thead>
-              <tbody id="tbody"></tbody>
-            </table>
-          </div>
-          <div class="pager" id="pager" style="display:none">
-            <button class="pg-btn" id="pg-first" onclick="goPage(1)">«</button>
-            <button class="pg-btn" id="pg-prev" onclick="goPage(curPage-1)">‹ Prev</button>
-            <span class="pager-info" id="pg-info">—</span>
-            <button class="pg-btn" id="pg-next" onclick="goPage(curPage+1)">Next ›</button>
-            <button class="pg-btn" id="pg-last" onclick="goPage(totalPages)">»</button>
-            <div class="per-page-wrap">
-              <span>Rows:</span>
-              <select class="tb-select" id="perPage" onchange="goPage(1)" style="width:60px">
-                <option>25</option><option selected>50</option><option>100</option><option>200</option><option>500</option>
-              </select>
-            </div>
-            <div class="pg-jump">
-              Go to: <input type="number" id="pg-jump-input" min="1" value="1">
-              <button class="pg-btn" onclick="goPage(+document.getElementById('pg-jump-input').value)">Go</button>
-            </div>
-          </div>
-          <div class="statusbar" id="statusbar" style="display:none">
-            <span><span class="status-dot" id="sdot"></span><span id="s-conn">Connecting…</span></span>
-            <span id="s-rows">—</span>
-            <span id="s-filter">Filter: none</span>
-            <span id="s-sort">Sort: none</span>
-          </div>
-        </div>
-      </div>
-
+    <div id="loading-state">
+      <div class="spinner"></div>
+      <span style="font-size:13px">Fetching birthday data...</span>
     </div>
-  </div>
 
-  <!-- ══ SIBLINGS PANEL ══ -->
-  <div class="panel" id="panel-siblings">
-    <div class="siblings-wrap">
-      <div class="toolbar-card sib-search">
-        <i class="fas fa-magnifying-glass" style="color:var(--tx2);font-size:.82rem"></i>
-        <input type="text" class="tb-input" id="sibInput" placeholder="Father or mother name…" style="width:220px">
-        <button class="tb-btn primary" onclick="doSibSearch()"><i class="fas fa-users"></i> Find Siblings</button>
-        <button class="tb-btn" onclick="showAllFamilies()"><i class="fas fa-list"></i> All Families</button>
-        <button class="tb-btn" onclick="document.getElementById('sibInput').value='';showAllFamilies()"><i class="fas fa-xmark"></i> Clear</button>
-        <span style="font-size:.78rem;color:var(--tx2)">Fuzzy & case-insensitive. Both parents searched.</span>
-      </div>
-      <div id="sib-results"></div>
-    </div>
-  </div>
-
-  <!-- ══ TODAY PANEL ══ -->
-  <div class="panel" id="panel-today">
-    <div style="display:flex;flex-direction:column;gap:1rem">
-      <div class="today-banner">
-        <span class="t-icon">🎂</span>
-        <div>
-          <h2 id="today-date-label">Today's Birthdays</h2>
-          <p id="today-count-label" style="color:var(--tx2)"></p>
-        </div>
-      </div>
-      <div class="table-card">
-        <div class="table-wrap">
-          <table class="dt" id="today-table">
+    <div id="table-area" style="display:none">
+      <div class="details-wrap">
+        <div class="table-scroll" id="table-wrap">
+          <table id="datatable">
             <thead>
               <tr>
-                <th>Student Name</th>
-                <th>Father's Name</th>
-                <th>Mother's Name</th>
-                <th>Class</th>
-                <th>Section</th>
+                <th class="col-chk"><input type="checkbox" id="checkAll" onchange="toggleAll(this)"></th>
+                <th onclick="sortBy('date')">Date <span class="sort-icon" id="si-date">&#8597;</span></th>
+                <th onclick="sortBy('name')">Student <span class="sort-icon" id="si-name">&#8597;</span></th>
+                <th onclick="sortBy('father')">Father <span class="sort-icon" id="si-father">&#8597;</span></th>
+                <th onclick="sortBy('mother')">Mother <span class="sort-icon" id="si-mother">&#8597;</span></th>
+                <th onclick="sortBy('cls')">Class <span class="sort-icon" id="si-cls">&#8597;</span></th>
+                <th onclick="sortBy('sec')">Section <span class="sort-icon" id="si-sec">&#8597;</span></th>
               </tr>
             </thead>
-            <tbody id="today-tbody"></tbody>
+            <tbody id="tbody"></tbody>
           </table>
-          <div id="today-empty" class="no-results" style="display:none">No birthdays today — or data still loading.</div>
+        </div>
+        <div class="pager" id="pager">
+          <button class="pg-btn" id="pg-first" onclick="goPage(1)">&#171;</button>
+          <button class="pg-btn" id="pg-prev"  onclick="goPage(curPage-1)">&#8249;</button>
+          <span class="pager-info" id="pg-info">—</span>
+          <button class="pg-btn" id="pg-next"  onclick="goPage(curPage+1)">&#8250;</button>
+          <button class="pg-btn" id="pg-last"  onclick="goPage(totalPages)">&#187;</button>
+          <div class="pager-right">
+            <span class="ribbon-label">Rows per page</span>
+            <select id="perPage" onchange="goPage(1)" style="width:60px">
+              <option>25</option><option selected>50</option><option>100</option><option>200</option><option>500</option>
+            </select>
+            <span class="ribbon-label">Go to</span>
+            <input type="number" class="pg-jump-input" id="pg-jump-input" min="1" value="1">
+            <button class="pg-btn" onclick="goPage(+document.getElementById('pg-jump-input').value)">Go</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ══ STATS PANEL ══ -->
+  <!-- SIBLINGS -->
+  <div class="panel" id="panel-siblings">
+    <div class="cmdbar">
+      <input type="text" id="sibInput" placeholder="Father or mother name..." style="width:240px">
+      <button class="btn primary" onclick="doSibSearch()">Find Siblings</button>
+      <button class="btn" onclick="showAllFamilies()">All Families</button>
+      <button class="btn" onclick="document.getElementById('sibInput').value='';showAllFamilies()">Clear</button>
+      <span style="font-size:12px;color:var(--tx3);margin-left:4px">Fuzzy match, case-insensitive</span>
+    </div>
+    <div id="sib-results"></div>
+  </div>
+
+  <!-- TODAY -->
+  <div class="panel" id="panel-today">
+    <div class="today-header">
+      <h2 id="today-date-label">Today's Birthdays</h2>
+      <p id="today-count-label"></p>
+    </div>
+    <div class="details-wrap">
+      <div class="table-scroll">
+        <table id="today-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Father</th>
+              <th>Mother</th>
+              <th>Class</th>
+              <th>Section</th>
+            </tr>
+          </thead>
+          <tbody id="today-tbody"></tbody>
+        </table>
+        <div id="today-empty" class="no-results" style="display:none">No birthdays today.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
   <div class="panel" id="panel-stats">
-    <div class="stats-grid" id="stats-content"></div>
-  </div>
-
-</div><!-- /wrap -->
-
-<!-- ABOUT MODAL -->
-<div class="modal-ov" id="aboutModal">
-  <div class="modal-box">
-    <div class="modal-title">🎂 About Birthday Data Master</div>
-    <div class="modal-body-txt">
-      <h3>Why This Exists</h3>
-      <p>The DAV Jehanabad website shows daily birthdays, but the list disappears after the day. This app archives it permanently.</p>
-      <h3>How It Works — Backend</h3>
-      <ol>
-        <li>GitHub Actions triggers a Python script every day at 11:00 AM IST.</li>
-        <li>The script scrapes davjehanabad.in and downloads birthday HTML.</li>
-        <li>A second script parses names, classes, parents, dates into a clean .xlsx file.</li>
-      </ol>
-      <h3>How It Works — Frontend</h3>
-      <ol>
-        <li>Browser fetches the .xlsx from birthday-api.pages.dev.</li>
-        <li>XLSX.js reads it client-side — no server required.</li>
-        <li>All filtering, sorting, and search run locally — instant response.</li>
-      </ol>
-      <h3>Features</h3>
-      <p>✔ Month + class + section filters with sidebar drill-down<br>
-      ✔ Sibling finder via fuzzy parent name matching<br>
-      ✔ Today's birthdays highlighted + dedicated tab<br>
-      ✔ Automatic duplicate suppression<br>
-      ✔ Sortable columns, pagination, stats dashboard</p>
-    </div>
-    <div class="modal-footer">
-      <button class="tb-btn primary" onclick="document.getElementById('aboutModal').classList.remove('open')">Got it</button>
+    <div class="stats-grid" id="stats-content">
+      <div class="no-results">Loading statistics...</div>
     </div>
   </div>
+
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar" id="statusbar">
+  <div class="statusbar-item">
+    <div class="status-dot" id="sdot"></div>
+    <span id="s-conn">Connecting...</span>
+  </div>
+  <div class="statusbar-item" id="s-rows">—</div>
+  <div class="statusbar-item" id="s-filter">Filter: None</div>
+  <div class="statusbar-item" id="s-sort">Sort: Default</div>
 </div>
 
 <script>
-/* ══ CONSTANTS ══ */
 const DATA_URL = 'https://birthday-api.pages.dev/Birthday%20Data%20Master.xlsx';
 const MONTH_ORDER = {Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12};
 const CLASS_ORDER = {LKG:0,UKG:1,I:2,II:3,III:4,IV:5,V:6,VI:7,VII:8,VIII:9,IX:10,X:11,XI:12,XII:13};
 const MONTHS_ALL = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
+const GENERIC_SURNAMES = new Set([
+  'kumar','kumari','devi','prasad','singh','sinha','verma','yadav','gupta','sharma',
+  'pandey','mishra','thakur','jha','lal','raj','ram','das','sah','shaw','mandal','paswan',
+  'chauhan','maurya','rai','srivastava','tripathi','dubey','pathak','tiwari','chaudhary',
+  'mahto','sahni','nath','chand','kaur','bano','begum','khan','ansari','ali','hussain'
+]);
+
 let allData=[], filteredData=[], curPage=1, totalPages=1;
 let sortCol=null, sortDir=1;
-let showTodayHL=true, showDups=false;
+let showDups=false;
 
-/* ══ UTILS ══ */
 function norm(s){ return String(s||'').toLowerCase().replace(/\s+/g,' ').trim(); }
 function parseDateR(raw){
   const p=String(raw||'').split(',');
@@ -497,29 +688,42 @@ function fuzzyScore(needle,hay){
   toks.forEach(t=>{ if(t.length>1&&h.includes(t)) m++; });
   return m/Math.max(toks.length,1);
 }
+function extractSurname(name){
+  const parts=String(name||'').trim().split(/\s+/);
+  if(parts.length<2) return null;
+  const last=parts[parts.length-1].toLowerCase();
+  return GENERIC_SURNAMES.has(last)?null:parts[parts.length-1];
+}
+function resolveSurname(row){
+  const childSn=extractSurname(row.name);
+  if(childSn) return childSn;
+  const papaSn=extractSurname(row.father);
+  const mamaSn=extractSurname(row.mother);
+  if(papaSn&&mamaSn){ if(papaSn.toLowerCase()===mamaSn.toLowerCase()) return papaSn; return papaSn; }
+  if(papaSn) return papaSn;
+  if(mamaSn) return mamaSn;
+  return 'Unknown';
+}
 
-/* ══ THEME ══ */
-const html=document.documentElement;
-(function(){
-  const t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
-  html.setAttribute('data-theme',t);
-})();
+/* THEME */
 document.getElementById('theme-toggle').addEventListener('click',()=>{
-  const t=html.getAttribute('data-theme')==='dark'?'light':'dark';
-  html.setAttribute('data-theme',t);
-  localStorage.setItem('theme',t);
+  document.body.classList.toggle('dark');
+  localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');
 });
 
-/* ══ TABS ══ */
+const savedTheme=localStorage.getItem('theme');
+if(savedTheme==='dark') document.body.classList.add('dark');
+
+/* TABS */
 function switchTab(tab){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+tab).classList.add('active');
   document.getElementById('ntab-'+tab).classList.add('active');
   if(tab==='siblings') autoLoadSiblings();
 }
 
-/* ══ LOAD ══ */
+/* LOAD DATA */
 async function loadData(){
   try{
     const res=await fetch(DATA_URL);
@@ -530,53 +734,51 @@ async function loadData(){
     const rows=XLSX.utils.sheet_to_json(ws,{header:1});
     const hdrs=rows[0].map(h=>norm(h));
     const idx={
-      date:hdrs.findIndex(h=>h.includes('date')),
-      name:hdrs.findIndex(h=>h.includes('student')||h.includes('name')),
+      date:  hdrs.findIndex(h=>h.includes('date')),
+      name:  hdrs.findIndex(h=>h.includes('student')||h.includes('name')),
       father:hdrs.findIndex(h=>h.includes('father')),
       mother:hdrs.findIndex(h=>h.includes('mother')),
-      cls:hdrs.findIndex(h=>h.includes('class')),
-      sec:hdrs.findIndex(h=>h.includes('section'))
+      cls:   hdrs.findIndex(h=>h.includes('class')),
+      sec:   hdrs.findIndex(h=>h.includes('section'))
     };
     const seen=new Set();
     allData=rows.slice(1)
       .filter(r=>r.some(c=>c!==undefined&&String(c).trim()))
       .map(r=>({
-        date:String(r[idx.date]||'').trim(),
-        name:String(r[idx.name]||'').trim(),
+        date:  String(r[idx.date]||'').trim(),
+        name:  String(r[idx.name]||'').trim(),
         father:String(r[idx.father]||'').trim(),
         mother:String(r[idx.mother]||'').trim(),
-        cls:String(r[idx.cls]||'').trim(),
-        sec:String(r[idx.sec]||'').trim(),
-        _dup:false
+        cls:   String(r[idx.cls]||'').trim(),
+        sec:   String(r[idx.sec]||'').trim(),
+        _dup:  false
       }));
     allData.forEach(r=>{
+      r._surname=resolveSurname(r);
       const k=`${r.date}|${norm(r.name)}|${r.cls}|${r.sec}`;
       if(seen.has(k)){r._dup=true;}else{seen.add(k);}
     });
+
     const unique=allData.filter(r=>!r._dup).length;
     document.getElementById('loading-state').style.display='none';
-    document.getElementById('table-wrap').style.display='';
-    document.getElementById('pager').style.display='flex';
-    document.getElementById('statusbar').style.display='flex';
-    document.getElementById('sdot').style.background='#34d399';
+    document.getElementById('table-area').style.display='';
+    document.getElementById('sdot').style.background='#6ccb6c';
     document.getElementById('s-conn').textContent='Connected — birthday-api.pages.dev';
-    document.getElementById('s-rows').textContent=`${unique} students (${allData.length} raw)`;
-    document.getElementById('hdr-count').innerHTML=`<b>${unique}</b> students`;
+    document.getElementById('s-rows').textContent=`${unique} students · ${allData.length} raw rows`;
     populateFilters();
     buildFiltered();
     renderPage();
-    buildSidebar();
     renderToday();
     renderStats();
     showAllFamilies();
   }catch(e){
-    document.getElementById('loading-state').innerHTML=`<i class="fas fa-triangle-exclamation" style="color:#f87171;font-size:1.5rem"></i><span style="color:#f87171">Error: ${e.message}</span>`;
-    document.getElementById('sdot').classList.add('err');
+    document.getElementById('loading-state').innerHTML=`<span style="color:var(--danger);font-size:13px">Error: ${e.message}</span>`;
+    document.getElementById('sdot').style.background='#ff7070';
     document.getElementById('s-conn').textContent='Connection failed';
   }
 }
 
-/* ══ FILTERS ══ */
+/* FILTERS */
 function populateFilters(){
   const classes=[...new Set(allData.map(r=>r.cls).filter(Boolean))].sort((a,b)=>(CLASS_ORDER[a]??99)-(CLASS_ORDER[b]??99));
   const secs=[...new Set(allData.map(r=>r.sec).filter(Boolean))].sort();
@@ -591,6 +793,7 @@ function buildFiltered(){
   const mon=document.getElementById('filterMonth').value;
   const cls=document.getElementById('filterClass').value;
   const sec=document.getElementById('filterSection').value;
+
   filteredData=allData.filter(r=>{
     if(!showDups&&r._dup) return false;
     if(cls&&r.cls!==cls) return false;
@@ -599,37 +802,39 @@ function buildFiltered(){
     if(q){ const hay=[r.name,r.father,r.mother,r.cls,r.sec,r.date].map(norm).join(' '); if(!hay.includes(q)) return false; }
     return true;
   });
+
   if(sortCol){
     filteredData.sort((a,b)=>{
       let av=a[sortCol],bv=b[sortCol];
-      if(sortCol==='date'){const pa=parseDateR(av),pb=parseDateR(bv);return sortDir*(pa.monthN-pb.monthN||pa.day-pb.day);}
+      if(sortCol==='date'){ const pa=parseDateR(av),pb=parseDateR(bv); return sortDir*(pa.monthN-pb.monthN||pa.day-pb.day); }
       if(sortCol==='cls') return sortDir*((CLASS_ORDER[av]??99)-(CLASS_ORDER[bv]??99));
       return sortDir*String(av).localeCompare(String(bv));
     });
   }
+
   const pp=+document.getElementById('perPage').value;
   totalPages=Math.max(1,Math.ceil(filteredData.length/pp));
   curPage=Math.min(curPage,totalPages);
+
   const fparts=[];
   const fq=document.getElementById('searchInput').value.trim();
   if(fq) fparts.push(`"${fq}"`);
   if(mon) fparts.push(mon);
-  if(cls) fparts.push(cls);
+  if(cls) fparts.push('Class '+cls);
   if(sec) fparts.push('Sec '+sec);
-  document.getElementById('s-filter').textContent='Filter: '+(fparts.length?fparts.join(', '):'none');
+  document.getElementById('s-filter').textContent='Filter: '+(fparts.length?fparts.join(', '):'None');
 }
 
-function applyFilters(){buildFiltered();goPage(1);}
+function applyFilters(){ buildFiltered(); goPage(1); }
 function clearFilters(){
-  ['searchInput','filterMonth','filterClass','filterSection'].forEach(id=>{ const el=document.getElementById(id); el.tagName==='INPUT'?el.value='':el.value=''; });
+  document.getElementById('searchInput').value='';
   document.getElementById('filterMonth').value='';
   document.getElementById('filterClass').value='';
   document.getElementById('filterSection').value='';
-  document.getElementById('searchInput').value='';
   applyFilters();
 }
 
-/* ══ RENDER PAGE ══ */
+/* RENDER TABLE */
 function renderPage(){
   const pp=+document.getElementById('perPage').value;
   const start=(curPage-1)*pp, end=start+pp;
@@ -637,27 +842,33 @@ function renderPage(){
   const today=todayStr();
   const tbody=document.getElementById('tbody');
   tbody.innerHTML='';
+
   if(!pageData.length){
     tbody.innerHTML='<tr><td colspan="7" class="no-results">No records match the current filter.</td></tr>';
   }
+
   pageData.forEach(r=>{
     const tr=document.createElement('tr');
-    const isToday=showTodayHL&&r.date===today;
-    if(isToday) tr.classList.add('is-today');
-    const dateBadge=isToday
-      ?`<span class="badge b-today">🎂 ${r.date}</span>`
-      :`<span style="font-size:.8rem;color:var(--tx2);font-variant-numeric:tabular-nums">${r.date||'—'}</span>`;
+    const isToday=r.date===today;
+    if(isToday) tr.classList.add('today-row');
+
+    const datePart=isToday
+      ?`<span class="pill pill-warn">${r.date} — Today</span>`
+      :`<span style="font-size:12px;color:var(--tx2);font-variant-numeric:tabular-nums;font-family:var(--mono)">${r.date||'—'}</span>`;
+
     tr.innerHTML=`
       <td class="col-chk"><input type="checkbox"></td>
-      <td>${dateBadge}</td>
-      <td title="${r.name}"><span class="badge b-name">${r.name||'—'}</span></td>
-      <td style="color:var(--tx2);font-size:.8rem" title="${r.father}">${r.father||'—'}</td>
-      <td style="color:var(--tx2);font-size:.8rem" title="${r.mother}">${r.mother||'—'}</td>
-      <td><span class="badge b-class">${r.cls||'—'}</span></td>
-      <td><span class="badge b-sec">${r.sec||'—'}</span></td>`;
+      <td>${datePart}</td>
+      <td title="${r.name}"><span class="pill pill-blue">${r.name||'—'}</span></td>
+      <td title="${r.father}" style="color:var(--tx2);font-size:12px">${r.father||'—'}</td>
+      <td title="${r.mother}" style="color:var(--tx2);font-size:12px">${r.mother||'—'}</td>
+      <td><span class="pill pill-green">${r.cls||'—'}</span></td>
+      <td><span class="pill pill-purple">${r.sec||'—'}</span></td>`;
     tbody.appendChild(tr);
   });
-  document.getElementById('pg-info').innerHTML=`Page <b>${curPage}</b> of <b>${totalPages}</b> &nbsp;·&nbsp; ${start+1}–${Math.min(end,filteredData.length)} of <b>${filteredData.length}</b>`;
+
+  document.getElementById('pg-info').innerHTML=
+    `Page <b>${curPage}</b> / <b>${totalPages}</b> &nbsp;&middot;&nbsp; ${start+1}&ndash;${Math.min(end,filteredData.length)} of <b>${filteredData.length}</b>`;
   document.getElementById('pg-first').disabled=curPage===1;
   document.getElementById('pg-prev').disabled=curPage===1;
   document.getElementById('pg-next').disabled=curPage===totalPages;
@@ -673,11 +884,11 @@ function goPage(n){
 
 function sortBy(col){
   if(sortCol===col){sortDir*=-1;}else{sortCol=col;sortDir=1;}
-  document.querySelectorAll('.sort-ic').forEach(i=>{ i.className='fas fa-sort sort-ic'; });
-  const ic=document.getElementById('si-'+col);
-  if(ic){ ic.className=`fas fa-sort-${sortDir===1?'up':'down'} sort-ic`; }
-  const th=ic?.closest('th'); if(th){ document.querySelectorAll('table.dt thead th').forEach(t=>t.classList.remove('sa')); th.classList.add('sa'); }
-  document.getElementById('s-sort').textContent=`Sort: ${col} ${sortDir===1?'ASC':'DESC'}`;
+  document.querySelectorAll('.sort-icon').forEach(i=>{ i.innerHTML='&#8597;'; });
+  document.querySelectorAll('thead th').forEach(t=>t.classList.remove('sorted'));
+  const si=document.getElementById('si-'+col);
+  if(si){ si.innerHTML=sortDir===1?'&#8593;':'&#8595;'; si.closest('th').classList.add('sorted'); }
+  document.getElementById('s-sort').textContent=`Sort: ${col} ${sortDir===1?'Asc':'Desc'}`;
   buildFiltered(); renderPage();
 }
 
@@ -685,51 +896,15 @@ function toggleAll(cb){
   document.querySelectorAll('#tbody input[type=checkbox]').forEach(c=>c.checked=cb.checked);
 }
 
-/* ══ SIDEBAR ══ */
-function buildSidebar(){
-  const today=todayStr();
-  const byClass={}, byMonth={}, bySec={};
-  allData.filter(r=>!r._dup).forEach(r=>{
-    if(r.cls) byClass[r.cls]=(byClass[r.cls]||0)+1;
-    const {month:m}=parseDateR(r.date); if(m) byMonth[m]=(byMonth[m]||0)+1;
-    if(r.sec) bySec[r.sec]=(bySec[r.sec]||0)+1;
-  });
-  function fill(id,entries,filterFn){
-    const el=document.getElementById(id);
-    entries.forEach(([k,cnt])=>{
-      const d=document.createElement('div'); d.className='sb-item';
-      d.innerHTML=`<span>${k}</span><span class="sb-cnt">${cnt}</span>`;
-      d.onclick=()=>{ filterFn(k); updateSbActive(id,d); };
-      el.appendChild(d);
-    });
-  }
-  fill('sb-class',Object.entries(byClass).sort((a,b)=>(CLASS_ORDER[a[0]]??99)-(CLASS_ORDER[b[0]]??99)).map(([k,v])=>['Class '+k,v]),
-    k=>{ document.getElementById('filterClass').value=k.replace('Class ',''); applyFilters(); });
-  fill('sb-month',MONTHS_ALL.filter(m=>byMonth[m]).map(m=>[m,byMonth[m]]),
-    k=>{ document.getElementById('filterMonth').value=k; applyFilters(); });
-  fill('sb-sec',Object.entries(bySec).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>['Sec '+k,v]),
-    k=>{ document.getElementById('filterSection').value=k.replace('Sec ',''); applyFilters(); });
-}
-
-function updateSbActive(id,el){
-  document.querySelectorAll('#'+id+' .sb-item').forEach(i=>i.classList.remove('active'));
-  el.classList.toggle('active');
-}
-
-function toggleSb(id){
-  const el=document.getElementById(id);
-  el.style.display=el.style.display==='none'?'':'none';
-}
-
-/* ══ TODAY ══ */
+/* TODAY */
 function renderToday(){
   const today=todayStr();
   const d=new Date();
   document.getElementById('today-date-label').textContent=
-    `Today's Birthdays — ${d.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`;
+    d.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   const kids=allData.filter(r=>!r._dup&&r.date===today);
   document.getElementById('today-count-label').textContent=
-    kids.length?`${kids.length} student${kids.length>1?'s':''} celebrating today!`:'No birthdays today.';
+    kids.length?`${kids.length} student${kids.length>1?'s':''} celebrating today`:'No birthdays today.';
   const tbody=document.getElementById('today-tbody');
   const empty=document.getElementById('today-empty');
   if(!kids.length){empty.style.display='block';return;}
@@ -737,16 +912,16 @@ function renderToday(){
   kids.forEach(r=>{
     const tr=document.createElement('tr');
     tr.innerHTML=`
-      <td><span class="badge b-name">${r.name}</span></td>
-      <td style="color:var(--tx2);font-size:.8rem">${r.father||'—'}</td>
-      <td style="color:var(--tx2);font-size:.8rem">${r.mother||'—'}</td>
-      <td><span class="badge b-class">${r.cls||'—'}</span></td>
-      <td><span class="badge b-sec">${r.sec||'—'}</span></td>`;
+      <td><span class="pill pill-blue">${r.name}</span></td>
+      <td style="color:var(--tx2);font-size:12px">${r.father||'—'}</td>
+      <td style="color:var(--tx2);font-size:12px">${r.mother||'—'}</td>
+      <td><span class="pill pill-green">${r.cls||'—'}</span></td>
+      <td><span class="pill pill-purple">${r.sec||'—'}</span></td>`;
     tbody.appendChild(tr);
   });
 }
 
-/* ══ SIBLINGS ══ */
+/* SIBLINGS */
 function groupFamilies(rows){
   const map=new Map();
   rows.filter(r=>!r._dup).forEach(r=>{
@@ -765,21 +940,27 @@ function renderFamilies(groups,container){
   groups.forEach(g=>{
     const classes=[...new Set(g.children.map(c=>c.cls).filter(Boolean))].join(', ');
     const div=document.createElement('div'); div.className='family-card';
+    const bodyId='fb-'+Math.random().toString(36).slice(2);
     div.innerHTML=`
-      <div class="family-head" onclick="const b=this.nextElementSibling;b.style.display=b.style.display==='none'?'':'none'">
-        <i class="fas fa-users" style="color:var(--ac);font-size:.85rem"></i>
-        <div class="family-name">${g.display} <span class="family-meta">— ${classes||'?'}</span></div>
-        <span class="family-badge">${g.children.length} children</span>
-        <i class="fas fa-chevron-down" style="color:var(--tx2);font-size:.7rem;margin-left:.5rem"></i>
+      <div class="family-head" onclick="
+        const b=document.getElementById('${bodyId}');
+        const open=b.classList.toggle('open');
+        this.querySelector('.chevron').classList.toggle('open',open);
+        this.classList.toggle('open',open);
+      ">
+        <span class="family-name">${g.display}</span>
+        <span class="family-meta">${classes||'—'}</span>
+        <span class="fam-badge">${g.children.length}</span>
+        <span class="chevron">&#9654;</span>
       </div>
-      <div class="family-body">
-        <table class="family-table">
+      <div class="family-body" id="${bodyId}">
+        <table>
           <thead><tr><th>Student</th><th>Birthday</th><th>Class</th><th>Section</th></tr></thead>
           <tbody>${g.children.map(r=>`<tr>
-            <td><span class="badge b-name">${r.name}</span></td>
-            <td style="color:var(--tx2);font-size:.78rem">${r.date||'—'}</td>
-            <td><span class="badge b-class">${r.cls||'—'}</span></td>
-            <td><span class="badge b-sec">${r.sec||'—'}</span></td>
+            <td><span class="pill pill-blue">${r.name}</span></td>
+            <td style="color:var(--tx2);font-size:12px;font-family:var(--mono)">${r.date||'—'}</td>
+            <td><span class="pill pill-green">${r.cls||'—'}</span></td>
+            <td><span class="pill pill-purple">${r.sec||'—'}</span></td>
           </tr>`).join('')}</tbody>
         </table>
       </div>`;
@@ -790,12 +971,11 @@ function renderFamilies(groups,container){
 function doSibSearch(){
   const q=document.getElementById('sibInput').value.trim();
   const container=document.getElementById('sib-results');
-  if(!q){container.innerHTML='<div class="no-results">Please enter a parent name.</div>';return;}
+  if(!q){container.innerHTML='<div class="no-results">Enter a parent name to search.</div>';return;}
   const all=groupFamilies(allData);
   const matched=all.filter(g=>fuzzyScore(q,g.display)>=0.4).sort((a,b)=>fuzzyScore(q,b.display)-fuzzyScore(q,a.display));
   renderFamilies(matched,container);
 }
-
 function showAllFamilies(){ renderFamilies(groupFamilies(allData),document.getElementById('sib-results')); }
 function autoLoadSiblings(){
   const q=document.getElementById('sibInput').value.trim();
@@ -805,7 +985,43 @@ function autoLoadSiblings(){
 document.getElementById('sibInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSibSearch();});
 document.getElementById('sibInput').addEventListener('input',e=>{if(!e.target.value.trim())showAllFamilies();});
 
-/* ══ STATS ══ */
+/* STATS */
+let snSortCol='count', snSortDir=-1;
+
+function computeSurnameData(){
+  const base=allData.filter(r=>!r._dup);
+  const map={};
+  base.forEach(r=>{
+    const sn=r._surname||'Unknown';
+    if(!map[sn]) map[sn]={surname:sn,count:0,classes:new Set()};
+    map[sn].count++;
+    if(r.cls) map[sn].classes.add(r.cls);
+  });
+  return Object.values(map);
+}
+
+function renderSurnameTable(data,searchQ){
+  let rows=[...data];
+  if(searchQ){ const q=norm(searchQ); rows=rows.filter(r=>norm(r.surname).includes(q)); }
+  rows.sort((a,b)=>{
+    const av=a[snSortCol],bv=b[snSortCol];
+    if(typeof av==='number') return snSortDir*(av-bv);
+    return snSortDir*String(av).localeCompare(String(bv));
+  });
+  const mH=(col,label)=>{
+    const sorted=snSortCol===col;
+    const arrow=sorted?(snSortDir===1?'&#8593;':'&#8595;'):'&#8597;';
+    return `<th class="${sorted?'sorted':''}" onclick="snSortCol='${col}';snSortDir=${sorted?-snSortDir:-1};document.getElementById('sn-table-wrap').innerHTML=renderSurnameTable(computeSurnameData(),document.getElementById('sn-search-input').value)">${label} <span>${arrow}</span></th>`;
+  };
+  return `<table class="sn-table"><thead><tr>${mH('surname','Surname')}${mH('count','Students')}<th>Classes</th></tr></thead><tbody>
+    ${rows.length?rows.map(r=>`<tr>
+      <td style="font-weight:600">${r.surname}</td>
+      <td style="font-variant-numeric:tabular-nums">${r.count}</td>
+      <td style="color:var(--tx2);font-size:11px">${[...r.classes].sort((a,b)=>(CLASS_ORDER[a]??99)-(CLASS_ORDER[b]??99)).join(', ')||'—'}</td>
+    </tr>`).join(''):'<tr><td colspan="3" class="no-results">No results.</td></tr>'}
+  </tbody></table>`;
+}
+
 function renderStats(){
   const content=document.getElementById('stats-content');
   const base=allData.filter(r=>!r._dup);
@@ -824,43 +1040,54 @@ function renderStats(){
   const maxC=Math.max(...sortedC.map(([,v])=>v),1);
   const maxM=Math.max(...sortedM.map(([,v])=>v),1);
   const maxS=Math.max(...sortedS.map(([,v])=>v),1);
-
-  const barRows=(arr,max,grad)=>arr.map(([l,v])=>`
+  const barRows=(arr,max)=>arr.map(([l,v])=>`
     <div class="bar-row">
       <span class="bar-label">${l}</span>
-      <div class="bar-track"><div class="bar-fill" style="width:${(v/max*100).toFixed(1)}%;${grad?'background:'+grad:''}"></div></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(v/max*100).toFixed(1)}%"></div></div>
       <span class="bar-count">${v}</span>
     </div>`).join('');
+  const snData=computeSurnameData();
 
   content.innerHTML=`
     <div class="stat-card">
-      <div class="stat-head"><i class="fas fa-circle-info"></i> Summary</div>
+      <div class="stat-head">Summary</div>
       <div class="stat-body">
         <div class="stat-kv"><span class="k">Total students</span><span class="v">${base.length}</span></div>
         <div class="stat-kv"><span class="k">Duplicates hidden</span><span class="v">${allData.filter(r=>r._dup).length}</span></div>
-        <div class="stat-kv"><span class="k">Today's birthdays</span><span class="v" style="color:var(--ac2)">${todayC}</span></div>
-        <div class="stat-kv"><span class="k">Families with siblings</span><span class="v" style="color:var(--ac)">${sibC}</span></div>
+        <div class="stat-kv"><span class="k">Today's birthdays</span><span class="v" style="color:var(--today-bdr)">${todayC}</span></div>
+        <div class="stat-kv"><span class="k">Families (siblings)</span><span class="v">${sibC}</span></div>
+        <div class="stat-kv"><span class="k">Unique surnames</span><span class="v">${snData.filter(s=>s.surname!=='Unknown').length}</span></div>
         <div class="stat-kv"><span class="k">Classes</span><span class="v">${sortedC.length}</span></div>
         <div class="stat-kv"><span class="k">Sections</span><span class="v">${sortedS.length}</span></div>
         <div class="stat-kv"><span class="k">Months covered</span><span class="v">${sortedM.length}</span></div>
       </div>
     </div>
+
+    <div class="stat-card" style="grid-column:1/-1">
+      <div class="stat-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">
+        <span>Surname-wise Students</span>
+        <input type="text" id="sn-search-input" placeholder="Search surname..." style="width:180px;height:26px;font-size:12px"
+          oninput="document.getElementById('sn-table-wrap').innerHTML=renderSurnameTable(computeSurnameData(),this.value)">
+        <span style="font-size:11px;color:var(--tx3)">Click column headers to sort</span>
+      </div>
+      <div class="stat-body" style="padding:0;overflow:auto;max-height:360px" id="sn-table-wrap">
+        ${renderSurnameTable(snData,'')}
+      </div>
+    </div>
+
     <div class="stat-card">
-      <div class="stat-head"><i class="fas fa-graduation-cap"></i> By Class</div>
+      <div class="stat-head">By Class</div>
       <div class="stat-body">${barRows(sortedC,maxC)}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-head"><i class="fas fa-calendar"></i> By Month</div>
-      <div class="stat-body">${barRows(sortedM,maxM,'linear-gradient(to right,#f472b6,#818cf8)')}</div>
+      <div class="stat-head">By Month</div>
+      <div class="stat-body">${barRows(sortedM,maxM)}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-head"><i class="fas fa-building"></i> By Section</div>
-      <div class="stat-body">${barRows(sortedS,maxS,'linear-gradient(to right,#34d399,#818cf8)')}</div>
+      <div class="stat-head">By Section</div>
+      <div class="stat-body">${barRows(sortedS,maxS)}</div>
     </div>`;
 }
-
-/* ══ MODAL CLOSE ON BG CLICK ══ */
-document.getElementById('aboutModal').onclick=e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');};
 
 loadData();
 </script>
