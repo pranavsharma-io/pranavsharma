@@ -1,377 +1,874 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birthday Data Master - Search & Filter</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Data Master</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #4f46e5;
+  --primary-light: #818cf8;
+  --primary-dark: #3730a3;
+  --accent: #f59e0b;
+  --accent2: #ec4899;
+  --bg: #0f0e17;
+  --bg2: #1a1929;
+  --card: #1e1d2e;
+  --card2: #252438;
+  --border: #2e2d45;
+  --text: #e8e6ff;
+  --text-dim: #8b89aa;
+  --success: #10b981;
+  --danger: #ef4444;
+  --today: #f59e0b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+/* ── HEADER ── */
+header {
+  position: relative;
+  padding: 3.5rem 1.5rem 5.5rem;
+  text-align: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1340 0%, #0f0e17 60%, #1a0a2e 100%);
+}
+header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(79,70,229,.35) 0%, transparent 70%);
+}
+.header-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+.orb1 { width: 350px; height: 350px; background: rgba(79,70,229,.25); top: -120px; left: -80px; }
+.orb2 { width: 250px; height: 250px; background: rgba(245,158,11,.15); top: -60px; right: -60px; }
+.orb3 { width: 200px; height: 200px; background: rgba(236,72,153,.15); bottom: -80px; left: 40%; }
+header h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  position: relative;
+  background: linear-gradient(135deg, #c7d2fe, #fff 40%, #fde68a);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header-sub {
+  position: relative;
+  margin-top: 10px;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.12);
+  padding: 6px 18px; border-radius: 50px;
+  font-size: .85rem; color: var(--text-dim);
+  backdrop-filter: blur(8px);
+}
+.dot-live {
+  width: 8px; height: 8px; background: var(--success); border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(16,185,129,.4);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.4)} 50%{box-shadow:0 0 0 6px rgba(16,185,129,0)} }
 
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-dark: #1e40af;
-            --accent-color: #334155;
-            --accent-hover: #1e293b;
-            --bg-color: #f1f5f9;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-light: #64748b;
-            --border-color: #e2e8f0;
-            --success-color: #10b981;
-            --info-color: #0ea5e9;
-        }
+/* ── TABS ── */
+.tab-bar {
+  display: flex; gap: 4px;
+  background: var(--card2);
+  border-radius: 12px; padding: 4px;
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+.tab-btn {
+  flex: 1; min-width: 120px;
+  padding: 10px 16px; border-radius: 9px;
+  border: none; background: transparent;
+  color: var(--text-dim); font-family: 'Outfit', sans-serif;
+  font-size: .88rem; font-weight: 600; cursor: pointer;
+  transition: all .2s; display: flex; align-items: center;
+  justify-content: center; gap: 7px; white-space: nowrap;
+}
+.tab-btn.active {
+  background: var(--primary); color: #fff;
+  box-shadow: 0 4px 14px rgba(79,70,229,.4);
+}
+.tab-btn:not(.active):hover { background: rgba(255,255,255,.06); color: var(--text); }
 
-        * { box-sizing: border-box; }
+/* ── CONTAINER ── */
+.container {
+  max-width: 1200px; margin: -55px auto 40px;
+  padding: 0 16px; position: relative; z-index: 10;
+}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            -webkit-text-size-adjust: 100%;
-        }
+/* ── TODAY BANNER ── */
+#today-banner {
+  background: linear-gradient(135deg, rgba(245,158,11,.15), rgba(245,158,11,.05));
+  border: 1px solid rgba(245,158,11,.35);
+  border-radius: 14px; padding: 18px 22px; margin-bottom: 20px;
+  display: none;
+  animation: slideIn .4s ease;
+}
+@keyframes slideIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+#today-banner h3 {
+  font-family: 'Outfit', sans-serif; font-size: 1rem;
+  color: var(--today); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.today-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.today-chip {
+  background: rgba(245,158,11,.18); border: 1px solid rgba(245,158,11,.3);
+  border-radius: 8px; padding: 7px 13px; font-size: .83rem; color: #fde68a;
+  cursor: pointer; transition: all .2s;
+}
+.today-chip:hover { background: rgba(245,158,11,.3); transform: translateY(-1px); }
+.today-chip strong { display: block; font-size: .95rem; }
 
-        /* Header */
-        header {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            padding: 3rem 1rem 4rem 1rem;
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
+/* ── CONTROLS CARD ── */
+.controls-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; margin-bottom: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.35);
+}
 
-        header h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 2.2rem;
-            margin: 0 0 10px 0;
-        }
+/* ── SEARCH ROW ── */
+.search-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.input-wrap { position: relative; flex: 1; min-width: 220px; }
+.input-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: .95rem; pointer-events: none; }
+input[type=text], select {
+  width: 100%; padding: 12px 14px 12px 38px;
+  background: var(--card2); border: 1.5px solid var(--border);
+  border-radius: 10px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: .95rem;
+  transition: border-color .2s;
+}
+select { padding-left: 14px; appearance: none; }
+input[type=text]:focus, select:focus { outline: none; border-color: var(--primary-light); }
+input::placeholder { color: var(--text-dim); }
 
-        header p {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 6px 16px;
-            border-radius: 50px;
-            display: inline-block;
-            font-size: 0.9rem;
-            backdrop-filter: blur(5px);
-        }
-        
-        header p i { color: white; margin-right: 5px; }
+/* ── FILTER ROW ── */
+.filter-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.select-wrap { position: relative; min-width: 130px; flex: 1; }
+.select-wrap::after {
+  content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--text-dim); font-size: .75rem; pointer-events: none;
+}
+.stats-pill {
+  background: rgba(79,70,229,.15); border: 1px solid rgba(79,70,229,.3);
+  border-radius: 8px; padding: 8px 16px;
+  font-family: 'Outfit', sans-serif; font-size: .85rem; font-weight: 600;
+  color: var(--primary-light); white-space: nowrap;
+}
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 10px; border: none;
+  font-family: 'Outfit', sans-serif; font-size: .88rem; font-weight: 600;
+  cursor: pointer; transition: all .2s; text-decoration: none;
+}
+.btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,.35); }
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(79,70,229,.5); }
+.btn-outline { background: transparent; color: var(--primary-light); border: 1.5px solid var(--border); }
+.btn-outline:hover { border-color: var(--primary-light); background: rgba(79,70,229,.1); }
+.btn-ghost { background: rgba(255,255,255,.05); color: var(--text-dim); border: 1.5px solid var(--border); }
+.btn-ghost:hover { background: rgba(255,255,255,.08); color: var(--text); }
 
-        .container {
-            max-width: 1200px;
-            margin: -50px auto 40px auto;
-            padding: 0 20px;
-            position: relative;
-            z-index: 10;
-        }
+/* ── PANEL VIEWS ── */
+.panel { display: none; }
+.panel.active { display: block; animation: fadeUp .3s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
 
-        .controls-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px; /* Unified gap */
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .search-wrapper {
-            flex-grow: 1;
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            min-width: 250px;
-        }
+/* ── TABLE ── */
+.table-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,.3);
+}
+.table-wrapper { max-height: 60vh; overflow: auto; }
+table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+th {
+  background: var(--card2); color: var(--text-dim); font-family: 'Outfit', sans-serif;
+  font-size: .82rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  padding: 14px 16px; text-align: left; position: sticky; top: 0; z-index: 5;
+  border-bottom: 1px solid var(--border);
+}
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--text); }
+th .sort-icon { margin-left: 4px; opacity: .4; font-size: .7rem; }
+th.asc .sort-icon::after { content: '↑'; }
+th.desc .sort-icon::after { content: '↓'; }
+th:not(.asc):not(.desc) .sort-icon::after { content: '↕'; }
+td {
+  padding: 13px 16px; border-bottom: 1px solid rgba(46,45,69,.6);
+  font-size: .9rem; color: var(--text);
+}
+tbody tr { transition: background .15s; }
+tbody tr:hover { background: rgba(79,70,229,.08); }
+tbody tr.today-row { background: rgba(245,158,11,.06); }
+tbody tr.today-row td:first-child { border-left: 3px solid var(--today); }
+.badge {
+  display: inline-block; padding: 3px 10px; border-radius: 6px;
+  font-size: .78rem; font-weight: 600; font-family: 'Outfit', sans-serif;
+}
+.badge-class { background: rgba(79,70,229,.2); color: #a5b4fc; }
+.badge-sec { background: rgba(16,185,129,.15); color: #6ee7b7; }
+.badge-today { background: rgba(245,158,11,.2); color: #fde68a; }
+#loadingMsg {
+  padding: 48px; text-align: center; color: var(--text-dim);
+  font-family: 'Outfit', sans-serif;
+}
+.spinner2 {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 3px solid var(--border); border-top-color: var(--primary);
+  animation: spin .8s linear infinite; margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.empty-state {
+  padding: 52px; text-align: center; color: var(--text-dim);
+}
+.empty-state i { font-size: 2.5rem; display: block; margin-bottom: 12px; opacity: .4; }
 
-        .input-group { position: relative; flex-grow: 1; }
-        .sr-only {
-            position: absolute; width: 1px; height: 1px; padding: 0;
-            margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0);
-            white-space: nowrap; border-width: 0;
-        }
+/* ── SIBLING PANEL ── */
+.sibling-search-box {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px; margin-bottom: 20px;
+}
+.sibling-search-box h3 {
+  font-family: 'Outfit', sans-serif; font-size: 1.05rem; margin-bottom: 6px;
+  color: var(--text);
+}
+.sibling-search-box p { color: var(--text-dim); font-size: .87rem; margin-bottom: 18px; }
+.sibling-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+.sibling-row .input-wrap { flex: 1; min-width: 200px; }
+#siblingResults { display: none; }
+.sibling-group {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; margin-bottom: 16px; overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+}
+.sibling-group-header {
+  background: linear-gradient(135deg, rgba(79,70,229,.2), rgba(236,72,153,.1));
+  border-bottom: 1px solid var(--border); padding: 14px 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.sibling-group-header .group-icon { font-size: 1.3rem; }
+.sibling-group-header strong {
+  font-family: 'Outfit', sans-serif; font-size: .95rem; color: var(--text);
+}
+.sibling-group-header span { font-size: .8rem; color: var(--text-dim); }
+.sibling-count-badge {
+  margin-left: auto; background: rgba(79,70,229,.25);
+  border: 1px solid rgba(79,70,229,.3); color: var(--primary-light);
+  padding: 3px 12px; border-radius: 20px;
+  font-size: .78rem; font-weight: 700; font-family: 'Outfit', sans-serif;
+}
 
-        .search-input {
-            width: 100%; padding: 12px 16px 12px 40px; border: 2px solid var(--border-color);
-            border-radius: 8px; font-size: 1rem; font-family: 'Inter', sans-serif;
-            transition: border-color 0.2s;
-        }
-        .search-input:focus { outline: none; border-color: var(--primary-color); }
-        .search-icon {
-            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-            color: var(--text-light); font-size: 1.1rem;
-        }
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.7);
+  display: none; align-items: center; justify-content: center;
+  z-index: 1000; padding: 20px; backdrop-filter: blur(6px);
+}
+.modal-overlay.active { display: flex; }
+.modal-content {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px; max-width: 720px; width: 100%;
+  max-height: 85vh; overflow-y: auto; position: relative;
+  box-shadow: 0 24px 48px rgba(0,0,0,.6);
+  animation: fadeUp .3s ease;
+}
+.modal-close {
+  position: absolute; top: 16px; right: 20px;
+  background: rgba(255,255,255,.07); border: 1px solid var(--border);
+  width: 32px; height: 32px; border-radius: 8px;
+  color: var(--text-dim); cursor: pointer; font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center; transition: all .2s;
+}
+.modal-close:hover { background: rgba(255,255,255,.12); color: var(--text); }
+.modal-content h2 {
+  font-family: 'Outfit', sans-serif; font-size: 1.5rem;
+  background: linear-gradient(135deg, #c7d2fe, #fde68a); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px;
+}
+.modal-content h3 {
+  font-family: 'Outfit', sans-serif; font-size: 1rem; color: var(--primary-light);
+  margin: 24px 0 10px; border-left: 3px solid var(--primary); padding-left: 10px;
+}
+.modal-content p, .modal-content li { color: var(--text-dim); line-height: 1.7; font-size: .92rem; }
+.modal-content strong { color: var(--text); }
+.modal-content ol { padding-left: 20px; }
+.modal-content ol li { margin-bottom: 6px; }
 
-        .count-badge {
-            background-color: #ecfdf5; color: var(--success-color); padding: 8px 16px;
-            border-radius: 8px; font-weight: 700; font-size: 0.95rem;
-            border: 1px solid #d1fae5; white-space: nowrap;
-        }
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        /* Button Group for Contact & Info */
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .search-row, .filter-row, .btn-row, .sibling-row { flex-direction: column; }
+  .tab-btn { min-width: 100px; font-size: .8rem; padding: 9px 12px; }
+  table { white-space: normal; }
+  td { word-break: break-word; }
+}
+@media (max-width: 480px) {
+  header { padding: 2.5rem 1rem 5rem; }
+  .controls-card { padding: 14px; }
+  td, th { padding: 10px 10px; font-size: .8rem; }
+}
 
-        .btn {
-            color: white; padding: 12px 24px; border-radius: 8px;
-            text-decoration: none; font-weight: 600; font-size: 0.95rem;
-            transition: all 0.2s ease; display: inline-flex; align-items: center;
-            gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: none; cursor: pointer;
-        }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 8px rgba(0,0,0,0.15); }
-        .btn i { font-size: 1.1em; }
-
-        .contact-btn { background-color: var(--accent-color); }
-        .contact-btn:hover { background-color: var(--accent-hover); }
-
-        /* --- NEW BUTTON STYLE --- */
-        .info-btn {
-            background-color: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-            box-shadow: none;
-        }
-        .info-btn:hover {
-            background-color: var(--primary-color);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(37,99,235,0.2);
-        }
-
-        .table-card {
-            background: var(--card-bg); border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            overflow: hidden; border: 1px solid var(--border-color);
-        }
-        .table-wrapper { max-height: 65vh; overflow-y: auto; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-        th, td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        th {
-            background-color: #f8fafc; color: var(--text-main); font-weight: 600;
-            position: sticky; top: 0; z-index: 5; border-bottom: 2px solid var(--border-color);
-        }
-        tbody tr:hover { background-color: #f1f5f9; }
-
-        #loading { padding: 40px; text-align: center; color: var(--text-light); }
-        .spinner {
-            border: 3px solid #e2e8f0; border-top: 3px solid var(--primary-color);
-            border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* --- NEW MODAL STYLES --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(15, 23, 42, 0.6);
-            display: none; /* Hidden by default */
-            align-items: center; justify-content: center; z-index: 1000;
-            padding: 20px; backdrop-filter: blur(4px);
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
-            background-color: var(--card-bg); border-radius: 12px;
-            padding: 30px 35px; max-width: 750px; width: 100%;
-            max-height: 85vh; overflow-y: auto; position: relative;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-            animation: fadeIn 0.3s ease-out;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        .modal-close {
-            position: absolute; top: 15px; right: 20px;
-            background: none; border: none; font-size: 1.8rem;
-            color: var(--text-light); cursor: pointer; transition: color 0.2s;
-        }
-        .modal-close:hover { color: var(--text-main); }
-        .modal-content h2 { font-family: 'Poppins', sans-serif; margin-top: 0; color: var(--primary-color); }
-        .modal-content h3 { font-family: 'Poppins', sans-serif; margin-top: 25px; border-left: 3px solid var(--primary-color); padding-left: 10px; }
-        .modal-content p, .modal-content li { line-height: 1.6; color: var(--text-light); }
-        .modal-content strong { color: var(--text-main); }
-
-        /* --- RESPONSIVE STYLES --- */
-        @media (max-width: 1000px) {
-            .table-wrapper { overflow-x: hidden; }
-            table { white-space: normal; }
-            th, td { word-break: break-word; }
-        }
-        @media (max-width: 768px) {
-            .container { padding: 0 15px; }
-            .controls-card, .button-group { flex-direction: column; align-items: stretch; }
-            .search-wrapper { flex-direction: column; align-items: stretch; }
-            .count-badge, .btn { text-align: center; justify-content: center; }
-            header { padding-bottom: 3.5rem; }
-            header h1 { font-size: 1.8rem; }
-        }
-        @media (max-width: 480px) {
-            .container { padding: 0 10px; }
-            .controls-card { padding: 15px; }
-            th, td { padding: 12px 8px; font-size: 0.8rem; }
-        }
-    </style>
+/* ── YEAR BADGE ── */
+.year-highlight {
+  background: rgba(236,72,153,.15); color: #f9a8d4;
+  border: 1px solid rgba(236,72,153,.3);
+}
+</style>
 </head>
 <body>
 
-    <header>
-        <h1>Birthday Data Master</h1>
-        <p><i class="fa-solid fa-circle-info"></i> Data extracted daily from <strong>davjehanabad.in</strong> at 11:00 AM IST</p>
-    </header>
+<header>
+  <div class="header-orb orb1"></div>
+  <div class="header-orb orb2"></div>
+  <div class="header-orb orb3"></div>
+  <h1>🎂 Birthday Data Master</h1>
+  <div class="header-sub">
+    <div class="dot-live"></div>
+    Data extracted daily from <strong>davjehanabad.in</strong> at 11:00 AM IST
+  </div>
+</header>
 
-    <div class="container">
-        <div class="controls-card">
-            <div class="search-wrapper">
-                <label class="input-group">
-                    <span class="sr-only">Search by Class, Section, or Name</span>
-                    <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input type="text" id="searchInput" class="search-input" placeholder="Search Class, Section, Name...">
-                </label>
-                <div id="studentCount" class="count-badge">Total Students: 0</div>
-            </div>
+<div class="container">
 
-            <!-- Button Group -->
-            <div class="button-group">
-                <!-- NEW BUTTON HERE -->
-                <button id="readMoreBtn" class="btn info-btn">
-                    <i class="fa-solid fa-book-open"></i> Read about this project
-                </button>
-                <a href="https://pranav-sharma.pages.dev/#contact" target="_blank" rel="noopener noreferrer" class="btn contact-btn">
-                    <i class="fa-solid fa-address-card"></i> Contact Developer
-                </a>
-            </div>
-        </div>
+  <!-- TODAY BANNER -->
+  <div id="today-banner">
+    <h3><i class="fa-solid fa-cake-candles"></i> Today's Birthdays</h3>
+    <div class="today-chips" id="today-chips"></div>
+  </div>
 
-        <div class="table-card">
-            <div id="loading"><div class="spinner"></div>Loading data...</div>
-            <div id="table-container" class="table-wrapper"></div>
-        </div>
+  <!-- CONTROLS -->
+  <div class="controls-card">
+    <div class="search-row">
+      <div class="input-wrap" style="flex:2">
+        <span class="input-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+        <input type="text" id="searchInput" placeholder="Search name, class, section, parent…">
+      </div>
+      <div id="studentCount" class="stats-pill">Students: 0</div>
     </div>
 
-    <!-- NEW MODAL HTML -->
-    <div id="infoModal" class="modal-overlay">
-        <div class="modal-content">
-            <button id="modalCloseBtn" class="modal-close">&times;</button>
-            <h2>About The Birthday Data Master</h2>
-            
-            <h3>Why Does This Project Exist?</h3>
-            <p>The official DAV Jehanabad website features a list of daily birthdays, which is a great way to celebrate students. However, this information is temporary—once the day is over, the list is gone forever. This makes it impossible to check a birthday you might have missed or to plan for upcoming celebrations.</p>
-            <p>The Birthday Data Master was created to solve this simple problem. It enhances the school's feature by turning the fleeting daily list into a <strong>permanent, searchable, and useful archive</strong> for the entire school community.</p>
-
-            <h3>How It Works: The Full Story</h3>
-            <p>The application is split into two parts: a silent <strong>Backend</strong> that gathers data and a fast <strong>Frontend</strong> that you interact with.</p>
-
-            <h4>Part 1: The Backend (The Automated Data Engine)</h4>
-            <p>The backend's only job is to get fresh data, clean it, and prepare it once a day. This entire process is automated using <strong>GitHub Actions</strong>.</p>
-            <ol>
-                <li><strong>Automated Trigger:</strong> Every day at 11:00 AM IST, GitHub Actions automatically runs a Python script.</li>
-                <li><strong>Data Scraping:</strong> The script visits davjehanabad.in and downloads the raw HTML code of the birthday page.</li>
-                <li><strong>Formatting:</strong> A second script reads this messy HTML, intelligently extracts only the student names, classes, and dates, and neatly organizes this information into a single, clean Excel file (`.xlsx`).</li>
-            </ol>
-
-            <h4>Part 2: The Frontend (The Interface You Use)</h4>
-            <p>The frontend is designed for speed. It does all the work right inside your browser (client-side processing).</p>
-            <ol>
-                <li><strong>Fetching Data:</strong> When you open the page, your browser quickly fetches the single Excel file prepared by the backend.</li>
-                <li><strong>In-Browser Processing:</strong> Using a JavaScript library (XLSX.js), your browser reads the Excel file and builds the table you see on the screen—all without needing a server.</li>
-                <li><strong>Instant Search:</strong> Since all the data is already in your browser, searching is instantaneous. The app filters the local data and redraws the table with zero delay.</li>
-            </ol>
-        </div>
+    <div class="filter-row">
+      <div class="select-wrap">
+        <select id="filterMonth">
+          <option value="">All Months</option>
+          <option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option>
+          <option>May</option><option>Jun</option><option>Jul</option><option>Aug</option>
+          <option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option>
+        </select>
+      </div>
+      <div class="select-wrap">
+        <select id="filterClass">
+          <option value="">All Classes</option>
+        </select>
+      </div>
+      <div class="select-wrap">
+        <select id="filterSection">
+          <option value="">All Sections</option>
+        </select>
+      </div>
+      <button id="clearFilters" class="btn btn-ghost" style="padding:10px 14px">
+        <i class="fa-solid fa-xmark"></i> Clear
+      </button>
     </div>
 
-    <script>
-        const url = 'https://birthday-api.pages.dev/Birthday%20Data%20Master.xlsx';
-        
-        const loadingElement = document.getElementById('loading');
-        const tableContainer = document.getElementById('table-container');
-        const countDisplay = document.getElementById('studentCount');
-        const searchInput = document.getElementById('searchInput');
+    <div class="btn-row">
+      <button id="readMoreBtn" class="btn btn-outline"><i class="fa-solid fa-book-open"></i> About Project</button>
+      <a href="https://pranav-sharma.pages.dev/#contact" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+        <i class="fa-solid fa-address-card"></i> Contact Developer
+      </a>
+    </div>
+  </div>
 
-        // --- NEW: Modal element selection ---
-        const readMoreBtn = document.getElementById('readMoreBtn');
-        const infoModal = document.getElementById('infoModal');
-        const modalCloseBtn = document.getElementById('modalCloseBtn');
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="all">
+      <i class="fa-solid fa-table"></i> All Records
+    </button>
+    <button class="tab-btn" data-tab="siblings">
+      <i class="fa-solid fa-people-group"></i> Find Siblings
+    </button>
+    <button class="tab-btn" data-tab="today">
+      <i class="fa-solid fa-cake-candles"></i> Today
+    </button>
+    <button class="tab-btn" data-tab="stats">
+      <i class="fa-solid fa-chart-bar"></i> Stats
+    </button>
+  </div>
 
-        let globalHeaders = [], globalData = [];
+  <!-- PANEL: ALL RECORDS -->
+  <div id="panel-all" class="panel active">
+    <div class="table-card">
+      <div id="loading"><div class="spinner2"></div>Loading data…</div>
+      <div class="table-wrapper" id="table-container"></div>
+    </div>
+  </div>
 
-        function debounce(func, delay) {
-            let timeout;
-            return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); };
+  <!-- PANEL: SIBLINGS -->
+  <div id="panel-siblings" class="panel">
+    <div class="sibling-search-box">
+      <h3><i class="fa-solid fa-magnifying-glass" style="color:var(--primary-light);margin-right:8px"></i>Sibling Finder</h3>
+      <p>Enter a parent's name (father or mother). Fuzzy & case-insensitive matching finds all children under the same parent.</p>
+      <div class="sibling-row">
+        <div class="input-wrap">
+          <span class="input-icon"><i class="fa-solid fa-user-tie"></i></span>
+          <input type="text" id="siblingSearchInput" placeholder="e.g. Rajesh Kumar, Suman Devi…">
+        </div>
+        <button id="findSiblings" class="btn btn-primary"><i class="fa-solid fa-search"></i> Find Siblings</button>
+        <button id="showAllSiblings" class="btn btn-ghost"><i class="fa-solid fa-users"></i> Show All Families</button>
+      </div>
+    </div>
+    <div id="siblingResults"></div>
+  </div>
+
+  <!-- PANEL: TODAY -->
+  <div id="panel-today" class="panel">
+    <div class="table-card">
+      <div class="table-wrapper" id="today-table-container">
+        <div class="empty-state" id="today-empty"><i class="fa-solid fa-calendar-xmark"></i>No birthdays today (or data not yet loaded).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL: STATS -->
+  <div id="panel-stats" class="panel">
+    <div id="stats-content" style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))"></div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- MODAL -->
+<div id="infoModal" class="modal-overlay">
+  <div class="modal-content">
+    <button id="modalCloseBtn" class="modal-close">&times;</button>
+    <h2>About Birthday Data Master</h2>
+    <h3>Why This Project Exists</h3>
+    <p>The official DAV Jehanabad website shows daily birthdays, but the list disappears after the day ends. This app turns that fleeting list into a <strong>permanent, searchable archive</strong>.</p>
+    <h3>How It Works</h3>
+    <p><strong>Backend (Automated Engine)</strong></p>
+    <ol>
+      <li><strong>Automated Trigger:</strong> GitHub Actions runs a Python script every day at 11 AM IST.</li>
+      <li><strong>Scraping:</strong> The script downloads raw HTML from davjehanabad.in.</li>
+      <li><strong>Formatting:</strong> A second script extracts names, classes, parents, and dates into a clean Excel file.</li>
+    </ol>
+    <p><strong>Frontend (Your Browser)</strong></p>
+    <ol>
+      <li><strong>Fetch:</strong> Your browser downloads the Excel file once.</li>
+      <li><strong>In-Browser Processing:</strong> XLSX.js reads the file and builds the table — no server needed.</li>
+      <li><strong>Instant Search & Filter:</strong> All filtering happens locally — zero delay.</li>
+    </ol>
+    <h3>New Features (Enhanced Version)</h3>
+    <p>✦ <strong>Year-aware search</strong> — filter by month and class simultaneously.<br>
+    ✦ <strong>Sibling Finder</strong> — fuzzy-match parent names to find all children in one family.<br>
+    ✦ <strong>Today's Birthdays</strong> — auto-highlighted banner and dedicated tab.<br>
+    ✦ <strong>Duplicate suppression</strong> — identical entries are hidden automatically.<br>
+    ✦ <strong>Stats dashboard</strong> — quick overview of distribution by class and month.</p>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const DATA_URL = 'https://birthday-api.pages.dev/Birthday%20Data%20Master.xlsx';
+const MONTH_ORDER = { Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12 };
+const CLASS_ORDER = { LKG:0,UKG:1,I:2,II:3,III:4,IV:5,V:6,VI:7,VII:8,VIII:9,IX:10,X:11,XI:12,XII:13 };
+
+let globalData = [];   // deduped rows [{date,name,father,mother,cls,sec}]
+let filtered = [];
+
+// ── UTILS ──
+function parseDate(raw) {
+  if (!raw) return { day: 0, month: '', monthN: 0 };
+  const parts = String(raw).split(',');
+  const day = parseInt(parts[0]) || 0;
+  const month = (parts[1] || '').trim();
+  return { day, month, monthN: MONTH_ORDER[month] || 0 };
+}
+function todayStr() {
+  const d = new Date();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${String(d.getDate()).padStart(2,'0')},${months[d.getMonth()]}`;
+}
+function normalize(s) { return String(s || '').toLowerCase().replace(/\s+/g,' ').trim(); }
+
+// Fuzzy score: how well does needle match haystack (simple token overlap)
+function fuzzyScore(needle, haystack) {
+  if (!needle || !haystack) return 0;
+  const n = normalize(needle), h = normalize(haystack);
+  if (h.includes(n)) return 1;
+  const nTokens = n.split(' '), hStr = h;
+  let matches = 0;
+  nTokens.forEach(t => { if (t.length > 1 && hStr.includes(t)) matches++; });
+  return matches / Math.max(nTokens.length, 1);
+}
+
+// ── LOAD DATA ──
+async function loadData() {
+  try {
+    const res = await fetch(DATA_URL);
+    if (!res.ok) throw new Error(res.status);
+    const buf = await res.arrayBuffer();
+    const wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+    if (rows.length < 2) throw new Error('Empty');
+
+    const headers = rows[0].map(h => normalize(h));
+    const idx = {
+      date: headers.findIndex(h => h.includes('date')),
+      name: headers.findIndex(h => h.includes('student') || h.includes('name')),
+      father: headers.findIndex(h => h.includes('father')),
+      mother: headers.findIndex(h => h.includes('mother')),
+      cls: headers.findIndex(h => h.includes('class')),
+      sec: headers.findIndex(h => h.includes('section')),
+    };
+
+    const seen = new Set();
+    globalData = rows.slice(1)
+      .filter(r => r.some(c => c !== undefined && String(c).trim()))
+      .map(r => ({
+        date:   String(r[idx.date]   || '').trim(),
+        name:   String(r[idx.name]   || '').trim(),
+        father: String(r[idx.father] || '').trim(),
+        mother: String(r[idx.mother] || '').trim(),
+        cls:    String(r[idx.cls]    || '').trim(),
+        sec:    String(r[idx.sec]    || '').trim(),
+      }))
+      .filter(r => {
+        const key = `${r.date}|${normalize(r.name)}|${r.cls}|${r.sec}`;
+        if (seen.has(key)) return false;
+        seen.add(key); return true;
+      });
+
+    populateFilters();
+    filtered = [...globalData];
+    renderTable(filtered);
+    document.getElementById('loading').style.display = 'none';
+    showToday();
+    renderStats();
+  } catch(e) {
+    document.getElementById('loading').innerHTML =
+      `<span style="color:var(--danger)"><i class="fa-solid fa-triangle-exclamation"></i> Error loading data (${e.message}).</span>`;
+  }
+}
+
+function populateFilters() {
+  const classes = [...new Set(globalData.map(r => r.cls).filter(Boolean))].sort((a,b) => (CLASS_ORDER[a]??99)-(CLASS_ORDER[b]??99));
+  const sections = [...new Set(globalData.map(r => r.sec).filter(Boolean))].sort();
+  const fc = document.getElementById('filterClass');
+  const fs = document.getElementById('filterSection');
+  classes.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = `Class ${c}`; fc.appendChild(o); });
+  sections.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = `Section ${s}`; fs.appendChild(o); });
+}
+
+// ── RENDER TABLE ──
+function renderTable(data) {
+  const today = todayStr();
+  document.getElementById('studentCount').textContent = `Students: ${data.length}`;
+  const container = document.getElementById('table-container');
+  if (!data.length) {
+    container.innerHTML = '<div class="empty-state"><i class="fa-solid fa-magnifying-glass"></i>No records found.</div>';
+    return;
+  }
+  const tbl = document.createElement('table');
+  tbl.innerHTML = `<thead><tr>
+    <th class="sortable" data-col="date">#&nbsp;Date <span class="sort-icon"></span></th>
+    <th class="sortable" data-col="name">Student Name <span class="sort-icon"></span></th>
+    <th>Father's Name</th>
+    <th>Mother's Name</th>
+    <th class="sortable" data-col="cls">Class <span class="sort-icon"></span></th>
+    <th>Sec</th>
+  </tr></thead>`;
+  const tbody = document.createElement('tbody');
+  data.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    if (r.date === today) tr.classList.add('today-row');
+    tr.innerHTML = `
+      <td>${r.date === today ? `<span class="badge badge-today">🎂 ${r.date}</span>` : r.date}</td>
+      <td><strong>${r.name || '—'}</strong></td>
+      <td style="color:var(--text-dim)">${r.father || '—'}</td>
+      <td style="color:var(--text-dim)">${r.mother || '—'}</td>
+      <td><span class="badge badge-class">${r.cls || '—'}</span></td>
+      <td><span class="badge badge-sec">${r.sec || '—'}</span></td>`;
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+  container.innerHTML = ''; container.appendChild(tbl);
+  attachSort(tbl, data);
+}
+
+let sortState = { col: null, dir: 1 };
+function attachSort(tbl, data) {
+  tbl.querySelectorAll('th.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (sortState.col === col) sortState.dir *= -1;
+      else { sortState.col = col; sortState.dir = 1; }
+      tbl.querySelectorAll('th.sortable').forEach(t => t.classList.remove('asc','desc'));
+      th.classList.add(sortState.dir === 1 ? 'asc' : 'desc');
+      const sorted = [...data].sort((a,b) => {
+        let av = a[col], bv = b[col];
+        if (col === 'date') {
+          const pa = parseDate(av), pb = parseDate(bv);
+          return sortState.dir * (pa.monthN - pb.monthN || pa.day - pb.day);
         }
+        if (col === 'cls') return sortState.dir * ((CLASS_ORDER[av]??99)-(CLASS_ORDER[bv]??99));
+        return sortState.dir * String(av).localeCompare(String(bv));
+      });
+      const tbody = tbl.querySelector('tbody');
+      tbody.innerHTML = '';
+      const today = todayStr();
+      sorted.forEach(r => {
+        const tr = document.createElement('tr');
+        if (r.date === today) tr.classList.add('today-row');
+        tr.innerHTML = `
+          <td>${r.date === today ? `<span class="badge badge-today">🎂 ${r.date}</span>` : r.date}</td>
+          <td><strong>${r.name||'—'}</strong></td>
+          <td style="color:var(--text-dim)">${r.father||'—'}</td>
+          <td style="color:var(--text-dim)">${r.mother||'—'}</td>
+          <td><span class="badge badge-class">${r.cls||'—'}</span></td>
+          <td><span class="badge badge-sec">${r.sec||'—'}</span></td>`;
+        tbody.appendChild(tr);
+      });
+    });
+  });
+}
 
-        async function fetchAndDisplayExcel() {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+// ── FILTER ──
+let debTimer;
+function applyFilters() {
+  clearTimeout(debTimer);
+  debTimer = setTimeout(() => {
+    const q = normalize(document.getElementById('searchInput').value);
+    const month = document.getElementById('filterMonth').value;
+    const cls = document.getElementById('filterClass').value;
+    const sec = document.getElementById('filterSection').value;
+    filtered = globalData.filter(r => {
+      if (cls && r.cls !== cls) return false;
+      if (sec && r.sec !== sec) return false;
+      if (month) {
+        const { month: m } = parseDate(r.date);
+        if (m !== month) return false;
+      }
+      if (q) {
+        const hay = [r.name, r.father, r.mother, r.cls, r.sec, r.date].map(normalize).join(' ');
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+    renderTable(filtered);
+  }, 200);
+}
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+document.getElementById('filterMonth').addEventListener('change', applyFilters);
+document.getElementById('filterClass').addEventListener('change', applyFilters);
+document.getElementById('filterSection').addEventListener('change', applyFilters);
+document.getElementById('clearFilters').addEventListener('click', () => {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterMonth').value = '';
+  document.getElementById('filterClass').value = '';
+  document.getElementById('filterSection').value = '';
+  applyFilters();
+});
 
-                if (jsonData.length > 0) {
-                    globalHeaders = jsonData[0];
-                    globalData = jsonData.slice(1).filter(row => row.length > 0 && row.some(cell => cell !== undefined && cell !== null && String(cell).trim() !== ''));
-                    renderTable(globalData);
-                    loadingElement.style.display = 'none';
-                } else {
-                    loadingElement.textContent = "No data found.";
-                }
-            } catch (error) {
-                console.error(error);
-                loadingElement.innerHTML = `<span style="color:#ef4444"><i class="fa-solid fa-triangle-exclamation"></i> Error loading data.</span>`;
-            }
-        }
+// ── TODAY ──
+function showToday() {
+  const today = todayStr();
+  const todayKids = globalData.filter(r => r.date === today);
+  const banner = document.getElementById('today-banner');
+  const chips = document.getElementById('today-chips');
+  if (!todayKids.length) return;
+  banner.style.display = 'block';
+  chips.innerHTML = '';
+  todayKids.forEach(r => {
+    const chip = document.createElement('div');
+    chip.className = 'today-chip';
+    chip.innerHTML = `<strong>${r.name}</strong>${r.cls ? ` · Class ${r.cls}${r.sec?' '+r.sec:''}` : ''}`;
+    chip.title = `Father: ${r.father || 'N/A'} | Mother: ${r.mother || 'N/A'}`;
+    chips.appendChild(chip);
+  });
+  // Today tab table
+  const container = document.getElementById('today-table-container');
+  document.getElementById('today-empty').style.display = 'none';
+  const tbl = document.createElement('table');
+  tbl.innerHTML = `<thead><tr><th>Student Name</th><th>Father's Name</th><th>Mother's Name</th><th>Class</th><th>Sec</th></tr></thead>`;
+  const tbody = document.createElement('tbody');
+  todayKids.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><strong>${r.name}</strong></td><td style="color:var(--text-dim)">${r.father||'—'}</td><td style="color:var(--text-dim)">${r.mother||'—'}</td>
+      <td><span class="badge badge-class">${r.cls||'—'}</span></td><td><span class="badge badge-sec">${r.sec||'—'}</span></td>`;
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody); container.appendChild(tbl);
+}
 
-        function renderTable(dataRows) {
-            countDisplay.textContent = `Total Students: ${dataRows.length}`;
-            if (dataRows.length === 0) {
-                tableContainer.innerHTML = '<div style="padding:20px; text-align:center; color:#64748b;">No matching records found.</div>';
-                return;
-            }
-            const table = document.createElement('table'), thead = document.createElement('thead'), tbody = document.createElement('tbody');
-            const trHead = document.createElement('tr');
-            globalHeaders.forEach(text => { const th = document.createElement('th'); th.textContent = text; trHead.appendChild(th); });
-            thead.appendChild(trHead);
-            dataRows.forEach(rowData => {
-                const tr = document.createElement('tr');
-                for(let i=0; i < globalHeaders.length; i++) { const td = document.createElement('td'); td.textContent = rowData[i] || "-"; tr.appendChild(td); }
-                tbody.appendChild(tr);
-            });
-            table.appendChild(thead); table.appendChild(tbody);
-            tableContainer.innerHTML = ''; tableContainer.appendChild(table);
-        }
+// ── SIBLINGS ──
+function groupByParent(rows) {
+  const map = new Map();
+  rows.forEach(r => {
+    [r.father, r.mother].forEach(parent => {
+      const key = normalize(parent);
+      if (!key || key === '-' || key.length < 3) return;
+      if (!map.has(key)) map.set(key, { displayName: parent, children: [] });
+      map.get(key).children.push(r);
+    });
+  });
+  return [...map.values()].filter(g => g.children.length >= 2)
+    .sort((a,b) => b.children.length - a.children.length);
+}
 
-        searchInput.addEventListener('keyup', debounce(function(e) {
-            const searchTerm = e.target.value.toLowerCase().trim();
-            const filteredData = globalData.filter(row => row.map(cell => String(cell || "").toLowerCase()).join(" ").includes(searchTerm));
-            renderTable(filteredData);
-        }, 300));
-        
-        fetchAndDisplayExcel();
+function renderSiblingGroups(groups, container) {
+  if (!groups.length) {
+    container.innerHTML = '<div class="empty-state"><i class="fa-solid fa-user-slash"></i>No siblings found for that parent name.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  groups.forEach(g => {
+    const el = document.createElement('div');
+    el.className = 'sibling-group';
+    const headerClasses = [...new Set(g.children.map(c => c.cls).filter(Boolean))].join(', ');
+    el.innerHTML = `<div class="sibling-group-header">
+      <span class="group-icon">👨‍👩‍👧‍👦</span>
+      <div><strong>${g.displayName}</strong><br><span>${headerClasses ? 'Classes: '+headerClasses : ''}</span></div>
+      <span class="sibling-count-badge">${g.children.length} children</span>
+    </div>`;
+    const tbl = document.createElement('table');
+    tbl.innerHTML = `<thead><tr><th>Student Name</th><th>Birthday</th><th>Class</th><th>Sec</th></tr></thead>`;
+    const tbody = document.createElement('tbody');
+    g.children.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td><strong>${r.name}</strong></td><td>${r.date||'—'}</td>
+        <td><span class="badge badge-class">${r.cls||'—'}</span></td>
+        <td><span class="badge badge-sec">${r.sec||'—'}</span></td>`;
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody); el.appendChild(tbl);
+    container.appendChild(el);
+  });
+}
 
-        // --- NEW: Modal event listeners ---
-        readMoreBtn.addEventListener('click', () => {
-            infoModal.classList.add('active');
-        });
-        modalCloseBtn.addEventListener('click', () => {
-            infoModal.classList.remove('active');
-        });
-        // Close modal if user clicks on the dark overlay
-        infoModal.addEventListener('click', (e) => {
-            if (e.target === infoModal) {
-                infoModal.classList.remove('active');
-            }
-        });
+document.getElementById('findSiblings').addEventListener('click', () => {
+  const q = document.getElementById('siblingSearchInput').value.trim();
+  const container = document.getElementById('siblingResults');
+  container.style.display = 'block';
+  if (!q) { container.innerHTML = '<div class="empty-state"><i class="fa-solid fa-keyboard"></i>Please enter a parent name.</div>'; return; }
+  // Fuzzy match: find all parents with score > 0.4
+  const allGroups = groupByParent(globalData);
+  const matched = allGroups.filter(g => fuzzyScore(q, g.displayName) >= 0.4)
+    .sort((a,b) => fuzzyScore(q,b.displayName) - fuzzyScore(q,a.displayName));
+  renderSiblingGroups(matched, container);
+});
 
-    </script>
+document.getElementById('showAllSiblings').addEventListener('click', () => {
+  const container = document.getElementById('siblingResults');
+  container.style.display = 'block';
+  const groups = groupByParent(globalData);
+  renderSiblingGroups(groups, container);
+});
+
+document.getElementById('siblingSearchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('findSiblings').click();
+});
+
+// ── STATS ──
+function renderStats() {
+  const content = document.getElementById('stats-content');
+  // By class
+  const byClass = {};
+  globalData.forEach(r => { if (r.cls) byClass[r.cls] = (byClass[r.cls]||0)+1; });
+  const sortedClass = Object.entries(byClass).sort((a,b) => (CLASS_ORDER[a[0]]??99)-(CLASS_ORDER[b[0]]??99));
+  const maxC = Math.max(...sortedClass.map(([,v])=>v));
+
+  const byMonth = {};
+  globalData.forEach(r => { const { month: m } = parseDate(r.date); if(m) byMonth[m]=(byMonth[m]||0)+1; });
+  const sortedMonth = Object.entries(byMonth).sort((a,b)=>(MONTH_ORDER[a[0]]||0)-(MONTH_ORDER[b[0]]||0));
+  const maxM = Math.max(...sortedMonth.map(([,v])=>v));
+
+  const today = todayStr();
+  const todayCount = globalData.filter(r => r.date === today).length;
+
+  content.innerHTML = `
+    <div style="grid-column:1/-1; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px; display:flex; gap:24px; flex-wrap:wrap;">
+      <div style="text-align:center">
+        <div style="font-family:'Outfit',sans-serif; font-size:2.5rem; font-weight:800; background:linear-gradient(135deg,#818cf8,#fde68a); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text">${globalData.length}</div>
+        <div style="color:var(--text-dim); font-size:.85rem">Total Students</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Outfit',sans-serif; font-size:2.5rem; font-weight:800; color:var(--today)">${todayCount}</div>
+        <div style="color:var(--text-dim); font-size:.85rem">Today's Birthdays</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Outfit',sans-serif; font-size:2.5rem; font-weight:800; color:var(--accent2)">${groupByParent(globalData).length}</div>
+        <div style="color:var(--text-dim); font-size:.85rem">Families w/ Siblings</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Outfit',sans-serif; font-size:2.5rem; font-weight:800; color:var(--success)">${sortedClass.length}</div>
+        <div style="color:var(--text-dim); font-size:.85rem">Classes</div>
+      </div>
+    </div>
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px">
+      <h3 style="font-family:'Outfit',sans-serif; font-size:1rem; color:var(--text); margin-bottom:16px">By Class</h3>
+      ${sortedClass.map(([cls, count]) => `
+        <div style="margin-bottom:10px">
+          <div style="display:flex; justify-content:space-between; font-size:.82rem; color:var(--text-dim); margin-bottom:4px">
+            <span style="color:var(--text); font-weight:600">Class ${cls}</span><span>${count}</span>
+          </div>
+          <div style="background:var(--card2); border-radius:4px; height:6px; overflow:hidden">
+            <div style="height:100%; width:${(count/maxC*100).toFixed(1)}%; background:linear-gradient(90deg,var(--primary),var(--primary-light)); border-radius:4px; transition:width .6s ease"></div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px">
+      <h3 style="font-family:'Outfit',sans-serif; font-size:1rem; color:var(--text); margin-bottom:16px">By Month</h3>
+      ${sortedMonth.map(([month, count]) => `
+        <div style="margin-bottom:10px">
+          <div style="display:flex; justify-content:space-between; font-size:.82rem; color:var(--text-dim); margin-bottom:4px">
+            <span style="color:var(--text); font-weight:600">${month}</span><span>${count}</span>
+          </div>
+          <div style="background:var(--card2); border-radius:4px; height:6px; overflow:hidden">
+            <div style="height:100%; width:${(count/maxM*100).toFixed(1)}%; background:linear-gradient(90deg,var(--accent2),var(--accent)); border-radius:4px; transition:width .6s ease"></div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+// ── TABS ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`panel-${btn.dataset.tab}`).classList.add('active');
+  });
+});
+
+// ── MODAL ──
+document.getElementById('readMoreBtn').addEventListener('click', () => document.getElementById('infoModal').classList.add('active'));
+document.getElementById('modalCloseBtn').addEventListener('click', () => document.getElementById('infoModal').classList.remove('active'));
+document.getElementById('infoModal').addEventListener('click', e => { if (e.target === document.getElementById('infoModal')) document.getElementById('infoModal').classList.remove('active'); });
+
+// ── INIT ──
+loadData();
+</script>
 </body>
 </html>
