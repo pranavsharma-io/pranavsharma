@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Crush Paradox Profiler</title>
+    <title>Analyse Your Crush Situation</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono&display=swap');
 
@@ -23,6 +23,19 @@
             width: 100%; max-width: 480px; padding: 30px; background: var(--card-bg);
             border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             overflow: hidden;
+        }
+
+        /* Language Switcher */
+        #language-switcher {
+            display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;
+        }
+        #language-switcher button {
+            flex: 1; padding: 8px 10px; border: 1px solid var(--border-color); background: var(--bg-color);
+            border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--subtle-text);
+            transition: all 0.2s;
+        }
+        #language-switcher button.active {
+            background: var(--primary-color); color: #fff; border-color: var(--primary-color);
         }
         
         /* Question Area */
@@ -66,20 +79,26 @@
 <body>
 
     <div class="container">
+        <div id="language-switcher">
+            <button data-lang="en" class="active">English</button>
+            <button data-lang="hi">हिंदी</button>
+            <button data-lang="hinglish">Hinglish</button>
+        </div>
+
         <div id="question-area">
             <div id="progress-indicator"></div>
             <div id="question-card"></div>
         </div>
         <div id="processing-container">
-            <h4>Analyzing...</h4>
+            <h4 id="analyzing-label">Analyzing...</h4>
             <div class="analysis-log" id="analysis-log"></div>
         </div>
         <div id="result-container">
             <div id="final-verdict" class="final-verdict-box"></div>
             <div id="analysis-details"></div>
-            <div class="cosmic-analysis"><h4>✨ Cosmic Connection Score ✨</h4><div id="cosmic-score"></div></div>
+            <div class="cosmic-analysis"><h4 id="cosmic-label">✨ Cosmic Connection Score ✨</h4><div id="cosmic-score"></div></div>
             <div class="share-wrapper">
-                <h4>Share this Result!</h4>
+                <h4 id="share-label">Share this Result!</h4>
                 <input type="text" id="share-link-input" readonly>
                 <button id="copy-btn">Copy Link</button>
             </div>
@@ -87,40 +106,146 @@
     </div>
 
     <script>
-        // --- SETUP ---
-        // ⚠️ PASTE YOUR NEW WEB APP URL FROM GOOGLE HERE ⚠️
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwZLs1XDXH_oFoBFqz-jZQrfqGRG8gStbMs2H8wpm1S5Os4idT5sFm5DouGF29pTu2Q/exec';
-        
-        const questions = [
-            { id: 'situation', type: 'radio', label: "Let's start. Describe your situation:", options: [ "I'm a boy, crushing on a girl", "I'm a girl, crushing on a boy", "It's a different situation" ]},
-            { id: 'your_name', type: 'text', label: "Aapka Naam?", placeholder: "Aapka naam yahan likhein" },
-            { id: 'crush_name', type: 'text', label: "Aapki crush ka naam?", placeholder: "Crush ka naam yahan likhein" },
-            { id: 'connection', type: 'radio', label: "What's your connection with them?", options: ['We are friends', 'Classmates / Colleagues', 'Acquaintances', 'We are basically strangers']},
-            { id: 'signals', type: 'radio', label: "Have you received any 'signals' from them?", options: ['Yes, definitely!', 'Maybe, I\'m not sure', 'No, not at all']},
-            { id: 'effort', type: 'radio', label: "So, what's your final move?", options: ['Effort Daalunga/Daalungi', 'Cool Banunga/Banungi'] }
-        ];
+        const TELEGRAM_BOT_TOKEN = '8365986703:AAFaEpx9dlUFo0kxXXxhXSxVQ4gKWuf-dD0';
+        const TELEGRAM_CHAT_ID = '-1004466332454';
+        let currentLang = 'en';
+        const translations = {
+            en: {
+                progress: (current, total) => `Question ${current} of ${total}`,
+                nextBtn: 'Next →',
+                analyzeBtn: 'Analyze My Fate 🔮',
+                fillField: 'Please fill this field.',
+                selectOption: 'Please select an option.',
+                analyzing: 'Analyzing...',
+                cosmicLabel: '✨ Cosmic Connection Score ✨',
+                shareLabel: 'Share this Result!',
+                copyBtn: 'Copy Link',
+                copiedBtn: 'Copied! ✅',
+                verdictYes: 'YES ✅',
+                verdictNo: 'NO 💔',
+                resultNo: (crush, you) => `Unfortunately, <strong>${crush}</strong> didn't choose <strong>${you}</strong>. 😔`,
+                resultYes: (you, crush) => `Congratulations! A connection has formed!<br><span class="name-highlight">${you}</span> ❤️ <span class="name-highlight">${crush}</span>`,
+                analysisLog: [
+                    "[INPUT RECEIVED]",
+                    "[ENCRYPTING DATA]",
+                    "[PROCESSING] > Calculating synaptic resonance...",
+                    "[ASTROLOGY] > Cross-referencing vectors...",
+                    "[ANALYZING BEHAVIORAL PATTERNS]",
+                    "[FINALIZING] > Compiling paradox verdict..."
+                ],
+                questions: [
+                    { id: 'situation', type: 'radio', label: "Let's start. Describe your situation:", options: [ "I'm a boy, crushing on a girl", "I'm a girl, crushing on a boy", "It's a different situation" ]},
+                    { id: 'your_name', type: 'text', label: "What's your name?", placeholder: "Type your name here" },
+                    { id: 'crush_name', type: 'text', label: "What's your crush's name?", placeholder: "Type their name here" },
+                    { id: 'connection', type: 'radio', label: "What's your connection with them?", options: ['We are friends', 'Classmates / Colleagues', 'Acquaintances', 'We are basically strangers']},
+                    { id: 'signals', type: 'radio', label: "Have you received any 'signals' from them?", options: ['Yes, definitely!', "Maybe, I'm not sure", 'No, not at all']},
+                    { id: 'effort', type: 'radio', label: "So, what's your final move?", options: ['I will make an effort', 'I will stay cool'] }
+                ]
+            },
+            hi: {
+                progress: (current, total) => `प्रश्न ${current} / ${total}`,
+                nextBtn: 'आगे →',
+                analyzeBtn: 'मेरा भाग्य जानें 🔮',
+                fillField: 'कृपया यह फ़ील्ड भरें।',
+                selectOption: 'कृपया एक विकल्प चुनें।',
+                analyzing: 'विश्लेषण हो रहा है...',
+                cosmicLabel: '✨ कॉस्मिक कनेक्शन स्कोर ✨',
+                shareLabel: 'यह परिणाम साझा करें!',
+                copyBtn: 'लिंक कॉपी करें',
+                copiedBtn: 'कॉपी हो गया! ✅',
+                verdictYes: 'हाँ ✅',
+                verdictNo: 'नहीं 💔',
+                resultNo: (crush, you) => `अफ़सोस! <strong>${crush}</strong> ने <strong>${you}</strong> का पत्ता काट दिया। 😔`,
+                resultYes: (you, crush) => `मुबारक हो! कनेक्शन बन गया है!<br><span class="name-highlight">${you}</span> ❤️ <span class="name-highlight">${crush}</span>`,
+                analysisLog: [
+                    "[इनपुट प्राप्त हुआ]",
+                    "[डेटा एन्क्रिप्ट हो रहा है]",
+                    "[प्रोसेसिंग] > सिनैप्टिक रेज़ोनेंस की गणना...",
+                    "[एस्ट्रोलॉजी] > वेक्टर्स की जांच...",
+                    "[व्यवहार पैटर्न का विश्लेषण]",
+                    "[अंतिम चरण] > परिणाम तैयार किया जा रहा है..."
+                ],
+                questions: [
+                    { id: 'situation', type: 'radio', label: "शुरू करते हैं। अपनी स्थिति बताएं:", options: [ "मैं एक लड़का हूं, किसी लड़की को पसंद करता हूं", "मैं एक लड़की हूं, किसी लड़के को पसंद करती हूं", "यह कुछ अलग स्थिति है" ]},
+                    { id: 'your_name', type: 'text', label: "आपका नाम?", placeholder: "अपना नाम यहां लिखें" },
+                    { id: 'crush_name', type: 'text', label: "आपकी क्रश का नाम?", placeholder: "क्रश का नाम यहां लिखें" },
+                    { id: 'connection', type: 'radio', label: "उनके साथ आपका संबंध कैसा है?", options: ['हम दोस्त हैं', 'सहपाठी / सहकर्मी', 'परिचित', 'हम लगभग अनजान हैं']},
+                    { id: 'signals', type: 'radio', label: "क्या आपको उनसे कोई 'संकेत' मिले हैं?", options: ['हां, बिल्कुल!', 'शायद, पता नहीं', 'नहीं, बिल्कुल नहीं']},
+                    { id: 'effort', type: 'radio', label: "तो, आपका अंतिम फैसला क्या है?", options: ['मैं कोशिश करूंगा/करूंगी', 'मैं शांत रहूंगा/रहूंगी'] }
+                ]
+            },
+            hinglish: {
+                progress: (current, total) => `Question ${current} of ${total}`,
+                nextBtn: 'Next →',
+                analyzeBtn: 'Analyze My Fate 🔮',
+                fillField: 'Please ye field fill karo.',
+                selectOption: 'Please ek option select karo.',
+                analyzing: 'Analyzing...',
+                cosmicLabel: '✨ Cosmic Connection Score ✨',
+                shareLabel: 'Share this Result!',
+                copyBtn: 'Copy Link',
+                copiedBtn: 'Copied! ✅',
+                verdictYes: 'HAAN ✅',
+                verdictNo: 'NAHI 💔',
+                resultNo: (crush, you) => `Afsos! <strong>${crush}</strong> ne <strong>${you}</strong> ka patta kaat diya. 😔`,
+                resultYes: (you, crush) => `Mubarak ho! Connection ban gaya hai!<br><span class="name-highlight">${you}</span> ❤️ <span class="name-highlight">${crush}</span>`,
+                analysisLog: [
+                    "[INPUT RECEIVED]",
+                    "[ENCRYPTING DATA]",
+                    "[PROCESSING] > Calculating synaptic resonance...",
+                    "[ASTROLOGY] > Cross-referencing vectors...",
+                    "[ANALYZING BEHAVIORAL PATTERNS]",
+                    "[FINALIZING] > Compiling paradox verdict..."
+                ],
+                questions: [
+                    { id: 'situation', type: 'radio', label: "Let's start. Describe your situation:", options: [ "I'm a boy, crushing on a girl", "I'm a girl, crushing on a boy", "It's a different situation" ]},
+                    { id: 'your_name', type: 'text', label: "Aapka Naam?", placeholder: "Aapka naam yahan likhein" },
+                    { id: 'crush_name', type: 'text', label: "Aapki crush ka naam?", placeholder: "Crush ka naam yahan likhein" },
+                    { id: 'connection', type: 'radio', label: "What's your connection with them?", options: ['We are friends', 'Classmates / Colleagues', 'Acquaintances', 'We are basically strangers']},
+                    { id: 'signals', type: 'radio', label: "Have you received any 'signals' from them?", options: ['Yes, definitely!', "Maybe, I'm not sure", 'No, not at all']},
+                    { id: 'effort', type: 'radio', label: "So, what's your final move?", options: ['Effort Daalunga/Daalungi', 'Cool Banunga/Banungi'] }
+                ]
+            }
+        };
 
         let currentQuestionIndex = 0;
         const answers = {};
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('#language-switcher button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            document.getElementById('analyzing-label').textContent = translations[currentLang].analyzing;
+            document.getElementById('cosmic-label').textContent = translations[currentLang].cosmicLabel;
+            document.getElementById('share-label').textContent = translations[currentLang].shareLabel;
+            document.getElementById('copy-btn').textContent = translations[currentLang].copyBtn;
+            if (document.getElementById('question-area').style.display !== 'none') {
+                renderQuestion();
+            }
+        }
 
-        // --- SHARABLE LINK LOGIC ---
+        document.querySelectorAll('#language-switcher button').forEach(btn => {
+            btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+        });
+
         function displaySharedResult(data) {
             document.getElementById('question-area').style.display = 'none';
             document.getElementById('processing-container').style.display = 'none';
             document.getElementById('result-container').style.display = 'block';
 
             const { yourName, crushName, scenario } = data;
+            const t = translations[currentLang];
             const finalVerdictBox = document.getElementById('final-verdict');
             const analysisDetails = document.getElementById('analysis-details');
             document.getElementById('cosmic-score').textContent = calculateCosmicScore(yourName, crushName);
             document.querySelector('.share-wrapper').style.display = 'none';
 
             if (scenario === 'no') {
-                finalVerdictBox.textContent = "NAHI 💔"; finalVerdictBox.className = 'final-verdict-box verdict-no';
-                analysisDetails.innerHTML = `<div class="analysis-block">Afsos! <strong>${crushName}</strong> ne <strong>${yourName}</strong> ka patta kaat diya. 😔</div>`;
+                finalVerdictBox.textContent = t.verdictNo; finalVerdictBox.className = 'final-verdict-box verdict-no';
+                analysisDetails.innerHTML = `<div class="analysis-block">${t.resultNo(crushName, yourName)}</div>`;
             } else {
-                finalVerdictBox.textContent = "HAAN ✅"; finalVerdictBox.className = 'final-verdict-box verdict-yes';
-                analysisDetails.innerHTML = `<div class="analysis-block">Mubarak ho! Connection ban gaya hai!<br><span class="name-highlight">${yourName}</span> ❤️ <span class="name-highlight">${crushName}</span></div>`;
+                finalVerdictBox.textContent = t.verdictYes; finalVerdictBox.className = 'final-verdict-box verdict-yes';
+                analysisDetails.innerHTML = `<div class="analysis-block">${t.resultYes(yourName, crushName)}</div>`;
             }
         }
 
@@ -141,24 +266,26 @@
                 }
             }
         };
-
-        // --- CORE QUIZ LOGIC ---
         function showResults() {
             document.getElementById('processing-container').style.display = 'none';
             document.getElementById('result-container').style.display = 'block';
             
+            const t = translations[currentLang];
             const finalVerdictBox = document.getElementById('final-verdict'); 
             const analysisDetails = document.getElementById('analysis-details');
             document.getElementById('cosmic-score').textContent = calculateCosmicScore(answers.your_name, answers.crush_name);
-            const putEffort = answers.effort.startsWith('Effort');
+
+            // "effort" detection works across languages by checking option index instead of text
+            const effortQuestion = translations[currentLang].questions.find(q => q.id === 'effort');
+            const putEffort = answers.effort === effortQuestion.options[0];
             const scenario = putEffort ? 'no' : 'yes';
 
             if (scenario === 'no') {
-                finalVerdictBox.textContent = "NAHI 💔"; finalVerdictBox.className = 'final-verdict-box verdict-no';
-                analysisDetails.innerHTML = `<div class="analysis-block">Afsos! <strong>${answers.crush_name}</strong> ne <strong>${answers.your_name}</strong> ka patta kaat diya. 😔</div>`;
+                finalVerdictBox.textContent = t.verdictNo; finalVerdictBox.className = 'final-verdict-box verdict-no';
+                analysisDetails.innerHTML = `<div class="analysis-block">${t.resultNo(answers.crush_name, answers.your_name)}</div>`;
             } else {
-                finalVerdictBox.textContent = "HAAN ✅"; finalVerdictBox.className = 'final-verdict-box verdict-yes';
-                analysisDetails.innerHTML = `<div class="analysis-block">Mubarak ho! Connection ban gaya hai!<br><span class="name-highlight">${answers.your_name}</span> ❤️ <span class="name-highlight">${answers.crush_name}</span></div>`;
+                finalVerdictBox.textContent = t.verdictYes; finalVerdictBox.className = 'final-verdict-box verdict-yes';
+                analysisDetails.innerHTML = `<div class="analysis-block">${t.resultYes(answers.your_name, answers.crush_name)}</div>`;
             }
 
             const dataToEncode = { yourName: answers.your_name, crushName: answers.crush_name, scenario: scenario };
@@ -172,8 +299,8 @@
 
             copyBtn.onclick = () => {
                 navigator.clipboard.writeText(shareURL).then(() => {
-                    copyBtn.textContent = 'Copied! ✅';
-                    setTimeout(() => { copyBtn.textContent = 'Copy Link'; }, 2000);
+                    copyBtn.textContent = t.copiedBtn;
+                    setTimeout(() => { copyBtn.textContent = t.copyBtn; }, 2000);
                 });
             };
         }
@@ -181,11 +308,12 @@
         function renderQuestion() {
             document.getElementById('question-area').style.display = 'block';
             document.getElementById('result-container').style.display = 'none';
+            const t = translations[currentLang];
             const progressIndicator = document.getElementById('progress-indicator');
             const questionCard = document.getElementById('question-card');
-            const question = questions[currentQuestionIndex];
-            progressIndicator.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
-            progressIndicator.classList.toggle('urgent', (questions.length - currentQuestionIndex) <= 2);
+            const question = t.questions[currentQuestionIndex];
+            progressIndicator.textContent = t.progress(currentQuestionIndex + 1, t.questions.length);
+            progressIndicator.classList.toggle('urgent', (t.questions.length - currentQuestionIndex) <= 2);
             let inputHtml = '';
             if (question.type === 'text') { inputHtml = `<input type="text" id="${question.id}" placeholder="${question.placeholder}" required>`; } 
             else if (question.type === 'radio') {
@@ -193,17 +321,30 @@
                 question.options.forEach(option => { inputHtml += `<label><input type="radio" name="${question.id}" value="${option}" required> ${option}</label>`; });
                 inputHtml += `</div>`;
             }
-            questionCard.innerHTML = `<h2>${question.label}</h2><div class="form-group">${inputHtml}</div><div class="error-message" id="error-message"></div><button id="next-btn">${(currentQuestionIndex === questions.length - 1) ? 'Analyze My Fate 🔮' : 'Next →'}</button>`;
+            const btnLabel = (currentQuestionIndex === t.questions.length - 1) ? t.analyzeBtn : t.nextBtn;
+            questionCard.innerHTML = `<h2>${question.label}</h2><div class="form-group">${inputHtml}</div><div class="error-message" id="error-message"></div><button id="next-btn">${btnLabel}</button>`;
+
+            // Restore previously entered value if user already answered this question
+            if (answers[question.id] !== undefined) {
+                if (question.type === 'text') {
+                    document.getElementById(question.id).value = answers[question.id];
+                } else if (question.type === 'radio') {
+                    const radios = document.querySelectorAll(`input[name="${question.id}"]`);
+                    radios.forEach(r => { if (r.value === answers[question.id]) r.checked = true; });
+                }
+            }
+
             document.getElementById('next-btn').addEventListener('click', handleNext);
         }
 
         function handleNext() {
-            const question = questions[currentQuestionIndex]; const errorMsg = document.getElementById('error-message');
+            const t = translations[currentLang];
+            const question = t.questions[currentQuestionIndex]; const errorMsg = document.getElementById('error-message');
             let value;
-            if (question.type === 'text') { value = document.getElementById(question.id).value.trim(); if (!value) { errorMsg.textContent = "Please fill this field."; return; } } 
-            else if (question.type === 'radio') { const selected = document.querySelector(`input[name="${question.id}"]:checked`); if (!selected) { errorMsg.textContent = "Please select an option."; return; } value = selected.value; }
+            if (question.type === 'text') { value = document.getElementById(question.id).value.trim(); if (!value) { errorMsg.textContent = t.fillField; return; } } 
+            else if (question.type === 'radio') { const selected = document.querySelector(`input[name="${question.id}"]:checked`); if (!selected) { errorMsg.textContent = t.selectOption; return; } value = selected.value; }
             answers[question.id] = value; errorMsg.textContent = ''; currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) { renderQuestion(); } else { startAnalysis(); }
+            if (currentQuestionIndex < t.questions.length) { renderQuestion(); } else { startAnalysis(); }
         }
 
         function startAnalysis() {
@@ -218,18 +359,24 @@
         
         // --- HELPER FUNCTIONS ---
         function sendDataToSheet(yourName, crushName) { 
-            if (scriptURL.includes('YAHAN_APNA_WEB_APP_URL_PASTE_KARO')) {
-                console.error("Please paste your Google Apps Script Web App URL into the scriptURL variable.");
+            if (TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE') {
+                console.error("Please set your Telegram bot token and chat ID.");
                 return;
             }
-            fetch(scriptURL, {
+            const text = `💘 New Crush Quiz Submission\n\nYour Name: ${yourName}\nCrush Name: ${crushName}\nLanguage: ${currentLang}`;
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+            fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ yourName, crushName })
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: text
+                })
             })
             .then(res => res.json())
             .then(data => {
-                console.log("Success: Data sent to Google Sheet.", data);
+                console.log("Success: Sent to Telegram.", data);
             })
             .catch(error => console.error('Error!', error.message)); 
         }
@@ -241,7 +388,7 @@
         function runFakeAnalysis(callback) { 
             const logElement = document.getElementById('analysis-log'); 
             logElement.innerHTML = ''; 
-            const logEntries = ["[INPUT RECEIVED]", "[ENCRYPTING DATA]", "[PROCESSING] > Calculating synaptic resonance...", "[ASTROLOGY] > Cross-referencing vectors...", "[ANALYZING BEHAVIORAL PATTERNS]", "[FINALIZING] > Compiling paradox verdict..."]; 
+            const logEntries = translations[currentLang].analysisLog;
             logEntries.forEach((entry, index) => { 
                 setTimeout(() => { 
                     const p = document.createElement('p'); p.textContent = entry; logElement.appendChild(p); 
