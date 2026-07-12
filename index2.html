@@ -800,4 +800,239 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </body>
+</html>          <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pranav Sharma</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    
+    <style>
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            background-color: #000000; /* Pure Black for AMOLED */
+            color: #e0e0e0; /* Slightly off-white text, easy on eyes */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+        }
+
+        /* Profile Picture */
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #f5f5f5;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        /* Name */
+        .name {
+            font-size: 2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        /* Short Description (only visible via ?des=true) */
+        .short-desc {
+            display: none;
+            font-size: 0.95em;
+            color: #a0a0a0;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .short-desc.visible {
+            display: block;
+        }
+
+        /* Projects Section (only visible via ?des=true) */
+        .projects-section {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .projects-section.visible {
+            display: block;
+        }
+
+        .projects-title {
+            font-size: 1em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .projects-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .project-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            border: 2px solid #333;
+            color: #d0d0d0;
+            padding: 13px;
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: 500;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .project-button i {
+            margin-right: 10px;
+            font-size: 1.1em;
+        }
+
+        .project-button:hover {
+            background-color: #1a1a1a;
+            border-color: #666;
+            color: #ffffff;
+        }
+
+        /* Bio */
+        .bio {
+            font-size: 1.1em;
+            color: #a0a0a0; /* Lighter grey for bio */
+            margin-bottom: 30px;
+        }
+
+        /* Links Container */
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between buttons */
+        }
+
+        /* Link Buttons */
+        .link-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            border: 2px solid #444; /* Dark grey border */
+            color: #f5f5f5;
+            padding: 15px;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 500;
+            border-radius: 50px; /* Pill-shaped buttons */
+            transition: all 0.3s ease;
+        }
+
+        .link-button i {
+            margin-right: 12px;
+            font-size: 1.2em;
+        }
+
+        /* Hover effect on buttons */
+        .link-button:hover {
+            background-color: #f5f5f5;
+            color: #000000;
+            border-color: #f5f5f5;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            color: #555;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+   
+        <!-- === NAME === -->
+        <h1 class="name">Pranav Sharma</h1>
+
+        <!-- === SHORT DESCRIPTION (visible only when ?des=true) === -->
+        <p class="short-desc" id="shortDesc">11th grader &bull; Coder &bull; Chess player</p>
+        
+        <!-- === LINKS === -->
+        <div class="links-container">
+            
+            <!-- Email Link -->
+            <a href="mailto:pranavsharma2009@cloud.com" class="link-button">
+                <i class="fa-solid fa-envelope"></i> Email
+            </a>
+            
+            <!-- Twitter / X Link -->
+            <a href="https://x.com/pranavsharma_io" target="_blank" class="link-button">
+                <i class="fa-brands fa-x-twitter"></i> Twitter / X
+            </a>
+            
+            <!-- Instagram Link -->
+            <a href="https://instagram.com/pranavsharma.io" target="_blank" class="link-button">
+                <i class="fa-brands fa-instagram"></i> Instagram
+            </a>
+
+            <!-- Telegram Link -->
+            <a href="https://t.me/pranavsharmahere" target="_blank" class="link-button">
+                <i class="fa-brands fa-telegram"></i> Telegram
+            </a>
+          
+        </div>
+<br>
+    
+        <div class="projects-section" id="projectsSection">
+            <p class="projects-title">My Projects</p>
+            <br>
+            <div class="projects-container">
+                <a href="https://tictactoebypranavsharma.pages.dev/" target="_blank" class="project-button">
+                    <i class="fa-solid fa-hashtag"></i> Tic Tac Toe
+                </a>
+                <a href="https://tictactoe-live-by-pranav-sharma-ren.onrender.com/" target="_blank" class="project-button">
+                    <i class="fa-solid fa-users"></i> Tic Tac Toe Live
+                </a>
+                <a href="https://urlshortenerz.pages.dev/" target="_blank" class="project-button">
+                    <i class="fa-solid fa-link"></i> URL Shortener
+                </a>
+                <a href="https://pranav-sharma.pages.dev/attractor/" target="_blank" class="project-button">
+                    <i class="fa-solid fa-atom"></i> Attractor
+                </a>
+                <a href="https://pranav-sharma.pages.dev/birthday/" target="_blank" class="project-button">
+                    <i class="fa-solid fa-cake-candles"></i> Birthday
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('des') === 'true') {
+            document.getElementById('shortDesc').classList.add('visible');
+            document.getElementById('projectsSection').classList.add('visible');
+        }
+    </script>
+
+</body>
 </html>
+
