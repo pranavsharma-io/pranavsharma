@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pranav Sharma</title>
+  <meta name="description" content="Pranav Sharma — personal portfolio.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>/* ==========================================================================
+   Pranav Sharma — Portfolio
+   Minimalist, dual-theme, single-file stylesheet
+   ========================================================================== */
+
+:root {
+  /* Dark theme (default) */
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --name-color: #ffffff;
+  --accent-color: #bb86fc;
+  --accent-soft: rgba(187, 134, 252, 0.14);
+  --accent-soft-strong: rgba(187, 134, 252, 0.28);
+  --nav-bg: #1e1e1e;
+  --shadow-color: rgba(0, 0, 0, 0.45);
+  --backdrop-color: rgba(0, 0, 0, 0.5);
+
+  --font-display: 'Great Vibes', cursive;
+  --font-body: 'Poppins', sans-serif;
+
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.light-theme {
+  --bg-color: #fdfaf6;
+  --text-color: #5d5d5d;
+  --name-color: #2c2c2c;
+  /* --accent-color / --accent-soft / --accent-soft-strong are intentionally
+     NOT set here — script.js computes them from the day of the week and
+     writes them onto <html>. Redeclaring them here would shadow that for
+     every element inside <body>, since a rule on body wins over an
+     inherited value from an ancestor no matter how it was set. */
+  --nav-bg: #f9f4ef;
+  --shadow-color: rgba(44, 44, 44, 0.12);
+  --backdrop-color: rgba(44, 44, 44, 0.25);
+}
+
+/* ---------- Reset ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-body);
+  font-weight: 300;
+  overflow-x: hidden;
+  min-height: 100vh;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+::selection {
+  background: var(--accent-color);
+  color: var(--bg-color);
+}
+
+a { text-decoration: none; }
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+a:focus-visible,
+button:focus-visible,
+.pet-blob:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ---------- Icon buttons (hamburger + theme toggle) ---------- */
+.icon-btn {
+  position: fixed;
+  top: 2rem;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--text-color);
+  font-size: 1.15rem;
+  z-index: 1100;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.icon-btn:hover {
+  background-color: var(--accent-soft);
+  color: var(--accent-color);
+  transform: translateY(-2px);
+}
+
+.hamburger { left: 2rem; }
+.theme-toggle { right: 2rem; position: fixed; }
+
+/* Hamburger bars, morphing into an X when open */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.hamburger .bar {
+  width: 20px;
+  height: 2px;
+  background-color: var(--text-color);
+  border-radius: 2px;
+  transition: transform 0.35s var(--ease), opacity 0.25s ease, background-color 0.3s ease;
+}
+
+.hamburger:hover .bar { background-color: var(--accent-color); }
+
+.hamburger.open .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open .bar:nth-child(2) { opacity: 0; }
+.hamburger.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Theme toggle: sun / moon cross-fade, driven entirely by the light-theme class */
+.theme-toggle { position: fixed; }
+.icon-moon, .icon-sun {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  transition: opacity 0.45s ease, transform 0.55s var(--ease);
+}
+.icon-moon { opacity: 1; }
+.icon-sun  { opacity: 0; transform: translate(-50%, -50%) rotate(-90deg); }
+
+body.light-theme .icon-moon { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
+body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
+
+/* ---------- Nav backdrop ---------- */
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--backdrop-color);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 999;
+}
+
+.nav-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---------- Slide-in side navigation ---------- */
+.side-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 320px;
+  max-width: 85vw;
+  background-color: var(--nav-bg);
+  transform: translateX(-100%);
+  transition: transform 0.5s var(--ease), background-color 0.5s ease;
+  z-index: 1000;
+  padding: 6rem 2.2rem 2rem;
+  box-shadow: 6px 0 40px var(--shadow-color);
+  overflow-y: auto;
+}
+
+.side-nav.open { transform: translateX(0); }
+
+.projects-title {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent-color);
+  margin-bottom: 2rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--accent-soft-strong);
+}
+
+.projects-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.project-button {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 12px;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s var(--ease), color 0.3s ease;
+}
+
+.project-button i {
+  color: var(--accent-color);
+  width: 18px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.project-button:hover,
+.project-button:focus-visible {
+  background-color: var(--accent-soft);
+  border-color: var(--accent-soft-strong);
+  transform: translateX(6px);
+}
+
+.servers-section { margin-top: 2.5rem; }
+
+.project-button-text { flex: 1; }
+
+.project-button-status {
+  font-size: 0.8rem;
+  color: var(--accent-color);
+  opacity: 0.75;
+}
+
+/* Shown while the Servers links are being fetched from the sheet */
+.project-button.loading {
+  cursor: wait;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Shown if the sheet couldn't be reached or had no matching row */
+.project-button.unavailable {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.project-button.unavailable:hover,
+.project-button.unavailable:focus-visible {
+  background-color: transparent;
+  border-color: transparent;
+  transform: none;
+}
+
+/* ---------- Hero / main screen ---------- */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.2rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(22px);
+  animation: heroReveal 1s var(--ease) forwards;
+  animation-delay: 0.2s;
+  transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
+}
+
+body.nav-open .hero {
+  opacity: 0.4;
+  filter: blur(1px);
+  transform: scale(0.98);
+}
+
+.hero-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(700px, 90vw);
+  height: min(700px, 90vw);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+  transition: background 0.5s ease;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(3rem, 11vw, 6rem);
+  line-height: 1.15;
+  color: var(--name-color);
+  transition: color 0.5s ease;
+}
+
+.links-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  max-width: 620px;
+}
+
+.link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.75rem 1.35rem;
+  border: 1.5px solid var(--accent-color);
+  border-radius: 999px;
+  color: var(--text-color);
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  transition: background-color 0.35s var(--ease), color 0.35s var(--ease), transform 0.35s var(--ease), box-shadow 0.35s var(--ease), border-color 0.5s ease;
+}
+
+.link-button i { font-size: 0.9rem; }
+
+.link-button:hover,
+.link-button:focus-visible {
+  background-color: var(--accent-color);
+  color: var(--bg-color);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px var(--accent-soft-strong);
+}
+
+/* ---------- Virtual pet: the Aesthetic Blob ---------- */
+.pet-wrap {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 500;
+  animation: petFloat 5.5s ease-in-out infinite;
+}
+
+.pet-blob {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  background-color: var(--accent-color);
+  box-shadow: 0 14px 30px var(--accent-soft-strong);
+  cursor: pointer;
+  animation: petMorph 7s ease-in-out infinite;
+  transition: transform 0.3s var(--ease), background-color 0.5s ease;
+}
+
+.pet-blob:hover { transform: scale(1.08); }
+.pet-blob.squish { animation: petMorph 7s ease-in-out infinite, petSquish 0.55s ease; }
+
+.pet-eye {
+  position: absolute;
+  top: 36%;
+  width: 11px;
+  height: 11px;
+  background-color: var(--bg-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.5s ease;
+}
+
+.pet-eye.left { left: 26%; }
+.pet-eye.right { right: 26%; }
+
+.pet-pupil {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--name-color);
+  transition: background-color 0.5s ease, transform 0.12s ease-out;
+}
+
+.pet-bubble {
+  position: absolute;
+  bottom: 82px;
+  right: -8px;
+  min-width: max-content;
+  background-color: var(--nav-bg);
+  color: var(--text-color);
+  padding: 0.55rem 0.95rem;
+  border-radius: 14px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  box-shadow: 0 10px 26px var(--shadow-color);
+  opacity: 0;
+  transform: translateY(8px) scale(0.92);
+  transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.5s ease;
+  pointer-events: none;
+}
+
+.pet-bubble.show { opacity: 1; transform: translateY(0) scale(1); }
+
+.pet-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  right: 24px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--nav-bg);
+  transform: rotate(45deg);
+  transition: background-color 0.5s ease;
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes heroReveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes petFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes petMorph {
+  0%, 100% { border-radius: 60% 40% 55% 45% / 55% 45% 60% 40%; }
+  25%      { border-radius: 45% 55% 60% 40% / 40% 60% 45% 55%; }
+  50%      { border-radius: 50% 50% 40% 60% / 60% 40% 55% 45%; }
+  75%      { border-radius: 55% 45% 50% 50% / 45% 55% 40% 60%; }
+}
+
+@keyframes petSquish {
+  0%   { transform: scale(1, 1); }
+  30%  { transform: scale(1.22, 0.8); }
+  55%  { transform: scale(0.88, 1.12); }
+  75%  { transform: scale(1.06, 0.95); }
+  100% { transform: scale(1, 1); }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .side-nav { width: 300px; padding: 5.5rem 2rem 2rem; }
+}
+
+@media (max-width: 600px) {
+  .icon-btn { top: 1.25rem; width: 42px; height: 42px; }
+  .hamburger { left: 1.25rem; }
+  .theme-toggle { right: 1.25rem; }
+
+  .hero { gap: 1.6rem; padding: 1.5rem 1.25rem; }
+  .name { font-size: clamp(2.6rem, 13vw, 3.6rem); }
+
+  .links-container { gap: 0.6rem; }
+  .link-button { font-size: 0.78rem; padding: 0.65rem 1.05rem; }
+
+  .side-nav { width: 82vw; padding: 5rem 1.5rem 2rem; }
+
+  .pet-wrap { bottom: 1.25rem; right: 1.25rem; }
+  .pet-blob { width: 50px; height: 50px; }
+  .pet-eye { width: 9px; height: 9px; }
+  .pet-pupil { width: 4px; height: 4px; }
+  .pet-bubble { font-size: 0.75rem; bottom: 70px; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+</head>
+<body>
+
+  <!-- Backdrop shown behind the slide-in nav -->
+  <div class="nav-backdrop" id="navBackdrop"></div>
+
+  <!-- Hamburger menu (top-left) -->
+  <button class="icon-btn hamburger" id="hamburgerBtn" aria-label="Open navigation" aria-expanded="false" aria-controls="sideNav">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </button>
+
+  <!-- Theme toggle (top-right) -->
+  <button class="icon-btn theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme">
+    <i class="fa-solid fa-moon icon-moon" aria-hidden="true"></i>
+    <i class="fa-solid fa-sun icon-sun" aria-hidden="true"></i>
+  </button>
+
+  <!-- Slide-in side navigation -->
+  <nav class="side-nav" id="sideNav" aria-hidden="true">
+    <div class="projects-section">
+      <p class="projects-title">My Projects</p>
+      <div class="projects-container">
+        <a href="https://tictactoebypranavsharma.pages.dev/" target="_blank" rel="noopener noreferrer" class="project-button"><i class="fa-solid fa-hashtag"></i> Tic Tac Toe</a>
+        <a href="https://tictactoe-live-by-pranav-sharma-ren.onrender.com/" target="_blank" rel="noopener noreferrer" class="project-button"><i class="fa-solid fa-users"></i> Tic Tac Toe Live</a>
+        <a href="https://urlshortenerz.pages.dev/" target="_blank" rel="noopener noreferrer" class="project-button"><i class="fa-solid fa-link"></i> URL Shortener</a>
+        <a href="https://pranav-sharma.pages.dev/attractor/" target="_blank" rel="noopener noreferrer" class="project-button"><i class="fa-solid fa-atom"></i> Attractor</a>
+        <a href="https://pranav-sharma.pages.dev/birthday/" target="_blank" rel="noopener noreferrer" class="project-button"><i class="fa-solid fa-cake-candles"></i> Birthday</a>
+      </div>
+    </div>
+
+    <div class="projects-section servers-section">
+      <p class="projects-title">Servers</p>
+      <div class="projects-container">
+        <a href="#" target="_blank" rel="noopener noreferrer" class="project-button loading" id="photosLink" data-server-label="Immich">
+          <i class="fa-solid fa-images"></i>
+          <span class="project-button-text">Photos</span>
+          <i class="fa-solid fa-circle-notch fa-spin project-button-status" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main / hero content -->
+  <main class="hero" id="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+
+    <h1 class="name">Pranav Sharma</h1>
+
+    <div class="links-container">
+      <a href="mailto:pranavsharma2009@cloud.com" class="link-button"><i class="fa-solid fa-envelope"></i> Email</a>
+      <a href="https://x.com/pranavsharma_io" target="_blank" rel="noopener noreferrer" class="link-button"><i class="fa-brands fa-x-twitter"></i> Twitter / X</a>
+      <a href="https://instagram.com/pranavsharma.io" target="_blank" rel="noopener noreferrer" class="link-button"><i class="fa-brands fa-instagram"></i> Instagram</a>
+      <a href="https://t.me/pranavsharmahere" target="_blank" rel="noopener noreferrer" class="link-button"><i class="fa-brands fa-telegram"></i> Telegram</a>
+    </div>
+  </main>
+
+  <!-- Virtual pet: the Aesthetic Blob -->
+  <div class="pet-wrap" id="petWrap">
+    <div class="pet-bubble" id="petBubble"></div>
+    <div class="pet-blob" id="petBlob" role="button" tabindex="0" aria-label="A little companion. Click it to say hi.">
+      <div class="pet-eye left"><span class="pet-pupil" id="pupilLeft"></span></div>
+      <div class="pet-eye right"><span class="pet-pupil" id="pupilRight"></span></div>
+    </div>
+  </div>
+
+  <script>/* ==========================================================================
+   Pranav Sharma — Portfolio
+   Vanilla JS: side nav toggle, theme toggle (persisted), pet interactions
+   ========================================================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+  const body = document.body;
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sideNav = document.getElementById('sideNav');
+  const navBackdrop = document.getElementById('navBackdrop');
+  const themeToggle = document.getElementById('themeToggle');
+  const petBlob = document.getElementById('petBlob');
+  const petBubble = document.getElementById('petBubble');
+  const pupilLeft = document.getElementById('pupilLeft');
+  const pupilRight = document.getElementById('pupilRight');
+  const root = document.documentElement;
+
+  /* ---------------- Daily accent color ---------------- */
+  // Each day of the week gets its own accent hue. Dark/Light theme still
+  // controls background, text, and how soft the accent's glow reads —
+  // this only swaps the hue those glows are built from.
+  const dailyAccentColors = [
+    '#C2185B', // Sunday: Rose Red
+    '#F57C00', // Monday: Vibrant Orange
+    '#D32F2F', // Tuesday: Crimson Red
+    '#D81B60', // Wednesday: Deep Magenta
+    '#7B1FA2', // Thursday: Royal Purple
+    '#E64A19', // Friday: Fiery Orange-Red
+    '#FF4081'  // Saturday: Hot Pink
+  ];
+
+  function hexToRgb(hex) {
+    const value = hex.replace('#', '');
+    return {
+      r: parseInt(value.substring(0, 2), 16),
+      g: parseInt(value.substring(2, 4), 16),
+      b: parseInt(value.substring(4, 6), 16)
+    };
+  }
+
+  // Recomputes --accent-color/-soft/-soft-strong from today's hue.
+  // Called on load and again on every theme switch, since the soft/strong
+  // alpha values are tuned differently for dark vs. light backgrounds.
+  function applyDailyAccent() {
+    const todayColor = dailyAccentColors[new Date().getDay()];
+    const { r, g, b } = hexToRgb(todayColor);
+    const isLight = body.classList.contains('light-theme');
+    const softAlpha = isLight ? 0.10 : 0.14;
+    const strongAlpha = isLight ? 0.20 : 0.28;
+
+    root.style.setProperty('--accent-color', todayColor);
+    root.style.setProperty('--accent-soft', `rgba(${r}, ${g}, ${b}, ${softAlpha})`);
+    root.style.setProperty('--accent-soft-strong', `rgba(${r}, ${g}, ${b}, ${strongAlpha})`);
+  }
+
+  /* ---------------- Side navigation ---------------- */
+  function openNav() {
+    sideNav.classList.add('open');
+    navBackdrop.classList.add('visible');
+    hamburgerBtn.classList.add('open');
+    body.classList.add('nav-open');
+    hamburgerBtn.setAttribute('aria-expanded', 'true');
+    sideNav.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeNav() {
+    sideNav.classList.remove('open');
+    navBackdrop.classList.remove('visible');
+    hamburgerBtn.classList.remove('open');
+    body.classList.remove('nav-open');
+    hamburgerBtn.setAttribute('aria-expanded', 'false');
+    sideNav.setAttribute('aria-hidden', 'true');
+  }
+
+  hamburgerBtn.addEventListener('click', () => {
+    sideNav.classList.contains('open') ? closeNav() : openNav();
+  });
+
+  navBackdrop.addEventListener('click', closeNav);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sideNav.classList.contains('open')) closeNav();
+  });
+
+  /* ---------------- Theme toggle ---------------- */
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') {
+    body.classList.add('light-theme');
+  }
+  applyDailyAccent(); // set today's hue for the theme we just landed on
+
+  themeToggle.addEventListener('click', () => {
+    body.classList.toggle('light-theme');
+    const isLight = body.classList.contains('light-theme');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    applyDailyAccent(); // re-tune glow alpha for the new background
+  });
+
+  /* ---------------- Virtual pet ---------------- */
+  // Eyes gently follow the cursor
+  document.addEventListener('mousemove', (e) => {
+    const rect = petBlob.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
+    const distance = Math.min(3, Math.hypot(e.clientX - centerX, e.clientY - centerY) / 40);
+
+    const moveX = Math.cos(angle) * distance;
+    const moveY = Math.sin(angle) * distance;
+
+    pupilLeft.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    pupilRight.style.transform = `translate(${moveX}px, ${moveY}px)`;
+  });
+
+  // Click (or tap / keyboard) reaction: a little squish + a friendly message
+  const petMessages = ['hi there! 👋', 'hello!', '*wiggles*', 'having a good day?', 'boop!', '✨ hey ✨'];
+  let bubbleTimer;
+
+  function greet() {
+    petBlob.classList.remove('squish');
+    void petBlob.offsetWidth; // force reflow so the animation can restart
+    petBlob.classList.add('squish');
+
+    const message = petMessages[Math.floor(Math.random() * petMessages.length)];
+    petBubble.textContent = message;
+    petBubble.classList.add('show');
+
+    clearTimeout(bubbleTimer);
+    bubbleTimer = setTimeout(() => petBubble.classList.remove('show'), 1800);
+  }
+
+  petBlob.addEventListener('click', greet);
+  petBlob.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      greet();
+    }
+  });
+
+  /* ---------------- Servers: links pulled live from a Google Sheet ---------------- */
+  // The sheet is public. Rows look like:
+  //   Immich Tunnel Link <tab> https://some-tunnel-url <tab> 2026-07-12 20:32:06
+  // Column A = a label, column B = the current link. We match a nav item's
+  // data-server-label against column A (case-insensitive substring) and use
+  // column B as its href. Re-fetched fresh on every page load/refresh.
+  const SHEET_ID = '1MHjpvU0m-zOCUG59hN9JIxgfN8si_gsntl8c1w5B7Kg';
+  const SHEET_GID = '0';
+  let jsonpCallCount = 0;
+
+  // Google's gviz endpoint doesn't send Access-Control-Allow-Origin, so a
+  // plain fetch() gets blocked by CORS from any other domain. The endpoint's
+  // own documented workaround is a "responseHandler" callback: when present,
+  // it wraps the JSON as a call to that global function name instead of the
+  // usual google.visualization.Query.setResponse(...). Loading that URL as a
+  // <script> (JSONP) isn't subject to CORS, since it's a plain script load
+  // rather than an XHR/fetch — this is the standard way to read a public
+  // sheet cross-origin without a backend proxy.
+  function fetchSheetRows() {
+    return new Promise((resolve, reject) => {
+      const callbackName = `__sheetCb_${Date.now()}_${jsonpCallCount++}`;
+      const script = document.createElement('script');
+      let settled = false;
+
+      const timeoutId = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        reject(new Error('Sheet request timed out'));
+      }, 8000);
+
+      function cleanup() {
+        clearTimeout(timeoutId);
+        delete window[callbackName];
+        script.remove();
+      }
+
+      window[callbackName] = (response) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        try {
+          const rows = (response.table && response.table.rows) || [];
+          resolve(rows.map((row) => (row.c || []).map((cell) => (cell && cell.v != null ? String(cell.v).trim() : ''))));
+        } catch (err) {
+          reject(err);
+        }
+      };
+
+      script.onerror = () => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        reject(new Error('Sheet script failed to load'));
+      };
+
+      script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${SHEET_GID}&tqx=out:json;responseHandler:${callbackName}`;
+      document.head.appendChild(script);
+    });
+  }
+
+  function findLinkByLabel(rows, labelMatch) {
+    const needle = labelMatch.toLowerCase();
+    for (const cells of rows) {
+      const label = (cells[0] || '').toLowerCase();
+      if (label.includes(needle)) {
+        const url = cells[1] || '';
+        if (url) return url;
+      }
+    }
+    return null;
+  }
+
+  async function wireServerLinks() {
+    const serverLinkEls = Array.from(document.querySelectorAll('[data-server-label]'));
+    if (!serverLinkEls.length) return;
+
+    let rows = null;
+    try {
+      rows = await fetchSheetRows();
+    } catch (err) {
+      console.error('Could not reach the sheet for Servers links:', err);
+    }
+
+    serverLinkEls.forEach((el) => {
+      const url = rows ? findLinkByLabel(rows, el.dataset.serverLabel) : null;
+      const statusIcon = el.querySelector('.project-button-status');
+
+      if (url && /^https?:\/\//i.test(url)) {
+        el.href = url;
+        el.classList.remove('loading');
+      } else {
+        el.classList.remove('loading');
+        el.classList.add('unavailable');
+        el.removeAttribute('href');
+        el.setAttribute('aria-disabled', 'true');
+        el.title = 'Link unavailable right now';
+      }
+
+      if (statusIcon) statusIcon.remove();
+    });
+  }
+
+  wireServerLinks();
+});
+</script>
+</body>
+</html>
