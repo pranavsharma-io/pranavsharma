@@ -5,13 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pranav Sharma</title>
   <meta name="description" content="Pranav Sharma — personal portfolio.">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
   <style>
 :root {
-  /* Dark theme (default) */
   --bg-color: #121212;
   --text-color: #e0e0e0;
   --name-color: #ffffff;
@@ -21,10 +23,8 @@
   --nav-bg: #1e1e1e;
   --shadow-color: rgba(0, 0, 0, 0.45);
   --backdrop-color: rgba(0, 0, 0, 0.5);
-
   --font-display: 'Great Vibes', cursive;
   --font-body: 'Poppins', sans-serif;
-
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -37,16 +37,9 @@ body.light-theme {
   --backdrop-color: rgba(44, 44, 44, 0.25);
 }
 
-/* ---------- Reset ---------- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
   background-color: var(--bg-color);
@@ -58,19 +51,11 @@ body {
   transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-::selection {
-  background: var(--accent-color);
-  color: var(--bg-color);
-}
+::selection { background: var(--accent-color); color: var(--bg-color); }
 
 a { text-decoration: none; }
 
-button {
-  font-family: inherit;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
+button { font-family: inherit; border: none; background: none; cursor: pointer; }
 
 a:focus-visible,
 button:focus-visible,
@@ -80,7 +65,6 @@ button:focus-visible,
   border-radius: 4px;
 }
 
-/* ---------- Icon buttons (hamburger + theme toggle) ---------- */
 .icon-btn {
   position: fixed;
   top: 2rem;
@@ -105,7 +89,6 @@ button:focus-visible,
 .hamburger { left: 2rem; }
 .theme-toggle { right: 2rem; position: fixed; }
 
-/* Hamburger bars, morphing into an X when open */
 .hamburger {
   display: flex;
   flex-direction: column;
@@ -128,8 +111,8 @@ button:focus-visible,
 .hamburger.open .bar:nth-child(2) { opacity: 0; }
 .hamburger.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Theme toggle: sun / moon cross-fade */
 .theme-toggle { position: fixed; }
+
 .icon-moon, .icon-sun {
   position: absolute;
   top: 50%;
@@ -137,13 +120,13 @@ button:focus-visible,
   transform: translate(-50%, -50%) rotate(0deg);
   transition: opacity 0.45s ease, transform 0.55s var(--ease);
 }
+
 .icon-moon { opacity: 1; }
 .icon-sun  { opacity: 0; transform: translate(-50%, -50%) rotate(-90deg); }
 
 body.light-theme .icon-moon { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
 body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
 
-/* ---------- Nav backdrop ---------- */
 .nav-backdrop {
   position: fixed;
   inset: 0;
@@ -154,12 +137,8 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   z-index: 999;
 }
 
-.nav-backdrop.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
+.nav-backdrop.visible { opacity: 1; pointer-events: auto; }
 
-/* ---------- Slide-in side navigation ---------- */
 .side-nav {
   position: fixed;
   top: 0;
@@ -190,11 +169,7 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   border-bottom: 1px solid var(--accent-soft-strong);
 }
 
-.projects-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
+.projects-container { display: flex; flex-direction: column; gap: 0.85rem; }
 
 .project-button {
   display: flex;
@@ -225,7 +200,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
 }
 
 .servers-section { margin-top: 2.5rem; }
-
 .project-button-text { flex: 1; }
 
 .project-button-status {
@@ -234,16 +208,9 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   opacity: 0.75;
 }
 
-.project-button.loading {
-  cursor: wait;
-  opacity: 0.6;
-  pointer-events: none;
-}
+.project-button.loading { cursor: wait; opacity: 0.6; pointer-events: none; }
 
-.project-button.unavailable {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
+.project-button.unavailable { cursor: not-allowed; opacity: 0.5; }
 
 .project-button.unavailable:hover,
 .project-button.unavailable:focus-visible {
@@ -252,7 +219,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   transform: none;
 }
 
-/* ---------- Hero / main screen ---------- */
 .hero {
   position: relative;
   min-height: 100vh;
@@ -331,7 +297,6 @@ body.nav-open .hero {
   box-shadow: 0 10px 26px var(--accent-soft-strong);
 }
 
-/* ---------- Virtual pet: the Aesthetic Blob ---------- */
 .pet-wrap {
   position: fixed;
   bottom: 2rem;
@@ -410,7 +375,6 @@ body.nav-open .hero {
   transition: background-color 0.5s ease;
 }
 
-/* ---------- Keyframes ---------- */
 @keyframes heroReveal {
   to { opacity: 1; transform: translateY(0); }
 }
@@ -435,7 +399,6 @@ body.nav-open .hero {
   100% { transform: scale(1, 1); }
 }
 
-/* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .side-nav { width: 300px; padding: 5.5rem 2rem 2rem; }
 }
@@ -444,15 +407,11 @@ body.nav-open .hero {
   .icon-btn { top: 1.25rem; width: 42px; height: 42px; }
   .hamburger { left: 1.25rem; }
   .theme-toggle { right: 1.25rem; }
-
   .hero { gap: 1.6rem; padding: 1.5rem 1.25rem; }
   .name { font-size: clamp(2.6rem, 13vw, 3.6rem); }
-
   .links-container { gap: 0.6rem; }
   .link-button { font-size: 0.78rem; padding: 0.65rem 1.05rem; }
-
   .side-nav { width: 82vw; padding: 5rem 1.5rem 2rem; }
-
   .pet-wrap { bottom: 1.25rem; right: 1.25rem; }
   .pet-blob { width: 50px; height: 50px; }
   .pet-eye { width: 9px; height: 9px; }
@@ -460,7 +419,6 @@ body.nav-open .hero {
   .pet-bubble { font-size: 0.75rem; bottom: 70px; }
 }
 
-/* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -473,23 +431,19 @@ body.nav-open .hero {
 </head>
 <body>
 
-  <!-- Backdrop shown behind the slide-in nav -->
   <div class="nav-backdrop" id="navBackdrop"></div>
 
-  <!-- Hamburger menu (top-left) -->
   <button class="icon-btn hamburger" id="hamburgerBtn" aria-label="Open navigation" aria-expanded="false" aria-controls="sideNav">
     <span class="bar"></span>
     <span class="bar"></span>
     <span class="bar"></span>
   </button>
 
-  <!-- Theme toggle (top-right) -->
   <button class="icon-btn theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme">
     <i class="fa-solid fa-moon icon-moon" aria-hidden="true"></i>
     <i class="fa-solid fa-sun icon-sun" aria-hidden="true"></i>
   </button>
 
-  <!-- Slide-in side navigation -->
   <nav class="side-nav" id="sideNav" aria-hidden="true">
     <div class="projects-section">
       <p class="projects-title">My Projects</p>
@@ -519,12 +473,9 @@ body.nav-open .hero {
     </div>
   </nav>
 
-  <!-- Main / hero content -->
   <main class="hero" id="hero">
     <div class="hero-glow" aria-hidden="true"></div>
-
     <h1 class="name">Pranav Sharma</h1>
-
     <div class="links-container">
       <a href="mailto:pranavsharma2009@cloud.com" class="link-button"><i class="fa-solid fa-envelope"></i> Email</a>
       <a href="https://x.com/pranavsharma_io" target="_blank" rel="noopener noreferrer" class="link-button"><i class="fa-brands fa-x-twitter"></i> Twitter / X</a>
@@ -533,7 +484,6 @@ body.nav-open .hero {
     </div>
   </main>
 
-  <!-- Virtual pet: the Aesthetic Blob -->
   <div class="pet-wrap" id="petWrap">
     <div class="pet-bubble" id="petBubble"></div>
     <div class="pet-blob" id="petBlob" role="button" tabindex="0" aria-label="A little companion. Click it to say hi.">
@@ -542,11 +492,7 @@ body.nav-open .hero {
     </div>
   </div>
 
-  <script>/* ==========================================================================
-   Pranav Sharma — Portfolio
-   Vanilla JS: side nav toggle, theme toggle (persisted), pet interactions
-   ========================================================================== */
-
+  <script>
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
   const hamburgerBtn = document.getElementById('hamburgerBtn');
@@ -559,15 +505,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const pupilRight = document.getElementById('pupilRight');
   const root = document.documentElement;
 
-  /* ---------------- Daily accent color ---------------- */
   const dailyAccentColors = [
-    '#C2185B', // Sunday: Rose Red
-    '#F57C00', // Monday: Vibrant Orange
-    '#D32F2F', // Tuesday: Crimson Red
-    '#D81B60', // Wednesday: Deep Magenta
-    '#7B1FA2', // Thursday: Royal Purple
-    '#E64A19', // Friday: Fiery Orange-Red
-    '#FF4081'  // Saturday: Hot Pink
+    '#C2185B',
+    '#F57C00',
+    '#D32F2F',
+    '#D81B60',
+    '#7B1FA2',
+    '#E64A19',
+    '#FF4081'
   ];
 
   function hexToRgb(hex) {
@@ -585,13 +530,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const isLight = body.classList.contains('light-theme');
     const softAlpha = isLight ? 0.10 : 0.14;
     const strongAlpha = isLight ? 0.20 : 0.28;
-
     root.style.setProperty('--accent-color', todayColor);
     root.style.setProperty('--accent-soft', `rgba(${r}, ${g}, ${b}, ${softAlpha})`);
     root.style.setProperty('--accent-soft-strong', `rgba(${r}, ${g}, ${b}, ${strongAlpha})`);
   }
 
-  /* ---------------- Side navigation ---------------- */
   function openNav() {
     sideNav.classList.add('open');
     navBackdrop.classList.add('visible');
@@ -620,11 +563,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape' && sideNav.classList.contains('open')) closeNav();
   });
 
-  /* ---------------- Theme toggle ---------------- */
   const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'light') {
-    body.classList.add('light-theme');
-  }
+  if (savedTheme === 'light') body.classList.add('light-theme');
   applyDailyAccent();
 
   themeToggle.addEventListener('click', () => {
@@ -634,18 +574,14 @@ document.addEventListener('DOMContentLoaded', () => {
     applyDailyAccent();
   });
 
-  /* ---------------- Virtual pet ---------------- */
   document.addEventListener('mousemove', (e) => {
     const rect = petBlob.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-
     const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
     const distance = Math.min(3, Math.hypot(e.clientX - centerX, e.clientY - centerY) / 40);
-
     const moveX = Math.cos(angle) * distance;
     const moveY = Math.sin(angle) * distance;
-
     pupilLeft.style.transform = `translate(${moveX}px, ${moveY}px)`;
     pupilRight.style.transform = `translate(${moveX}px, ${moveY}px)`;
   });
@@ -657,29 +593,18 @@ document.addEventListener('DOMContentLoaded', () => {
     petBlob.classList.remove('squish');
     void petBlob.offsetWidth;
     petBlob.classList.add('squish');
-
     const message = petMessages[Math.floor(Math.random() * petMessages.length)];
     petBubble.textContent = message;
     petBubble.classList.add('show');
-
     clearTimeout(bubbleTimer);
     bubbleTimer = setTimeout(() => petBubble.classList.remove('show'), 1800);
   }
 
   petBlob.addEventListener('click', greet);
   petBlob.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      greet();
-    }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); greet(); }
   });
 
-  /* ---------------- Servers: links pulled live from a Google Sheet ---------------- */
-  // The sheet has rows like:
-  //   Immich Tunnel Link <tab> https://... <tab> timestamp
-  //   Koel Tunnel Link   <tab> https://... <tab> timestamp
-  // Column A = label, column B = URL. We match each nav item's
-  // data-server-label against column A (case-insensitive substring).
   const SHEET_ID = '1MHjpvU0m-zOCUG59hN9JIxgfN8si_gsntl8c1w5B7Kg';
   const SHEET_GID = '0';
   let jsonpCallCount = 0;
@@ -730,7 +655,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function findLinkByLabel(rows, labelMatch) {
     const needle = labelMatch.toLowerCase();
     for (const cells of rows) {
-      // Scan every column: when a label cell matches, the URL is the next cell
       for (let i = 0; i < cells.length - 1; i++) {
         const label = (cells[i] || '').toLowerCase();
         if (label.includes(needle)) {
