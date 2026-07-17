@@ -5,19 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pranav Sharma</title>
   <meta name="description" content="Pranav Sharma — personal portfolio.">
-
-  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
-
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
   <style>
-
 :root {
-  
+  /* Dark theme (default) */
   --bg-color: #121212;
   --text-color: #e0e0e0;
   --name-color: #ffffff;
@@ -43,7 +37,7 @@ body.light-theme {
   --backdrop-color: rgba(44, 44, 44, 0.25);
 }
 
-
+/* ---------- Reset ---------- */
 * {
   margin: 0;
   padding: 0;
@@ -86,7 +80,7 @@ button:focus-visible,
   border-radius: 4px;
 }
 
-
+/* ---------- Icon buttons (hamburger + theme toggle) ---------- */
 .icon-btn {
   position: fixed;
   top: 2rem;
@@ -111,7 +105,7 @@ button:focus-visible,
 .hamburger { left: 2rem; }
 .theme-toggle { right: 2rem; position: fixed; }
 
-
+/* Hamburger bars, morphing into an X when open */
 .hamburger {
   display: flex;
   flex-direction: column;
@@ -134,7 +128,7 @@ button:focus-visible,
 .hamburger.open .bar:nth-child(2) { opacity: 0; }
 .hamburger.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-
+/* Theme toggle: sun / moon cross-fade */
 .theme-toggle { position: fixed; }
 .icon-moon, .icon-sun {
   position: absolute;
@@ -149,7 +143,7 @@ button:focus-visible,
 body.light-theme .icon-moon { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
 body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
 
-
+/* ---------- Nav backdrop ---------- */
 .nav-backdrop {
   position: fixed;
   inset: 0;
@@ -165,7 +159,7 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   pointer-events: auto;
 }
 
-
+/* ---------- Slide-in side navigation ---------- */
 .side-nav {
   position: fixed;
   top: 0;
@@ -258,7 +252,7 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   transform: none;
 }
 
-
+/* ---------- Hero / main screen ---------- */
 .hero {
   position: relative;
   min-height: 100vh;
@@ -337,7 +331,7 @@ body.nav-open .hero {
   box-shadow: 0 10px 26px var(--accent-soft-strong);
 }
 
-
+/* ---------- Virtual pet: the Aesthetic Blob ---------- */
 .pet-wrap {
   position: fixed;
   bottom: 2rem;
@@ -416,7 +410,7 @@ body.nav-open .hero {
   transition: background-color 0.5s ease;
 }
 
-
+/* ---------- Keyframes ---------- */
 @keyframes heroReveal {
   to { opacity: 1; transform: translateY(0); }
 }
@@ -441,7 +435,7 @@ body.nav-open .hero {
   100% { transform: scale(1, 1); }
 }
 
-
+/* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .side-nav { width: 300px; padding: 5.5rem 2rem 2rem; }
 }
@@ -466,7 +460,7 @@ body.nav-open .hero {
   .pet-bubble { font-size: 0.75rem; bottom: 70px; }
 }
 
-
+/* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -479,23 +473,23 @@ body.nav-open .hero {
 </head>
 <body>
 
-  
+  <!-- Backdrop shown behind the slide-in nav -->
   <div class="nav-backdrop" id="navBackdrop"></div>
 
-  
+  <!-- Hamburger menu (top-left) -->
   <button class="icon-btn hamburger" id="hamburgerBtn" aria-label="Open navigation" aria-expanded="false" aria-controls="sideNav">
     <span class="bar"></span>
     <span class="bar"></span>
     <span class="bar"></span>
   </button>
 
-  
+  <!-- Theme toggle (top-right) -->
   <button class="icon-btn theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme">
     <i class="fa-solid fa-moon icon-moon" aria-hidden="true"></i>
     <i class="fa-solid fa-sun icon-sun" aria-hidden="true"></i>
   </button>
 
-  
+  <!-- Slide-in side navigation -->
   <nav class="side-nav" id="sideNav" aria-hidden="true">
     <div class="projects-section">
       <p class="projects-title">My Projects</p>
@@ -525,7 +519,7 @@ body.nav-open .hero {
     </div>
   </nav>
 
-  
+  <!-- Main / hero content -->
   <main class="hero" id="hero">
     <div class="hero-glow" aria-hidden="true"></div>
 
@@ -539,7 +533,7 @@ body.nav-open .hero {
     </div>
   </main>
 
-  
+  <!-- Virtual pet: the Aesthetic Blob -->
   <div class="pet-wrap" id="petWrap">
     <div class="pet-bubble" id="petBubble"></div>
     <div class="pet-blob" id="petBlob" role="button" tabindex="0" aria-label="A little companion. Click it to say hi.">
@@ -548,7 +542,10 @@ body.nav-open .hero {
     </div>
   </div>
 
-  <script>
+  <script>/* ==========================================================================
+   Pranav Sharma — Portfolio
+   Vanilla JS: side nav toggle, theme toggle (persisted), pet interactions
+   ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
@@ -562,15 +559,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const pupilRight = document.getElementById('pupilRight');
   const root = document.documentElement;
 
-  
+  /* ---------------- Daily accent color ---------------- */
   const dailyAccentColors = [
-    '#C2185B', 
-    '#F57C00', 
-    '#D32F2F', 
-    '#D81B60', 
-    '#7B1FA2', 
-    '#E64A19', 
-    '#FF4081'  
+    '#C2185B', // Sunday: Rose Red
+    '#F57C00', // Monday: Vibrant Orange
+    '#D32F2F', // Tuesday: Crimson Red
+    '#D81B60', // Wednesday: Deep Magenta
+    '#7B1FA2', // Thursday: Royal Purple
+    '#E64A19', // Friday: Fiery Orange-Red
+    '#FF4081'  // Saturday: Hot Pink
   ];
 
   function hexToRgb(hex) {
@@ -594,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
     root.style.setProperty('--accent-soft-strong', `rgba(${r}, ${g}, ${b}, ${strongAlpha})`);
   }
 
-  
+  /* ---------------- Side navigation ---------------- */
   function openNav() {
     sideNav.classList.add('open');
     navBackdrop.classList.add('visible');
@@ -623,7 +620,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape' && sideNav.classList.contains('open')) closeNav();
   });
 
-  
+  /* ---------------- Theme toggle ---------------- */
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'light') {
     body.classList.add('light-theme');
@@ -637,7 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyDailyAccent();
   });
 
-  
+  /* ---------------- Virtual pet ---------------- */
   document.addEventListener('mousemove', (e) => {
     const rect = petBlob.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -677,12 +674,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  
-  
-  
-  
-  
-  
+  /* ---------------- Servers: links pulled live from a Google Sheet ---------------- */
+  // The sheet has rows like:
+  //   Immich Tunnel Link <tab> https://... <tab> timestamp
+  //   Koel Tunnel Link   <tab> https://... <tab> timestamp
+  // Column A = label, column B = URL. We match each nav item's
+  // data-server-label against column A (case-insensitive substring).
   const SHEET_ID = '1MHjpvU0m-zOCUG59hN9JIxgfN8si_gsntl8c1w5B7Kg';
   const SHEET_GID = '0';
   let jsonpCallCount = 0;
@@ -733,12 +730,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function findLinkByLabel(rows, labelMatch) {
     const needle = labelMatch.toLowerCase();
     for (const cells of rows) {
-      
+      // Scan every column: when a label cell matches, the URL is the next cell
       for (let i = 0; i < cells.length - 1; i++) {
         const label = (cells[i] || '').toLowerCase();
         if (label.includes(needle)) {
           const url = cells[i + 1] || '';
-          if (url && /^https?:\/\
+          if (url && /^https?:\/\//i.test(url)) return url;
         }
       }
     }
@@ -760,7 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = rows ? findLinkByLabel(rows, el.dataset.serverLabel) : null;
       const statusIcon = el.querySelector('.project-button-status');
 
-      if (url && /^https?:\/\
+      if (url && /^https?:\/\//i.test(url)) {
         el.href = url;
         el.classList.remove('loading');
       } else {
