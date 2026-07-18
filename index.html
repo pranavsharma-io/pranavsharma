@@ -594,14 +594,16 @@ document.addEventListener('DOMContentLoaded', () => {
     pupilRight.style.transform = `translate(${moveX}px, ${moveY}px)`;
   });
 
-  const petMessages = ['hi there! 👋', 'hello!', '*wiggles*', 'having a good day?', 'boop!', '✨ hey ✨', 'Hey, Surbhis are Sexy', 'Have u got b@@bs?', 'Surbhi have got two of em 😋'];
+  const petMessages = ['hi there! 👋', 'hello!', '*wiggles*', 'having a good day?', 'boop!', '✨ hey ✨', 'Hey, Surbhis are Sexy', 'Have u got boobs?', 'Surbhi have got two of em 😋'];
+  let petMessageIndex = 0;
   let bubbleTimer;
 
   function greet() {
     petBlob.classList.remove('squish');
     void petBlob.offsetWidth;
     petBlob.classList.add('squish');
-    const message = petMessages[Math.floor(Math.random() * petMessages.length)];
+    const message = petMessages[petMessageIndex];
+    petMessageIndex = (petMessageIndex + 1) % petMessages.length;
     petBubble.textContent = message;
     petBubble.classList.add('show');
     clearTimeout(bubbleTimer);
