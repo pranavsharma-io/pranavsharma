@@ -690,7 +690,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const statusIcon = el.querySelector('.project-button-status');
 
       if (url && /^https?:\/\//i.test(url)) {
-        el.href = url;
+        el.href = el.dataset.serverLabel === 'Jellyfin'
+  ? url + '/web/#/music?topParentId=7e64e319657a9516ec78490da03edccb&collectionType=music&tab=5'
+  : url;
         el.classList.remove('loading');
       } else {
         el.classList.remove('loading');
