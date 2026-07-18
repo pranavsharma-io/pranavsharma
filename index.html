@@ -427,7 +427,7 @@ body.nav-open .hero {
     scroll-behavior: auto !important;
   }
 }
-</style>
+  </style>
 </head>
 <body>
 
@@ -459,14 +459,22 @@ body.nav-open .hero {
     <div class="projects-section servers-section">
       <p class="projects-title">Servers</p>
       <div class="projects-container">
+        <!-- Photos — matches "Immich Tunnel Link" in sheet -->
         <a href="#" target="_blank" rel="noopener noreferrer" class="project-button loading" id="photosLink" data-server-label="Immich">
           <i class="fa-solid fa-images"></i>
           <span class="project-button-text">Photos</span>
           <i class="fa-solid fa-circle-notch fa-spin project-button-status" aria-hidden="true"></i>
         </a>
-        <a href="#" target="_blank" rel="noopener noreferrer" class="project-button loading" id="musicLink" data-server-label="Koel">
-          <i class="fa-solid fa-music"></i>
-          <span class="project-button-text">Music</span>
+        <!-- Media — matches "Jellyfin Tunnel Link" in sheet -->
+        <a href="#" target="_blank" rel="noopener noreferrer" class="project-button loading" id="mediaLink" data-server-label="Jellyfin">
+          <i class="fa-solid fa-tv"></i>
+          <span class="project-button-text">Media</span>
+          <i class="fa-solid fa-circle-notch fa-spin project-button-status" aria-hidden="true"></i>
+        </a>
+        <!-- Files — matches "File Browser Tunnel Link" in sheet -->
+        <a href="#" target="_blank" rel="noopener noreferrer" class="project-button loading" id="filesLink" data-server-label="File Browser">
+          <i class="fa-solid fa-folder-open"></i>
+          <span class="project-button-text">Files</span>
           <i class="fa-solid fa-circle-notch fa-spin project-button-status" aria-hidden="true"></i>
         </a>
       </div>
@@ -698,6 +706,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   wireServerLinks();
 });
-</script>
+  </script>
 </body>
 </html>
