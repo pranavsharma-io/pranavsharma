@@ -169,6 +169,31 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   border-bottom: 1px solid var(--accent-soft-strong);
 }
 
+.servers-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.network-usage {
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--text-color);
+  opacity: 0.75;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  white-space: nowrap;
+}
+
+.network-usage i { font-size: 0.7rem; margin-right: 0.15rem; }
+.network-usage .fa-arrow-down { color: #4fc3f7; }
+.network-usage .fa-arrow-up { color: #ff8a65; }
+
 .projects-container { display: flex; flex-direction: column; gap: 0.85rem; }
 
 .project-button {
@@ -457,7 +482,12 @@ body.nav-open .hero {
     </div>
 
     <div class="projects-section servers-section">
-      <p class="projects-title">Servers</p>
+      <p class="projects-title servers-title">
+        <span>Servers</span>
+        <span class="network-usage" id="networkUsage">
+          <i class="fa-solid fa-circle-notch fa-spin"></i>
+        </span>
+      </p>
       <div class="projects-container">
         <!-- Photos — matches "Immich Tunnel Link" in sheet -->
         <a href="#" target="_blank" rel="noopener noreferrer" class="project-button loading" id="photosLink" data-server-label="Immich">
@@ -475,6 +505,12 @@ body.nav-open .hero {
         <a href="#" target="_blank" rel="noopener noreferrer" class="project-button loading" id="filesLink" data-server-label="File Browser">
           <i class="fa-solid fa-folder-open"></i>
           <span class="project-button-text">Files</span>
+          <i class="fa-solid fa-circle-notch fa-spin project-button-status" aria-hidden="true"></i>
+        </a>
+        <!-- Chat — matches "Rocket.Chat Tunnel Link" in sheet -->
+        <a href="#" target="_blank" rel="noopener noreferrer" class="project-button loading" id="chatLink" data-server-label="Rocket.Chat">
+          <i class="fa-solid fa-comments"></i>
+          <span class="project-button-text">Chat</span>
           <i class="fa-solid fa-circle-notch fa-spin project-button-status" aria-hidden="true"></i>
         </a>
       </div>
@@ -594,7 +630,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pupilRight.style.transform = `translate(${moveX}px, ${moveY}px)`;
   });
 
-  const petMessages = ['hi there! 👋', 'hello!', '*wiggles*', 'having a good day?', 'boop!', '✨ hey ✨', 'Hey, Surbhis are Secy', 'Have u got b@@bs?', 'Surbhi have got two of em 😋'];
+  const petMessages = ['hi there! 👋', 'hello!', '*wiggles*', 'having a good day?', 'boop!', '✨ hey ✨'];
   let petMessageIndex = 0;
   let bubbleTimer;
 
@@ -676,9 +712,23 @@ document.addEventListener('DOMContentLoaded', () => {
     return null;
   }
 
+  function findRowValues(rows, labelMatch, count = 2) {
+    const needle = labelMatch.toLowerCase();
+    for (const cells of rows) {
+      for (let i = 0; i < cells.length; i++) {
+        const label = (cells[i] || '').toLowerCase();
+        if (label.includes(needle)) {
+          return cells.slice(i + 1, i + 1 + count);
+        }
+      }
+    }
+    return null;
+  }
+
   async function wireServerLinks() {
     const serverLinkEls = Array.from(document.querySelectorAll('[data-server-label]'));
-    if (!serverLinkEls.length) return;
+    const networkUsageEl = document.getElementById('networkUsage');
+    if (!serverLinkEls.length && !networkUsageEl) return;
 
     let rows = null;
     try {
@@ -692,9 +742,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const statusIcon = el.querySelector('.project-button-status');
 
       if (url && /^https?:\/\//i.test(url)) {
+        const cleanUrl = url.replace(/\/+$/, '');
         el.href = el.dataset.serverLabel === 'Jellyfin'
-  ? url + '/web/#/music?topParentId=7e64e319657a9516ec78490da03edccb&collectionType=music&tab=5'
-  : url;
+          ? cleanUrl + '/web/#/music?topParentId=7e64e319657a9516ec78490da03edccb&collectionType=music&tab=5'
+          : url;
         el.classList.remove('loading');
       } else {
         el.classList.remove('loading');
@@ -706,6 +757,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (statusIcon) statusIcon.remove();
     });
+
+    if (networkUsageEl) {
+      const values = rows ? findRowValues(rows, 'Network Usage', 2) : null;
+      if (values && values[0] && values[1]) {
+        const [download, upload] = values;
+        networkUsageEl.innerHTML = `
+          <i class="fa-solid fa-arrow-down" title="Download"></i>${download}
+          <i class="fa-solid fa-arrow-up" title="Upload"></i>${upload}
+        `;
+      } else {
+        networkUsageEl.textContent = '';
+      }
+    }
   }
 
   wireServerLinks();
