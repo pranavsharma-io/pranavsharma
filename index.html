@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
@@ -38,7 +37,6 @@ body.light-theme {
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-
 html { scroll-behavior: smooth; }
 
 body {
@@ -52,9 +50,7 @@ body {
 }
 
 ::selection { background: var(--accent-color); color: var(--bg-color); }
-
 a { text-decoration: none; }
-
 button { font-family: inherit; border: none; background: none; cursor: pointer; }
 
 a:focus-visible,
@@ -65,6 +61,7 @@ button:focus-visible,
   border-radius: 4px;
 }
 
+/* ── Icon buttons (hamburger + theme) ── */
 .icon-btn {
   position: fixed;
   top: 2rem;
@@ -87,7 +84,7 @@ button:focus-visible,
 }
 
 .hamburger { left: 2rem; }
-.theme-toggle { right: 2rem; position: fixed; }
+.theme-toggle { right: 2rem; }
 
 .hamburger {
   display: flex;
@@ -106,13 +103,11 @@ button:focus-visible,
 }
 
 .hamburger:hover .bar { background-color: var(--accent-color); }
-
 .hamburger.open .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .hamburger.open .bar:nth-child(2) { opacity: 0; }
 .hamburger.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-.theme-toggle { position: fixed; }
-
+/* ── Theme toggle ── */
 .icon-moon, .icon-sun {
   position: absolute;
   top: 50%;
@@ -123,10 +118,10 @@ button:focus-visible,
 
 .icon-moon { opacity: 1; }
 .icon-sun  { opacity: 0; transform: translate(-50%, -50%) rotate(-90deg); }
-
 body.light-theme .icon-moon { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
 body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
 
+/* ── Nav backdrop ── */
 .nav-backdrop {
   position: fixed;
   inset: 0;
@@ -136,9 +131,9 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   transition: opacity 0.4s ease;
   z-index: 999;
 }
-
 .nav-backdrop.visible { opacity: 1; pointer-events: auto; }
 
+/* ── Side nav ── */
 .side-nav {
   position: fixed;
   top: 0;
@@ -153,10 +148,16 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   padding: 6rem 2.2rem 2rem;
   box-shadow: 6px 0 40px var(--shadow-color);
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-soft-strong) transparent;
 }
-
 .side-nav.open { transform: translateX(0); }
 
+.side-nav::-webkit-scrollbar { width: 4px; }
+.side-nav::-webkit-scrollbar-track { background: transparent; }
+.side-nav::-webkit-scrollbar-thumb { background: var(--accent-soft-strong); border-radius: 2px; }
+
+/* ── Section titles ── */
 .projects-title {
   font-family: var(--font-body);
   font-weight: 500;
@@ -177,6 +178,7 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   flex-wrap: wrap;
 }
 
+/* ── Network usage badge ── */
 .network-usage {
   font-size: 0.72rem;
   font-weight: 400;
@@ -186,14 +188,26 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   opacity: 0.75;
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.4rem;
   white-space: nowrap;
 }
 
-.network-usage i { font-size: 0.7rem; margin-right: 0.15rem; }
+.network-usage i { font-size: 0.68rem; }
 .network-usage .fa-arrow-down { color: #4fc3f7; }
-.network-usage .fa-arrow-up { color: #ff8a65; }
+.network-usage .fa-arrow-up   { color: #ff8a65; }
 
+/* ── Network total (under servers title) ── */
+.network-total {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--text-color);
+  opacity: 0.5;
+  margin-top: -1.4rem;
+  margin-bottom: 1.4rem;
+  letter-spacing: 0.01em;
+}
+
+/* ── Project/server buttons ── */
 .projects-container { display: flex; flex-direction: column; gap: 0.85rem; }
 
 .project-button {
@@ -208,13 +222,15 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   letter-spacing: 0.01em;
   border: 1px solid transparent;
   transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s var(--ease), color 0.3s ease;
+  position: relative;
 }
 
-.project-button i {
+.project-button .btn-icon {
   color: var(--accent-color);
   width: 18px;
   text-align: center;
   font-size: 0.95rem;
+  flex-shrink: 0;
 }
 
 .project-button:hover,
@@ -227,16 +243,30 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
 .servers-section { margin-top: 2.5rem; }
 .project-button-text { flex: 1; }
 
+/* ── Spinner inside button ── */
 .project-button-status {
   font-size: 0.8rem;
   color: var(--accent-color);
-  opacity: 0.75;
+  opacity: 0.7;
+  flex-shrink: 0;
 }
 
+/* ── Freshness dot ── */
+.freshness-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.freshness-dot.fresh   { background: #4caf50; box-shadow: 0 0 6px #4caf5066; }
+.freshness-dot.stale   { background: #ff9800; box-shadow: 0 0 6px #ff980066; }
+.freshness-dot.expired { background: #f44336; box-shadow: 0 0 6px #f4433666; }
+.freshness-dot.unknown { background: var(--text-color); opacity: 0.3; }
+
+/* ── Button states ── */
 .project-button.loading { cursor: wait; opacity: 0.6; pointer-events: none; }
 
-.project-button.unavailable { cursor: not-allowed; opacity: 0.5; }
-
+.project-button.unavailable { cursor: not-allowed; opacity: 0.45; }
 .project-button.unavailable:hover,
 .project-button.unavailable:focus-visible {
   background-color: transparent;
@@ -244,6 +274,41 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   transform: none;
 }
 
+/* ── Sheet error banner ── */
+.sheet-error {
+  font-size: 0.72rem;
+  color: #f44336;
+  opacity: 0.8;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.sheet-error.hidden { display: none; }
+
+/* ── Refresh button ── */
+.refresh-btn {
+  font-size: 0.72rem;
+  color: var(--accent-color);
+  opacity: 0.8;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  cursor: pointer;
+}
+.refresh-btn:hover { background-color: var(--accent-soft); opacity: 1; }
+.refresh-btn.spinning i { animation: spinOnce 0.7s linear; }
+
+@keyframes spinOnce {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Hero ── */
 .hero {
   position: relative;
   min-height: 100vh;
@@ -322,6 +387,7 @@ body.nav-open .hero {
   box-shadow: 0 10px 26px var(--accent-soft-strong);
 }
 
+/* ── Pet ── */
 .pet-wrap {
   position: fixed;
   bottom: 2rem;
@@ -357,7 +423,7 @@ body.nav-open .hero {
   transition: background-color 0.5s ease;
 }
 
-.pet-eye.left { left: 26%; }
+.pet-eye.left  { left: 26%; }
 .pet-eye.right { right: 26%; }
 
 .pet-pupil {
@@ -400,9 +466,8 @@ body.nav-open .hero {
   transition: background-color 0.5s ease;
 }
 
-@keyframes heroReveal {
-  to { opacity: 1; transform: translateY(0); }
-}
+/* ── Animations ── */
+@keyframes heroReveal { to { opacity: 1; transform: translateY(0); } }
 
 @keyframes petFloat {
   0%, 100% { transform: translateY(0); }
@@ -411,9 +476,9 @@ body.nav-open .hero {
 
 @keyframes petMorph {
   0%, 100% { border-radius: 60% 40% 55% 45% / 55% 45% 60% 40%; }
-  25%      { border-radius: 45% 55% 60% 40% / 40% 60% 45% 55%; }
-  50%      { border-radius: 50% 50% 40% 60% / 60% 40% 55% 45%; }
-  75%      { border-radius: 55% 45% 50% 50% / 45% 55% 40% 60%; }
+  25%       { border-radius: 45% 55% 60% 40% / 40% 60% 45% 55%; }
+  50%       { border-radius: 50% 50% 40% 60% / 60% 40% 55% 45%; }
+  75%       { border-radius: 55% 45% 50% 50% / 45% 55% 40% 60%; }
 }
 
 @keyframes petSquish {
@@ -424,6 +489,7 @@ body.nav-open .hero {
   100% { transform: scale(1, 1); }
 }
 
+/* ── Responsive ── */
 @media (max-width: 900px) {
   .side-nav { width: 300px; padding: 5.5rem 2rem 2rem; }
 }
@@ -459,64 +525,86 @@ body.nav-open .hero {
   <div class="nav-backdrop" id="navBackdrop"></div>
 
   <button class="icon-btn hamburger" id="hamburgerBtn" aria-label="Open navigation" aria-expanded="false" aria-controls="sideNav">
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
   </button>
 
   <button class="icon-btn theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme">
     <i class="fa-solid fa-moon icon-moon" aria-hidden="true"></i>
-    <i class="fa-solid fa-sun icon-sun" aria-hidden="true"></i>
+    <i class="fa-solid fa-sun icon-sun"  aria-hidden="true"></i>
   </button>
 
   <nav class="side-nav" id="sideNav" aria-hidden="true">
+
+    <!-- Projects (static) -->
     <div class="projects-section">
       <p class="projects-title">My Projects</p>
       <div class="projects-container">
-        <a href="https://tictactoebypranavsharma.pages.dev/" target="_blank" rel="noopener noreferrer" class="project-button"><i class="fa-solid fa-hashtag"></i> Tic Tac Toe</a>
-        <a href="https://tictactoe-live-by-pranav-sharma-ren.onrender.com/" target="_blank" rel="noopener noreferrer" class="project-button"><i class="fa-solid fa-users"></i> Tic Tac Toe Live</a>
-        <a href="https://urlshortenerz.pages.dev/" target="_blank" rel="noopener noreferrer" class="project-button"><i class="fa-solid fa-link"></i> URL Shortener</a>
-        <a href="https://pranav-sharma.pages.dev/attractor/" target="_blank" rel="noopener noreferrer" class="project-button"><i class="fa-solid fa-atom"></i> Attractor</a>
-        <a href="https://pranav-sharma.pages.dev/birthday/" target="_blank" rel="noopener noreferrer" class="project-button"><i class="fa-solid fa-cake-candles"></i> Birthday</a>
+        <a href="https://tictactoebypranavsharma.pages.dev/" target="_blank" rel="noopener noreferrer" class="project-button">
+          <i class="fa-solid fa-hashtag btn-icon"></i><span class="project-button-text">Tic Tac Toe</span>
+        </a>
+        <a href="https://tictactoe-live-by-pranav-sharma-ren.onrender.com/" target="_blank" rel="noopener noreferrer" class="project-button">
+          <i class="fa-solid fa-users btn-icon"></i><span class="project-button-text">Tic Tac Toe Live</span>
+        </a>
+        <a href="https://urlshortenerz.pages.dev/" target="_blank" rel="noopener noreferrer" class="project-button">
+          <i class="fa-solid fa-link btn-icon"></i><span class="project-button-text">URL Shortener</span>
+        </a>
+        <a href="https://pranav-sharma.pages.dev/attractor/" target="_blank" rel="noopener noreferrer" class="project-button">
+          <i class="fa-solid fa-atom btn-icon"></i><span class="project-button-text">Attractor</span>
+        </a>
+        <a href="https://pranav-sharma.pages.dev/birthday/" target="_blank" rel="noopener noreferrer" class="project-button">
+          <i class="fa-solid fa-cake-candles btn-icon"></i><span class="project-button-text">Birthday</span>
+        </a>
       </div>
     </div>
 
+    <!-- Servers (dynamic from sheet) -->
     <div class="projects-section servers-section">
       <p class="projects-title servers-title">
         <span>Servers</span>
-        <span class="network-usage" id="networkUsage">
-          <i class="fa-solid fa-circle-notch fa-spin"></i>
+        <span style="display:flex;align-items:center;gap:0.5rem;">
+          <span class="network-usage" id="networkUsage">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+          </span>
+          <button class="refresh-btn" id="refreshBtn" aria-label="Refresh server links" title="Refresh">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
         </span>
       </p>
-      <div class="projects-container">
-        <!-- Photos — matches "Immich Tunnel Link" in sheet -->
-        <a href="#" target="_blank" rel="noopener noreferrer" class="project-button loading" id="photosLink" data-server-label="Immich">
-          <i class="fa-solid fa-images"></i>
+
+      <!-- Sheet error banner -->
+      <p class="sheet-error hidden" id="sheetError">
+        <i class="fa-solid fa-triangle-exclamation"></i> Could not reach sheet
+      </p>
+
+      <!-- Server buttons injected by JS -->
+      <div class="projects-container" id="serversContainer">
+        <!-- skeleton placeholders -->
+        <div class="project-button loading" aria-hidden="true">
+          <i class="fa-solid fa-images btn-icon"></i>
           <span class="project-button-text">Photos</span>
-          <i class="fa-solid fa-circle-notch fa-spin project-button-status" aria-hidden="true"></i>
-        </a>
-        <!-- Music — matches "Jellyfin Tunnel Link" in sheet -->
-        <a href="#" target="_blank" rel="noopener noreferrer" class="project-button loading" id="mediaLink" data-server-label="Jellyfin">
-          <i class="fa-solid fa-music"></i>
+          <i class="fa-solid fa-circle-notch fa-spin project-button-status"></i>
+        </div>
+        <div class="project-button loading" aria-hidden="true">
+          <i class="fa-solid fa-music btn-icon"></i>
           <span class="project-button-text">Music</span>
-          <i class="fa-solid fa-circle-notch fa-spin project-button-status" aria-hidden="true"></i>
-        </a>
-        <!-- Files — matches "File Browser Tunnel Link" in sheet -->
-        <a href="#" target="_blank" rel="noopener noreferrer" class="project-button loading" id="filesLink" data-server-label="File Browser">
-          <i class="fa-solid fa-folder-open"></i>
+          <i class="fa-solid fa-circle-notch fa-spin project-button-status"></i>
+        </div>
+        <div class="project-button loading" aria-hidden="true">
+          <i class="fa-solid fa-folder-open btn-icon"></i>
           <span class="project-button-text">Files</span>
-          <i class="fa-solid fa-circle-notch fa-spin project-button-status" aria-hidden="true"></i>
-        </a>
-        <!-- Chat — matches "Rocket.Chat Tunnel Link" in sheet -->
-        <a href="#" target="_blank" rel="noopener noreferrer" class="project-button loading" id="chatLink" data-server-label="Rocket.Chat">
-          <i class="fa-solid fa-comments"></i>
+          <i class="fa-solid fa-circle-notch fa-spin project-button-status"></i>
+        </div>
+        <div class="project-button loading" aria-hidden="true">
+          <i class="fa-solid fa-comments btn-icon"></i>
           <span class="project-button-text">Chat</span>
-          <i class="fa-solid fa-circle-notch fa-spin project-button-status" aria-hidden="true"></i>
-        </a>
+          <i class="fa-solid fa-circle-notch fa-spin project-button-status"></i>
+        </div>
       </div>
     </div>
+
   </nav>
 
+  <!-- Hero -->
   <main class="hero" id="hero">
     <div class="hero-glow" aria-hidden="true"></div>
     <h1 class="name">Pranav Sharma</h1>
@@ -528,252 +616,346 @@ body.nav-open .hero {
     </div>
   </main>
 
+  <!-- Pet -->
   <div class="pet-wrap" id="petWrap">
     <div class="pet-bubble" id="petBubble"></div>
-    <div class="pet-blob" id="petBlob" role="button" tabindex="0" aria-label="A little companion. Click it to say hi.">
+    <div class="pet-blob" id="petBlob" role="button" tabindex="0" aria-label="A little companion. Click to say hi.">
       <div class="pet-eye left"><span class="pet-pupil" id="pupilLeft"></span></div>
       <div class="pet-eye right"><span class="pet-pupil" id="pupilRight"></span></div>
     </div>
   </div>
 
   <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const body = document.body;
-  const hamburgerBtn = document.getElementById('hamburgerBtn');
-  const sideNav = document.getElementById('sideNav');
-  const navBackdrop = document.getElementById('navBackdrop');
-  const themeToggle = document.getElementById('themeToggle');
-  const petBlob = document.getElementById('petBlob');
-  const petBubble = document.getElementById('petBubble');
-  const pupilLeft = document.getElementById('pupilLeft');
-  const pupilRight = document.getElementById('pupilRight');
-  const root = document.documentElement;
+  /* ─────────────────────────────────────────────
+     CONFIG
+  ───────────────────────────────────────────── */
+  const SHEET_ID  = '1MHjpvU0m-zOCUG59hN9JIxgfN8si_gsntl8c1w5B7Kg';
+  const SHEET_GID = '0';
+  const FETCH_TIMEOUT_MS = 8000;
 
-  const dailyAccentColors = [
-    '#C2185B',
-    '#F57C00',
-    '#D32F2F',
-    '#D81B60',
-    '#7B1FA2',
-    '#E64A19',
-    '#FF4081'
+  /*
+   * Server definitions — maps each UI card to a sheet label.
+   * Add or remove entries here to control what appears in the nav.
+   *
+   * jellyfin_suffix: optional path appended to the URL for that server
+   * icon           : Font Awesome class(es)
+   * label          : display name
+   * sheetLabel     : substring to look for in the sheet (case-insensitive)
+   */
+  const SERVER_DEFS = [
+    { id: 'photos',    label: 'Photos',       sheetLabel: 'immich',       icon: 'fa-solid fa-images'       },
+    { id: 'music',     label: 'Music',        sheetLabel: 'jellyfin',     icon: 'fa-solid fa-music',
+      urlSuffix: '/web/#/music?topParentId=7e64e319657a9516ec78490da03edccb&collectionType=music&tab=5' },
+    { id: 'files',     label: 'Files',        sheetLabel: 'file browser', icon: 'fa-solid fa-folder-open'  },
+    { id: 'chat',      label: 'Chat',         sheetLabel: 'rocket.chat',  icon: 'fa-solid fa-comments'     },
+    { id: 'vault',     label: 'Vault',        sheetLabel: 'vaultwarden',  icon: 'fa-solid fa-shield-halved'},
+    { id: 'notes',     label: 'Notes',        sheetLabel: 'trilium',      icon: 'fa-solid fa-note-sticky'  },
+    { id: 'pdf',       label: 'PDF Tools',    sheetLabel: 'stirling pdf', icon: 'fa-solid fa-file-pdf'     },
   ];
 
+  /* ─────────────────────────────────────────────
+     THEME & ACCENT
+  ───────────────────────────────────────────── */
+  const dailyAccents = ['#C2185B','#F57C00','#D32F2F','#D81B60','#7B1FA2','#E64A19','#FF4081'];
+
   function hexToRgb(hex) {
-    const value = hex.replace('#', '');
-    return {
-      r: parseInt(value.substring(0, 2), 16),
-      g: parseInt(value.substring(2, 4), 16),
-      b: parseInt(value.substring(4, 6), 16)
-    };
+    const v = hex.replace('#','');
+    return { r: parseInt(v.slice(0,2),16), g: parseInt(v.slice(2,4),16), b: parseInt(v.slice(4,6),16) };
   }
 
   function applyDailyAccent() {
-    const todayColor = dailyAccentColors[new Date().getDay()];
-    const { r, g, b } = hexToRgb(todayColor);
-    const isLight = body.classList.contains('light-theme');
-    const softAlpha = isLight ? 0.10 : 0.14;
-    const strongAlpha = isLight ? 0.20 : 0.28;
-    root.style.setProperty('--accent-color', todayColor);
-    root.style.setProperty('--accent-soft', `rgba(${r}, ${g}, ${b}, ${softAlpha})`);
-    root.style.setProperty('--accent-soft-strong', `rgba(${r}, ${g}, ${b}, ${strongAlpha})`);
+    const color = dailyAccents[new Date().getDay()];
+    const { r, g, b } = hexToRgb(color);
+    const light = document.body.classList.contains('light-theme');
+    const sa = light ? 0.10 : 0.14, ss = light ? 0.20 : 0.28;
+    document.documentElement.style.setProperty('--accent-color', color);
+    document.documentElement.style.setProperty('--accent-soft',       `rgba(${r},${g},${b},${sa})`);
+    document.documentElement.style.setProperty('--accent-soft-strong',`rgba(${r},${g},${b},${ss})`);
   }
 
-  function openNav() {
-    sideNav.classList.add('open');
-    navBackdrop.classList.add('visible');
-    hamburgerBtn.classList.add('open');
-    body.classList.add('nav-open');
-    hamburgerBtn.setAttribute('aria-expanded', 'true');
-    sideNav.setAttribute('aria-hidden', 'false');
-  }
-
-  function closeNav() {
-    sideNav.classList.remove('open');
-    navBackdrop.classList.remove('visible');
-    hamburgerBtn.classList.remove('open');
-    body.classList.remove('nav-open');
-    hamburgerBtn.setAttribute('aria-expanded', 'false');
-    sideNav.setAttribute('aria-hidden', 'true');
-  }
-
-  hamburgerBtn.addEventListener('click', () => {
-    sideNav.classList.contains('open') ? closeNav() : openNav();
-  });
-
-  navBackdrop.addEventListener('click', closeNav);
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && sideNav.classList.contains('open')) closeNav();
-  });
-
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'light') body.classList.add('light-theme');
-  applyDailyAccent();
-
-  themeToggle.addEventListener('click', () => {
-    body.classList.toggle('light-theme');
-    const isLight = body.classList.contains('light-theme');
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    applyDailyAccent();
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    const rect = petBlob.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
-    const distance = Math.min(3, Math.hypot(e.clientX - centerX, e.clientY - centerY) / 40);
-    const moveX = Math.cos(angle) * distance;
-    const moveY = Math.sin(angle) * distance;
-    pupilLeft.style.transform = `translate(${moveX}px, ${moveY}px)`;
-    pupilRight.style.transform = `translate(${moveX}px, ${moveY}px)`;
-  });
-
-  const petMessages = ['hi there! 👋', 'hello!', '*wiggles*', 'having a good day?', 'boop!', '✨ hey ✨'];
-  let petMessageIndex = 0;
-  let bubbleTimer;
-
-  function greet() {
-    petBlob.classList.remove('squish');
-    void petBlob.offsetWidth;
-    petBlob.classList.add('squish');
-    const message = petMessages[petMessageIndex];
-    petMessageIndex = (petMessageIndex + 1) % petMessages.length;
-    petBubble.textContent = message;
-    petBubble.classList.add('show');
-    clearTimeout(bubbleTimer);
-    bubbleTimer = setTimeout(() => petBubble.classList.remove('show'), 1800);
-  }
-
-  petBlob.addEventListener('click', greet);
-  petBlob.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); greet(); }
-  });
-
-  const SHEET_ID = '1MHjpvU0m-zOCUG59hN9JIxgfN8si_gsntl8c1w5B7Kg';
-  const SHEET_GID = '0';
-  let jsonpCallCount = 0;
+  /* ─────────────────────────────────────────────
+     SHEET FETCH (JSONP)
+  ───────────────────────────────────────────── */
+  let jsonpSeq = 0;
 
   function fetchSheetRows() {
     return new Promise((resolve, reject) => {
-      const callbackName = `__sheetCb_${Date.now()}_${jsonpCallCount++}`;
+      const cb = `__sheetCb_${Date.now()}_${jsonpSeq++}`;
       const script = document.createElement('script');
-      let settled = false;
+      let done = false;
 
-      const timeoutId = setTimeout(() => {
-        if (settled) return;
-        settled = true;
-        cleanup();
+      const tid = setTimeout(() => {
+        if (done) return; done = true; cleanup();
         reject(new Error('Sheet request timed out'));
-      }, 8000);
+      }, FETCH_TIMEOUT_MS);
 
       function cleanup() {
-        clearTimeout(timeoutId);
-        delete window[callbackName];
+        clearTimeout(tid);
+        delete window[cb];
         script.remove();
       }
 
-      window[callbackName] = (response) => {
-        if (settled) return;
-        settled = true;
-        cleanup();
+      window[cb] = (res) => {
+        if (done) return; done = true; cleanup();
         try {
-          const rows = (response.table && response.table.rows) || [];
-          resolve(rows.map((row) => (row.c || []).map((cell) => (cell && cell.v != null ? String(cell.v).trim() : ''))));
-        } catch (err) {
-          reject(err);
-        }
+          const rows = (res.table && res.table.rows) || [];
+          resolve(rows.map(row =>
+            (row.c || []).map(cell => (cell && cell.v != null ? String(cell.v).trim() : ''))
+          ));
+        } catch (err) { reject(err); }
       };
 
       script.onerror = () => {
-        if (settled) return;
-        settled = true;
-        cleanup();
-        reject(new Error('Sheet script failed to load'));
+        if (done) return; done = true; cleanup();
+        reject(new Error('Sheet script load failed'));
       };
 
-      script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${SHEET_GID}&tqx=out:json;responseHandler:${callbackName}`;
+      script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${SHEET_GID}&tqx=out:json;responseHandler:${cb}`;
       document.head.appendChild(script);
     });
   }
 
-  function findLinkByLabel(rows, labelMatch) {
-    const needle = labelMatch.toLowerCase();
+  /* ─────────────────────────────────────────────
+     SHEET PARSING HELPERS
+  ───────────────────────────────────────────── */
+
+  /** Find a URL in any row that has `needle` as a label in an adjacent cell */
+  function findUrl(rows, needle) {
+    const n = needle.toLowerCase();
     for (const cells of rows) {
       for (let i = 0; i < cells.length - 1; i++) {
-        const label = (cells[i] || '').toLowerCase();
-        if (label.includes(needle)) {
+        if ((cells[i] || '').toLowerCase().includes(n)) {
           const url = cells[i + 1] || '';
-          if (url && /^https?:\/\//i.test(url)) return url;
+          if (/^https?:\/\//i.test(url)) return url;
         }
       }
     }
     return null;
   }
 
-  function findRowValues(rows, labelMatch, count = 2) {
-    const needle = labelMatch.toLowerCase();
+  /**
+   * Find network usage values.
+   * Sheet row format: ... "Network Usage (Cumulative)"  "3.39 GB"  "10.92 GB"  "14.31 GB"  timestamp ...
+   * Returns { download, upload, total } or null.
+   */
+  function findNetworkUsage(rows) {
     for (const cells of rows) {
       for (let i = 0; i < cells.length; i++) {
-        const label = (cells[i] || '').toLowerCase();
-        if (label.includes(needle)) {
-          return cells.slice(i + 1, i + 1 + count);
+        if ((cells[i] || '').toLowerCase().includes('network usage')) {
+          // next three values: download, upload, total
+          const [dl, ul, total] = [cells[i+1], cells[i+2], cells[i+3]];
+          if (dl && ul) return { download: dl, upload: ul, total: total || null };
         }
       }
     }
     return null;
   }
 
-  async function wireServerLinks() {
-    const serverLinkEls = Array.from(document.querySelectorAll('[data-server-label]'));
-    const networkUsageEl = document.getElementById('networkUsage');
-    if (!serverLinkEls.length && !networkUsageEl) return;
+  /**
+   * Find a timestamp cell for a given label.
+   * E.g. "Immich Tunnel Link"  <url>  <timestamp>
+   * Returns a Date or null.
+   */
+  function findTimestamp(rows, needle) {
+    const n = needle.toLowerCase();
+    for (const cells of rows) {
+      for (let i = 0; i < cells.length - 2; i++) {
+        if ((cells[i] || '').toLowerCase().includes(n)) {
+          // timestamp is usually 2 cols after the label
+          const raw = cells[i + 2] || '';
+          if (raw) {
+            const d = new Date(raw);
+            if (!isNaN(d.getTime())) return d;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  /** Age-based freshness: green < 2 h, orange < 12 h, red otherwise */
+  function freshnessDot(timestamp) {
+    if (!timestamp) return 'unknown';
+    const age = (Date.now() - timestamp.getTime()) / 3600000; // hours
+    if (age < 2)  return 'fresh';
+    if (age < 12) return 'stale';
+    return 'expired';
+  }
+
+  /* ─────────────────────────────────────────────
+     RENDER SERVERS
+  ───────────────────────────────────────────── */
+  function renderServers(rows) {
+    const container   = document.getElementById('serversContainer');
+    const networkEl   = document.getElementById('networkUsage');
+    const errorEl     = document.getElementById('sheetError');
+
+    // Clear skeleton
+    container.innerHTML = '';
+
+    // Network usage badge
+    const net = rows ? findNetworkUsage(rows) : null;
+    if (net) {
+      networkEl.innerHTML = `
+        <i class="fa-solid fa-arrow-down" title="Download"></i>${net.download}
+        <i class="fa-solid fa-arrow-up"   title="Upload"></i>${net.upload}
+      `;
+      // Optionally show total as a sub-line
+      if (net.total) {
+        const existingTotal = document.getElementById('networkTotal');
+        if (!existingTotal) {
+          const totalEl = document.createElement('p');
+          totalEl.id = 'networkTotal';
+          totalEl.className = 'network-total';
+          totalEl.textContent = `Total: ${net.total}`;
+          document.querySelector('.servers-section').insertBefore(
+            totalEl,
+            document.getElementById('sheetError')
+          );
+        } else {
+          existingTotal.textContent = `Total: ${net.total}`;
+        }
+      }
+    } else {
+      networkEl.textContent = rows ? '' : '';
+    }
+
+    // Show/hide error banner
+    if (!rows) {
+      errorEl.classList.remove('hidden');
+    } else {
+      errorEl.classList.add('hidden');
+    }
+
+    // Render each server button
+    SERVER_DEFS.forEach(def => {
+      const url = rows ? findUrl(rows, def.sheetLabel) : null;
+      const ts  = rows ? findTimestamp(rows, def.sheetLabel) : null;
+      const dot = freshnessDot(ts);
+
+      const el = document.createElement('a');
+      el.className = 'project-button';
+      el.target   = '_blank';
+      el.rel      = 'noopener noreferrer';
+
+      if (url) {
+        const cleanUrl = url.replace(/\/+$/, '');
+        el.href = def.urlSuffix ? cleanUrl + def.urlSuffix : url;
+      } else {
+        el.classList.add('unavailable');
+        el.removeAttribute('href');
+        el.setAttribute('aria-disabled', 'true');
+        el.title = rows ? 'Link unavailable right now' : 'Could not load links';
+      }
+
+      el.innerHTML = `
+        <i class="${def.icon} btn-icon" aria-hidden="true"></i>
+        <span class="project-button-text">${def.label}</span>
+        <span class="freshness-dot ${dot}" title="${dot === 'fresh' ? 'Updated recently' : dot === 'stale' ? 'Updated >2 h ago' : dot === 'expired' ? 'Updated >12 h ago' : 'Age unknown'}"></span>
+      `;
+
+      container.appendChild(el);
+    });
+  }
+
+  /* ─────────────────────────────────────────────
+     WIRE + REFRESH
+  ───────────────────────────────────────────── */
+  async function loadServers() {
+    const refreshBtn = document.getElementById('refreshBtn');
+    refreshBtn.classList.add('spinning');
 
     let rows = null;
     try {
       rows = await fetchSheetRows();
     } catch (err) {
-      console.error('Could not reach the sheet for Servers links:', err);
+      console.warn('Sheet fetch failed:', err.message);
+    } finally {
+      // Small delay so the spin animation is visible on fast networks
+      setTimeout(() => refreshBtn.classList.remove('spinning'), 700);
     }
 
-    serverLinkEls.forEach((el) => {
-      const url = rows ? findLinkByLabel(rows, el.dataset.serverLabel) : null;
-      const statusIcon = el.querySelector('.project-button-status');
-
-      if (url && /^https?:\/\//i.test(url)) {
-        const cleanUrl = url.replace(/\/+$/, '');
-        el.href = el.dataset.serverLabel === 'Jellyfin'
-          ? cleanUrl + '/web/#/music?topParentId=7e64e319657a9516ec78490da03edccb&collectionType=music&tab=5'
-          : url;
-        el.classList.remove('loading');
-      } else {
-        el.classList.remove('loading');
-        el.classList.add('unavailable');
-        el.removeAttribute('href');
-        el.setAttribute('aria-disabled', 'true');
-        el.title = 'Link unavailable right now';
-      }
-
-      if (statusIcon) statusIcon.remove();
-    });
-
-    if (networkUsageEl) {
-      const values = rows ? findRowValues(rows, 'Network Usage', 2) : null;
-      if (values && values[0] && values[1]) {
-        const [download, upload] = values;
-        networkUsageEl.innerHTML = `
-          <i class="fa-solid fa-arrow-down" title="Download"></i>${download}
-          <i class="fa-solid fa-arrow-up" title="Upload"></i>${upload}
-        `;
-      } else {
-        networkUsageEl.textContent = '';
-      }
-    }
+    renderServers(rows);
   }
 
-  wireServerLinks();
-});
+  /* ─────────────────────────────────────────────
+     INIT
+  ───────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    const body         = document.body;
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const sideNav      = document.getElementById('sideNav');
+    const navBackdrop  = document.getElementById('navBackdrop');
+    const themeToggle  = document.getElementById('themeToggle');
+    const refreshBtn   = document.getElementById('refreshBtn');
+    const petBlob      = document.getElementById('petBlob');
+    const petBubble    = document.getElementById('petBubble');
+    const pupilLeft    = document.getElementById('pupilLeft');
+    const pupilRight   = document.getElementById('pupilRight');
+
+    /* Theme */
+    if (localStorage.getItem('theme') === 'light') body.classList.add('light-theme');
+    applyDailyAccent();
+
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('light-theme');
+      localStorage.setItem('theme', body.classList.contains('light-theme') ? 'light' : 'dark');
+      applyDailyAccent();
+    });
+
+    /* Nav */
+    function openNav()  {
+      sideNav.classList.add('open'); navBackdrop.classList.add('visible');
+      hamburgerBtn.classList.add('open'); body.classList.add('nav-open');
+      hamburgerBtn.setAttribute('aria-expanded','true');
+      sideNav.setAttribute('aria-hidden','false');
+    }
+    function closeNav() {
+      sideNav.classList.remove('open'); navBackdrop.classList.remove('visible');
+      hamburgerBtn.classList.remove('open'); body.classList.remove('nav-open');
+      hamburgerBtn.setAttribute('aria-expanded','false');
+      sideNav.setAttribute('aria-hidden','true');
+    }
+
+    hamburgerBtn.addEventListener('click', () => sideNav.classList.contains('open') ? closeNav() : openNav());
+    navBackdrop.addEventListener('click', closeNav);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && sideNav.classList.contains('open')) closeNav(); });
+
+    /* Refresh button */
+    refreshBtn.addEventListener('click', loadServers);
+
+    /* Pet eyes */
+    document.addEventListener('mousemove', e => {
+      const r = petBlob.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
+      const dist  = Math.min(3, Math.hypot(e.clientX - cx, e.clientY - cy) / 40);
+      const mx = Math.cos(angle) * dist, my = Math.sin(angle) * dist;
+      pupilLeft.style.transform  = `translate(${mx}px, ${my}px)`;
+      pupilRight.style.transform = `translate(${mx}px, ${my}px)`;
+    });
+
+    /* Pet click */
+    const msgs = ['hi there! 👋', 'hello!', '*wiggles*', 'having a good day?', 'boop!', '✨ hey ✨'];
+    let msgIdx = 0, bubbleTimer;
+
+    function greet() {
+      petBlob.classList.remove('squish');
+      void petBlob.offsetWidth;
+      petBlob.classList.add('squish');
+      petBubble.textContent = msgs[msgIdx];
+      msgIdx = (msgIdx + 1) % msgs.length;
+      petBubble.classList.add('show');
+      clearTimeout(bubbleTimer);
+      bubbleTimer = setTimeout(() => petBubble.classList.remove('show'), 1800);
+    }
+
+    petBlob.addEventListener('click', greet);
+    petBlob.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); greet(); } });
+
+    /* Kick off initial server load */
+    loadServers();
+  });
   </script>
 </body>
 </html>
