@@ -353,7 +353,8 @@ body.nav-open .hero {
   font-size: clamp(1.1rem, 3.2vw, 1.6rem);
   letter-spacing: 0.02em;
   line-height: 1;
-  transition: color 0.6s ease, transform 0.3s var(--ease);
+  color: #ffffff;
+  transition: transform 0.3s var(--ease);
   user-select: none;
   cursor: default;
 }
@@ -638,13 +639,13 @@ body.nav-open .hero {
   <main class="hero" id="hero">
     <div class="hero-glow" aria-hidden="true"></div>
     <h1 class="name">Pranav Sharma</h1>
-    <div class="daily-emoji" id="dailyEmoji" aria-hidden="true"></div>
     <div class="links-container">
       <a href="mailto:pranavsharma2009@cloud.com" class="link-button"><i class="fa-solid fa-envelope"></i> Email</a>
       <a href="https://x.com/pranavsharma_io" target="_blank" rel="noopener noreferrer" class="link-button"><i class="fa-brands fa-x-twitter"></i> Twitter / X</a>
       <a href="https://instagram.com/pranavsharma.io" target="_blank" rel="noopener noreferrer" class="link-button"><i class="fa-brands fa-instagram"></i> Instagram</a>
       <a href="https://t.me/pranavsharmahere" target="_blank" rel="noopener noreferrer" class="link-button"><i class="fa-brands fa-telegram"></i> Telegram</a>
     </div>
+    <div class="daily-emoji" id="dailyEmoji" aria-hidden="true"></div>
   </main>
 
   <!-- Pet -->
@@ -691,7 +692,16 @@ body.nav-open .hero {
   /* ─────────────────────────────────────────────
      THEME & ACCENT
   ───────────────────────────────────────────── */
-  const dailyAccents = ['#C2185B','#F57C00','#D32F2F','#D81B60','#7B1FA2','#E64A19','#FF4081'];
+  const dailyAccents = [
+    '#FF3B7F','#FF6B35','#FFB800','#7CFF6B','#20C997','#00D4FF','#3B82F6',
+    '#7C4DFF','#D946EF','#FF2E63','#FF9F1C','#2EC4B6','#06D6A0','#118AB2',
+    '#EF476F','#FFD166','#8338EC','#3A86FF','#FB5607','#FF006E','#00F5D4',
+    '#F72585','#4CC9F0','#7209B7','#F94144','#F3722C','#90BE6D','#43AA8B',
+    '#577590','#FFCA3A','#C77DFF','#39FF14','#FF61A6','#00E5FF','#FFD23F',
+    '#FF073A','#00FFAB','#FF4D6D','#9D4EDD','#FFA62B','#00B4D8','#B5179E',
+    '#FF9E00','#40C9A2','#FF477E','#4EA8DE','#FFEA00','#7400B8','#FF7B00',
+    '#38B000','#E4FF1A','#FF1E56','#00C2D1','#845EC2','#FF9671',
+  ];
 
   function hexToRgb(hex) {
     const v = hex.replace('#','');
@@ -699,7 +709,7 @@ body.nav-open .hero {
   }
 
   function applyDailyAccent() {
-    const color = dailyAccents[new Date().getDay()];
+    const color = dailyAccents[dayOfYear(new Date()) % dailyAccents.length];
     const { r, g, b } = hexToRgb(color);
     const light = document.body.classList.contains('light-theme');
     const sa = light ? 0.10 : 0.14, ss = light ? 0.20 : 0.28;
@@ -752,26 +762,6 @@ body.nav-open .hero {
     "^.^","=)","):-3","=D","*<","(*_*)"
   ];
 
-  const emojiColorThemes = [
-    '#FF3B7F','#FF6B35','#FFB800','#7CFF6B','#20C997','#00D4FF','#3B82F6',
-    '#7C4DFF','#D946EF','#FF2E63','#FF9F1C','#2EC4B6','#06D6A0','#118AB2',
-    '#EF476F','#FFD166','#8338EC','#3A86FF','#FB5607','#FF006E','#00F5D4',
-    '#F72585','#4CC9F0','#7209B7','#F94144','#F3722C','#90BE6D','#43AA8B',
-    '#577590','#FFCA3A','#C77DFF','#39FF14','#FF61A6','#00E5FF','#FFD23F',
-  ];
-
-  function hashString(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = (hash * 31 + str.charCodeAt(i)) | 0;
-    }
-    return Math.abs(hash);
-  }
-
-  function getEmojiColor(emoji) {
-    return emojiColorThemes[hashString(emoji) % emojiColorThemes.length];
-  }
-
   function dayOfYear(date) {
     const start = new Date(date.getFullYear(), 0, 0);
     const diff = date - start;
@@ -781,9 +771,7 @@ body.nav-open .hero {
   function applyDailyEmoji() {
     const el = document.getElementById('dailyEmoji');
     if (!el) return;
-    const todaysEmoji = happyEmoticons[dayOfYear(new Date()) % happyEmoticons.length];
-    el.textContent = todaysEmoji;
-    el.style.color = getEmojiColor(todaysEmoji);
+    el.textContent = happyEmoticons[dayOfYear(new Date()) % happyEmoticons.length];
   }
 
   /* ─────────────────────────────────────────────
