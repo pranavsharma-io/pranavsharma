@@ -289,18 +289,9 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
 .sheet-error.hidden { display: none; }
 
 /* ── Refresh button ── */
-.refresh-btn {
-  font-size: 0.72rem;
-  color: var(--accent-color);
-  opacity: 0.8;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  transition: background-color 0.2s ease, opacity 0.2s ease;
-  cursor: pointer;
-}
+.refresh-btn { display: none; }
+
+.freshness-dot { display: none; }
 .refresh-btn:hover { background-color: var(--accent-soft); opacity: 1; }
 .refresh-btn.spinning i { animation: spinOnce 0.7s linear; }
 
@@ -838,22 +829,6 @@ body.nav-open .hero {
         <i class="fa-solid fa-arrow-down" title="Download"></i>${net.download}
         <i class="fa-solid fa-arrow-up"   title="Upload"></i>${net.upload}
       `;
-      // Optionally show total as a sub-line
-      if (net.total) {
-        const existingTotal = document.getElementById('networkTotal');
-        if (!existingTotal) {
-          const totalEl = document.createElement('p');
-          totalEl.id = 'networkTotal';
-          totalEl.className = 'network-total';
-          totalEl.textContent = `Total: ${net.total}`;
-          document.querySelector('.servers-section').insertBefore(
-            totalEl,
-            document.getElementById('sheetError')
-          );
-        } else {
-          existingTotal.textContent = `Total: ${net.total}`;
-        }
-      }
     } else {
       networkEl.textContent = rows ? '' : '';
     }
