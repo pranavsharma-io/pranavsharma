@@ -8,7 +8,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
@@ -346,6 +346,19 @@ body.nav-open .hero {
   transition: color 0.5s ease;
 }
 
+/* ── Daily emoji badge ── */
+.daily-emoji {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 900;
+  font-size: clamp(1.1rem, 3.2vw, 1.6rem);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  transition: color 0.6s ease, transform 0.3s var(--ease);
+  user-select: none;
+  cursor: default;
+}
+.daily-emoji:hover { transform: scale(1.08) rotate(-2deg); }
+
 .links-container {
   display: flex;
   flex-wrap: wrap;
@@ -625,6 +638,7 @@ body.nav-open .hero {
   <main class="hero" id="hero">
     <div class="hero-glow" aria-hidden="true"></div>
     <h1 class="name">Pranav Sharma</h1>
+    <div class="daily-emoji" id="dailyEmoji" aria-hidden="true"></div>
     <div class="links-container">
       <a href="mailto:pranavsharma2009@cloud.com" class="link-button"><i class="fa-solid fa-envelope"></i> Email</a>
       <a href="https://x.com/pranavsharma_io" target="_blank" rel="noopener noreferrer" class="link-button"><i class="fa-brands fa-x-twitter"></i> Twitter / X</a>
@@ -692,6 +706,84 @@ body.nav-open .hero {
     document.documentElement.style.setProperty('--accent-color', color);
     document.documentElement.style.setProperty('--accent-soft',       `rgba(${r},${g},${b},${sa})`);
     document.documentElement.style.setProperty('--accent-soft-strong',`rgba(${r},${g},${b},${ss})`);
+  }
+
+  /* ─────────────────────────────────────────────
+     DAILY EMOJI (kaomoji) + PER-EMOJI COLOR THEMES
+     • the emoji changes once a day (cycles through the whole list)
+     • every emoji always gets the SAME colour (hashed, so it's
+       "definite" — not random each load), picked from a big pool
+       of vivid, mast-mast colour themes
+  ───────────────────────────────────────────── */
+  const happyEmoticons = [
+    "ヾ(≧▽≦*)o","φ(￣0￣)q","(≧▽≦q)","ψ(｀∇´)ψ","（￣︶￣）↗","^_^^","(～￣▽￣)～",
+    "( •̀ ω •́ )✧","[]\\(￣▽￣)","φ(゜▽゜*)♪","o(*^＠^*)o","O(∩_∩)O","(✿◡‿◡)","(*^▽^)",
+    "（*＾-＾）","(*^_^)","(❁´◡`❁)","(≧∇≦)ﾉ","(´▽`ʃ♡ƪ)","(●ˇ∀ˇ●)","○( ＾皿＾)っ","Hehehe…",
+    "(￣y▽￣)╭","Ohohoho.....","^o^/","(‾◡◝)","╰(*°▽°*)╯","(〃￣︶￣)人(￣︶￣〃)","o(*^▽^*)┛",
+    "o(*￣▽￣*)ブ","(^_-)db(-_^)","♪(^∇^)","(≧∀≦)ゞ","o(*￣︶￣*)o","--<-<-<@","(oﾟvﾟ)ノ",
+    "o(*≧▽≦)ツ┏━┓","(/≧▽≦)/","( $ _ $ )","(☆▽☆)","ヾ(＠⌒ー⌒＠)ノ","ㄟ(≧◇≦)ㄏ","o((>ω< ))o",
+    "( *︾▽︾)","ヾ(≧ ▽ ≦)ゝ","☆*: .｡. o(≧▽≦)o .｡.:☆","(((o(*ﾟ▽ﾟ*)o)))","＼(((￣(￣(￣▽￣)￣)￣)))／",
+    "♪(´▽｀)","( *^-^)ρ(^0^* )","~///(^v^)\\\\~","(^///^)","(p≧w≦q)","o(*￣▽￣*)o","( •̀ ω •́ )y",
+    "(o゜▽゜)o☆","ƪ(˘⌣˘)ʃ","ヾ(•ω•`)o","\\(￣︶￣*\\))","(* ￣3)(ε￣ *)","－O－","(*￣3￣)╭",
+    "( ´･･)ﾉ(._.``*)","(｡･∀･)ﾉﾞ","o(\\*￣▽￣\\*)ブ","(_　_)","。゜zｚＺ","(∪.∪ )...zzz",
+    "!(*￣(￣　*)(￣o￣) . z Z","(づ￣ 3￣)づ","（＾∀＾●）ﾉｼ","（づ￣3￣）づ","╭❤️～","\\(@^0^@)/",
+    "ヾ(^▽^*)))","(～﹃～)~zZ","☆⌒(*＾-゜)v","(￣o￣) . z Z","(*￣;(￣ *)","||ヽ(*￣▽￣*)ノミ|Ю",
+    "(＾Ｕ＾)ノ~ＹＯ","o(*°▽°*)o","ヾ(￣▽￣) Bye~Bye~","( ﾟдﾟ)つ Bye","(๑•̀ㅂ•́)و✧",
+    "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧","(∩^o^)⊃━☆","✪ ω ✪","d=====(￣▽￣*)b","＜（＾－＾）＞","o(*￣▽￣*)oo",
+    "(￣▽￣)ｄ","(╹ڡ╹ )","(u‿ฺu✿ฺ)","ヽ(✿ﾟ▽ﾟ)ノ","( •̀ .̫ •́ )✧","(^^ゞ","(＠＾０＾)","（。＾▽＾）",
+    "Ψ(￣∀￣)Ψ","*★,°:.☆(￣▽￣)/$:\\*.°★* 。","o(≧∀≦)o","(。・∀・)ノ","\\(≧▽≦)/","~b(￣▽￣)d",
+    "o(^▽^)o","(👉ﾟヮﾟ)👉","👈(ﾟヮﾟ👈)","👈(⌒▽⌒)👉","(¬‿¬)","(•_•)","( •_•)>⌐■-■","(⌐■_■)",
+    "ヾ(⌐■_■)ノ♪","(▀̿Ĺ̯▀̿ ̿)","＼(ﾟｰﾟ＼)( ﾉ ﾟｰﾟ)ﾉ","(￣y▽,￣)╭","(o|o)","(^人^)","§(￣▽￣)§",
+    "ψ(._. )>","(/▽＼)","(o′┏▽┓｀o)","(*≧︶≦))","(￣▽￣* )ゞ","(　o=^•ェ•)o　┏━┓","ผ(•̀_•́ผ)",
+    "(○｀ 3′○)","(❤️´艸｀❤️)","（〃｀ 3′〃）","(ง •_•)ง","(●'◡'●)","(. ❛ ᴗ ❛.)","ლ(╹◡╹ლ)",
+    "o(〃＾▽＾〃)o","(✿◠‿◠)","(>'-'<)","(。・ω・。)","(ﾉФωФ)ﾉ","ˋ( ° ▽、° )","=￣ω￣=",
+    "ο(=•ω＜=)ρ⌒☆","(✿◕‿◕✿)","✍️(◔◡◔)","(★‿★)","╰(￣ω￣ｏ)","~(￣▽￣)~","*〜(￣▽￣〜)",
+    "(〜￣▽￣)〜","(～o￣3￣)～","ԅ(¯﹃¯ԅ)","(￣﹃￣)","༼ つ ◕_◕ ༽つ","o(*////▽////)q","(/ω＼*)",
+    "………","(/ω•＼)","( ‵▽′)ψ","(❤️ ω ❤️)","(★ ω ★)","ヽ(￣ω￣(￣ω￣〃)ゝ","*(੭*ˊᵕˋ)੭",
+    "ଘ┏ (゜ω゜)=👉","U•ェ•U","（￣。。￣）","m( =∩王∩= )m","o(=•ェ•=)m","(‧‧)nnn","\\(0^◇^0)/~",
+    "o( =∩ω∩= )m","--\\(˙<>˙)/--","ﾉ≡[。。]≡","ฅʕ•̫͡•ʔฅ","( ◍•㉦•◍ )","(◉Θ◉)","ϵ( ‘Θ’ )϶",
+    "( ⓛ ω ⓛ )","(✧×✧)","(^◕.◕^)","ᓚᘏᗢ","~(=^‥^)ノ","/ᐠ｡ꞈ｡ᐟ\\","(^._.^)ﾉ","(^・ω・^ )",
+    "(ʘᴥʘ)","( ¯(∞)¯ )","(￣(工)￣)","<。)#)))≦","^(￣(oo)￣)^","(ʘ ͜ʖ ʘ)","( ͡• ͜ʖ ͡• )",
+    "( ͡° ͜ʖ ͡°)","( ͡~ ͜ʖ ͡°)","¯\\_(ツ)_/¯","（*゜ー゜）","（⊙ｏ⊙）","(*￣０￣)ノ","＼（〇_ｏ）／",
+    "(⊙o⊙)","¯\\(°_o)/¯","m( _ _ )m","(+_+)?","(o_ _)ﾉ","(￣▽￣)\"","(´ｰ∀ｰ`*)","(☆-ｖ-)",
+    "(。・・)ノ","♨︎_♨︎","◉_◉","(●__●)","(⊙_◎)","⚆_⚆","(•ˋ _ ˊ•)","^*^","╰(°▽°)╯",
+    ":-)",":-D","ᓚᘏᗢ",";)^","*~",";-):",")^*^","\\:D","^0^","\\:P",":-P",";P","OwO","UwU",
+    "~*~","^o^","<3","^3^",":-x","+*+","O_O","\\:O","¬*¬",";*","=.=",";]","^*+",";O","):-]",
+    "^.^","=)","):-3","=D","*<","(*_*)"
+  ];
+
+  const emojiColorThemes = [
+    '#FF3B7F','#FF6B35','#FFB800','#7CFF6B','#20C997','#00D4FF','#3B82F6',
+    '#7C4DFF','#D946EF','#FF2E63','#FF9F1C','#2EC4B6','#06D6A0','#118AB2',
+    '#EF476F','#FFD166','#8338EC','#3A86FF','#FB5607','#FF006E','#00F5D4',
+    '#F72585','#4CC9F0','#7209B7','#F94144','#F3722C','#90BE6D','#43AA8B',
+    '#577590','#FFCA3A','#C77DFF','#39FF14','#FF61A6','#00E5FF','#FFD23F',
+  ];
+
+  function hashString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash * 31 + str.charCodeAt(i)) | 0;
+    }
+    return Math.abs(hash);
+  }
+
+  function getEmojiColor(emoji) {
+    return emojiColorThemes[hashString(emoji) % emojiColorThemes.length];
+  }
+
+  function dayOfYear(date) {
+    const start = new Date(date.getFullYear(), 0, 0);
+    const diff = date - start;
+    return Math.floor(diff / 86400000);
+  }
+
+  function applyDailyEmoji() {
+    const el = document.getElementById('dailyEmoji');
+    if (!el) return;
+    const todaysEmoji = happyEmoticons[dayOfYear(new Date()) % happyEmoticons.length];
+    el.textContent = todaysEmoji;
+    el.style.color = getEmojiColor(todaysEmoji);
   }
 
   /* ─────────────────────────────────────────────
@@ -973,6 +1065,7 @@ body.nav-open .hero {
     /* Theme */
     if (localStorage.getItem('theme') === 'light') body.classList.add('light-theme');
     applyDailyAccent();
+    applyDailyEmoji();
 
     themeToggle.addEventListener('click', () => {
       body.classList.toggle('light-theme');
