@@ -170,7 +170,8 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   border-bottom: 1px solid var(--accent-soft-strong);
 }
 
-.servers-title {
+.servers-title,
+.achievements-title {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -253,15 +254,15 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
 
 /* ── Freshness dot ── */
 .freshness-dot {
-  width: 6px;
-  height: 6px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-.freshness-dot.fresh   { background: #4caf50; box-shadow: 0 0 6px #4caf5066; }
-.freshness-dot.stale   { background: #ff9800; box-shadow: 0 0 6px #ff980066; }
-.freshness-dot.expired { background: #f44336; box-shadow: 0 0 6px #f4433666; }
-.freshness-dot.unknown { background: var(--text-color); opacity: 0.3; }
+.freshness-dot.fresh   { background: #4caf50; box-shadow: 0 0 8px 1px #4caf5088; }
+.freshness-dot.stale   { background: #ff9800; box-shadow: 0 0 8px 1px #ff980088; }
+.freshness-dot.expired { background: #f44336; box-shadow: 0 0 8px 1px #f4433688; }
+.freshness-dot.unknown { background: var(--text-color); opacity: 0.45; box-shadow: 0 0 4px 1px var(--shadow-color); }
 
 /* ── Button states ── */
 .project-button.loading { cursor: wait; opacity: 0.6; pointer-events: none; }
@@ -557,6 +558,31 @@ body.nav-open .hero {
       </div>
     </div>
 
+    <!-- Achievements (dynamic from sheet) -->
+    <div class="projects-section">
+      <p class="projects-title achievements-title">
+        <span>Achievements</span>
+        <button class="refresh-btn" id="achievementsRefreshBtn" aria-label="Refresh achievements" title="Refresh">
+          <i class="fa-solid fa-rotate-right"></i>
+        </button>
+      </p>
+
+      <!-- Sheet error banner -->
+      <p class="sheet-error hidden" id="achievementsError">
+        <i class="fa-solid fa-triangle-exclamation"></i> Could not reach sheet
+      </p>
+
+      <!-- Achievement buttons injected by JS -->
+      <div class="projects-container" id="achievementsContainer">
+        <!-- skeleton placeholder -->
+        <div class="project-button loading" aria-hidden="true">
+          <i class="fa-solid fa-trophy btn-icon"></i>
+          <span class="project-button-text">Loading…</span>
+          <i class="fa-solid fa-circle-notch fa-spin project-button-status"></i>
+        </div>
+      </div>
+    </div>
+
     <!-- Servers (dynamic from sheet) -->
     <div class="projects-section servers-section">
       <p class="projects-title servers-title">
@@ -633,6 +659,10 @@ body.nav-open .hero {
   const SHEET_GID = '0';
   const FETCH_TIMEOUT_MS = 8000;
 
+  const ACHIEVEMENTS_SHEET_ID  = '19f2TNFoT9ny01VBJv70APTq7Y_p66jr26VPWT1sE1zQ';
+  const ACHIEVEMENTS_SHEET_GID = '0';
+  const DEFAULT_ACHIEVEMENT_ICON = 'fa-solid fa-trophy';
+
   /*
    * Server definitions — maps each UI card to a sheet label.
    * Add or remove entries here to control what appears in the nav.
@@ -678,7 +708,7 @@ body.nav-open .hero {
   ───────────────────────────────────────────── */
   let jsonpSeq = 0;
 
-  function fetchSheetRows() {
+  function fetchSheetRowsFrom(sheetId, gid) {
     return new Promise((resolve, reject) => {
       const cb = `__sheetCb_${Date.now()}_${jsonpSeq++}`;
       const script = document.createElement('script');
@@ -710,9 +740,17 @@ body.nav-open .hero {
         reject(new Error('Sheet script load failed'));
       };
 
-      script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${SHEET_GID}&tqx=out:json;responseHandler:${cb}`;
+      script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?gid=${gid}&tqx=out:json;responseHandler:${cb}`;
       document.head.appendChild(script);
     });
+  }
+
+  function fetchSheetRows() {
+    return fetchSheetRowsFrom(SHEET_ID, SHEET_GID);
+  }
+
+  function fetchAchievementsRows() {
+    return fetchSheetRowsFrom(ACHIEVEMENTS_SHEET_ID, ACHIEVEMENTS_SHEET_GID);
   }
 
   /* ─────────────────────────────────────────────
@@ -859,6 +897,70 @@ body.nav-open .hero {
   }
 
   /* ─────────────────────────────────────────────
+     RENDER ACHIEVEMENTS
+     Sheet columns: platform_name | font_awesome_icon | link
+  ───────────────────────────────────────────── */
+  function renderAchievements(rows) {
+    const container = document.getElementById('achievementsContainer');
+    const errorEl    = document.getElementById('achievementsError');
+
+    container.innerHTML = '';
+
+    if (!rows) {
+      errorEl.classList.remove('hidden');
+      return;
+    }
+    errorEl.classList.add('hidden');
+
+    // Skip a possible header row (e.g. "platform_name, font_awsome_icon, link")
+    const dataRows = rows.filter(cells => {
+      const name = (cells[0] || '').toLowerCase();
+      const link = cells[2] || '';
+      if (name.includes('platform_name')) return false;
+      return name.trim() !== '' && /^https?:\/\//i.test(link);
+    });
+
+    if (dataRows.length === 0) {
+      container.innerHTML = `<p class="sheet-error" style="margin:0;"><i class="fa-solid fa-circle-info"></i> No achievements yet</p>`;
+      return;
+    }
+
+    dataRows.forEach(cells => {
+      const name = cells[0] || 'Achievement';
+      const iconRaw = (cells[1] || '').trim();
+      const link = cells[2] || '';
+      const icon = iconRaw || DEFAULT_ACHIEVEMENT_ICON;
+
+      const el = document.createElement('a');
+      el.className = 'project-button';
+      el.href = link;
+      el.target = '_blank';
+      el.rel = 'noopener noreferrer';
+      el.innerHTML = `
+        <i class="${icon} btn-icon" aria-hidden="true"></i>
+        <span class="project-button-text">${name}</span>
+      `;
+      container.appendChild(el);
+    });
+  }
+
+  async function loadAchievements() {
+    const refreshBtn = document.getElementById('achievementsRefreshBtn');
+    refreshBtn.classList.add('spinning');
+
+    let rows = null;
+    try {
+      rows = await fetchAchievementsRows();
+    } catch (err) {
+      console.warn('Achievements sheet fetch failed:', err.message);
+    } finally {
+      setTimeout(() => refreshBtn.classList.remove('spinning'), 700);
+    }
+
+    renderAchievements(rows);
+  }
+
+  /* ─────────────────────────────────────────────
      WIRE + REFRESH
   ───────────────────────────────────────────── */
   async function loadServers() {
@@ -924,6 +1026,10 @@ body.nav-open .hero {
     /* Refresh button */
     refreshBtn.addEventListener('click', loadServers);
 
+    /* Achievements refresh button */
+    const achievementsRefreshBtn = document.getElementById('achievementsRefreshBtn');
+    achievementsRefreshBtn.addEventListener('click', loadAchievements);
+
     /* Pet eyes */
     document.addEventListener('mousemove', e => {
       const r = petBlob.getBoundingClientRect();
@@ -953,8 +1059,9 @@ body.nav-open .hero {
     petBlob.addEventListener('click', greet);
     petBlob.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); greet(); } });
 
-    /* Kick off initial server load */
+    /* Kick off initial loads */
     loadServers();
+    loadAchievements();
   });
   </script>
 </body>
