@@ -61,7 +61,6 @@ button:focus-visible,
   border-radius: 4px;
 }
 
-/* ── Icon buttons (hamburger + theme) ── */
 .icon-btn {
   position: fixed;
   top: 2rem;
@@ -107,7 +106,6 @@ button:focus-visible,
 .hamburger.open .bar:nth-child(2) { opacity: 0; }
 .hamburger.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* ── Theme toggle ── */
 .icon-moon, .icon-sun {
   position: absolute;
   top: 50%;
@@ -121,7 +119,6 @@ button:focus-visible,
 body.light-theme .icon-moon { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
 body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
 
-/* ── Nav backdrop ── */
 .nav-backdrop {
   position: fixed;
   inset: 0;
@@ -133,7 +130,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
 }
 .nav-backdrop.visible { opacity: 1; pointer-events: auto; }
 
-/* ── Side nav ── */
 .side-nav {
   position: fixed;
   top: 0;
@@ -157,7 +153,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
 .side-nav::-webkit-scrollbar-track { background: transparent; }
 .side-nav::-webkit-scrollbar-thumb { background: var(--accent-soft-strong); border-radius: 2px; }
 
-/* ── Section titles ── */
 .projects-title {
   font-family: var(--font-body);
   font-weight: 500;
@@ -179,7 +174,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   flex-wrap: wrap;
 }
 
-/* ── Network usage badge ── */
 .network-usage {
   font-size: 0.72rem;
   font-weight: 400;
@@ -197,7 +191,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
 .network-usage .fa-arrow-down { color: #4fc3f7; }
 .network-usage .fa-arrow-up   { color: #ff8a65; }
 
-/* ── Network total (under servers title) ── */
 .network-total {
   font-size: 0.7rem;
   font-weight: 400;
@@ -208,7 +201,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   letter-spacing: 0.01em;
 }
 
-/* ── Project/server buttons ── */
 .projects-container { display: flex; flex-direction: column; gap: 0.85rem; }
 
 .project-button {
@@ -244,7 +236,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
 .servers-section { margin-top: 2.5rem; }
 .project-button-text { flex: 1; }
 
-/* ── Spinner inside button ── */
 .project-button-status {
   font-size: 0.8rem;
   color: var(--accent-color);
@@ -252,7 +243,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   flex-shrink: 0;
 }
 
-/* ── Freshness dot ── */
 .freshness-dot {
   width: 9px;
   height: 9px;
@@ -264,7 +254,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
 .freshness-dot.expired { background: #f44336; box-shadow: 0 0 8px 1px #f4433688; }
 .freshness-dot.unknown { background: var(--text-color); opacity: 0.45; box-shadow: 0 0 4px 1px var(--shadow-color); }
 
-/* ── Button states ── */
 .project-button.loading { cursor: wait; opacity: 0.6; pointer-events: none; }
 
 .project-button.unavailable { cursor: not-allowed; opacity: 0.45; }
@@ -275,7 +264,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   transform: none;
 }
 
-/* ── Sheet error banner ── */
 .sheet-error {
   font-size: 0.72rem;
   color: #f44336;
@@ -288,7 +276,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
 }
 .sheet-error.hidden { display: none; }
 
-/* ── Refresh button ── */
 .refresh-btn { display: none; }
 
 .freshness-dot { display: none; }
@@ -300,7 +287,6 @@ body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotat
   to   { transform: rotate(360deg); }
 }
 
-/* ── Hero ── */
 .hero {
   position: relative;
   min-height: 100vh;
@@ -346,7 +332,6 @@ body.nav-open .hero {
   transition: color 0.5s ease;
 }
 
-/* ── Daily emoji badge ── */
 .daily-emoji {
   font-family: 'Poppins', sans-serif;
   font-weight: 900;
@@ -393,7 +378,6 @@ body.nav-open .hero {
   box-shadow: 0 10px 26px var(--accent-soft-strong);
 }
 
-/* ── Pet ── */
 .pet-wrap {
   position: fixed;
   bottom: 2rem;
@@ -472,7 +456,6 @@ body.nav-open .hero {
   transition: background-color 0.5s ease;
 }
 
-/* ── Animations ── */
 @keyframes heroReveal { to { opacity: 1; transform: translateY(0); } }
 
 @keyframes petFloat {
@@ -495,7 +478,6 @@ body.nav-open .hero {
   100% { transform: scale(1, 1); }
 }
 
-/* ── Responsive ── */
 @media (max-width: 900px) {
   .side-nav { width: 300px; padding: 5.5rem 2rem 2rem; }
 }
@@ -541,7 +523,6 @@ body.nav-open .hero {
 
   <nav class="side-nav" id="sideNav" aria-hidden="true">
 
-    <!-- Projects (static) -->
     <div class="projects-section">
       <p class="projects-title">My Projects</p>
       <div class="projects-container">
@@ -563,7 +544,6 @@ body.nav-open .hero {
       </div>
     </div>
 
-    <!-- Achievements (dynamic from sheet) -->
     <div class="projects-section">
       <p class="projects-title achievements-title">
         <span>Achievements</span>
@@ -572,14 +552,11 @@ body.nav-open .hero {
         </button>
       </p>
 
-      <!-- Sheet error banner -->
       <p class="sheet-error hidden" id="achievementsError">
         <i class="fa-solid fa-triangle-exclamation"></i> Could not reach sheet
       </p>
 
-      <!-- Achievement buttons injected by JS -->
       <div class="projects-container" id="achievementsContainer">
-        <!-- skeleton placeholder -->
         <div class="project-button loading" aria-hidden="true">
           <i class="fa-solid fa-trophy btn-icon"></i>
           <span class="project-button-text">Loading…</span>
@@ -588,13 +565,11 @@ body.nav-open .hero {
       </div>
     </div>
 
-    <!-- Servers (static, hardcoded) -->
     <div class="projects-section servers-section">
       <p class="projects-title servers-title">
         <span>Servers</span>
       </p>
 
-      <!-- Server buttons -->
       <div class="projects-container" id="serversContainer">
         <a href="https://photos.pranavsharma.dpdns.org" target="_blank" rel="noopener noreferrer" class="project-button">
           <i class="fa-solid fa-images btn-icon" aria-hidden="true"></i><span class="project-button-text">Photos</span>
@@ -611,7 +586,6 @@ body.nav-open .hero {
       </div>
     </div>
 
-    <!-- Personal Stuffs (static) -->
     <div class="projects-section">
       <p class="projects-title">Personal Stuffs</p>
       <div class="projects-container">
@@ -623,7 +597,6 @@ body.nav-open .hero {
 
   </nav>
 
-  <!-- Hero -->
   <main class="hero" id="hero">
     <div class="hero-glow" aria-hidden="true"></div>
     <h1 class="name">Pranav Sharma</h1>
@@ -636,7 +609,6 @@ body.nav-open .hero {
     <div class="daily-emoji" id="dailyEmoji" aria-hidden="true"></div>
   </main>
 
-  <!-- Pet -->
   <div class="pet-wrap" id="petWrap">
     <div class="pet-bubble" id="petBubble"></div>
     <div class="pet-blob" id="petBlob" role="button" tabindex="0" aria-label="A little companion. Click to say hi.">
@@ -646,16 +618,10 @@ body.nav-open .hero {
   </div>
 
   <script>
-  /* ─────────────────────────────────────────────
-     CONFIG
-  ───────────────────────────────────────────── */
   const ACHIEVEMENTS_SHEET_ID  = '19f2TNFoT9ny01VBJv70APTq7Y_p66jr26VPWT1sE1zQ';
   const ACHIEVEMENTS_SHEET_GID = '0';
   const DEFAULT_ACHIEVEMENT_ICON = 'fa-solid fa-trophy';
 
-  /* ─────────────────────────────────────────────
-     THEME & ACCENT
-  ───────────────────────────────────────────── */
   const dailyAccents = [
     '#FF3B7F','#FF6B35','#FFB800','#7CFF6B','#20C997','#00D4FF','#3B82F6',
     '#7C4DFF','#D946EF','#FF2E63','#FF9F1C','#2EC4B6','#06D6A0','#118AB2',
@@ -682,13 +648,6 @@ body.nav-open .hero {
     document.documentElement.style.setProperty('--accent-soft-strong',`rgba(${r},${g},${b},${ss})`);
   }
 
-  /* ─────────────────────────────────────────────
-     DAILY EMOJI (kaomoji) + PER-EMOJI COLOR THEMES
-     • the emoji changes once a day (cycles through the whole list)
-     • every emoji always gets the SAME colour (hashed, so it's
-       "definite" — not random each load), picked from a big pool
-       of vivid, mast-mast colour themes
-  ───────────────────────────────────────────── */
   const happyEmoticons = [
     "ヾ(≧▽≦*)o","φ(￣0￣)q","(≧▽≦q)","ψ(｀∇´)ψ","（￣︶￣）↗","^_^^","(～￣▽￣)～",
     "( •̀ ω •́ )✧","[]\\(￣▽￣)","φ(゜▽゜*)♪","o(*^＠^*)o","O(∩_∩)O","(✿◡‿◡)","(*^▽^)",
@@ -738,9 +697,6 @@ body.nav-open .hero {
     el.textContent = happyEmoticons[dayOfYear(new Date()) % happyEmoticons.length];
   }
 
-  /* ─────────────────────────────────────────────
-     SHEET FETCH (JSONP) — used for Achievements only
-  ───────────────────────────────────────────── */
   let jsonpSeq = 0;
   const FETCH_TIMEOUT_MS = 8000;
 
@@ -785,10 +741,6 @@ body.nav-open .hero {
     return fetchSheetRowsFrom(ACHIEVEMENTS_SHEET_ID, ACHIEVEMENTS_SHEET_GID);
   }
 
-  /* ─────────────────────────────────────────────
-     RENDER ACHIEVEMENTS
-     Sheet columns: platform_name | font_awesome_icon | link
-  ───────────────────────────────────────────── */
   function renderAchievements(rows) {
     const container = document.getElementById('achievementsContainer');
     const errorEl    = document.getElementById('achievementsError');
@@ -801,7 +753,6 @@ body.nav-open .hero {
     }
     errorEl.classList.add('hidden');
 
-    // Skip a possible header row (e.g. "platform_name, font_awsome_icon, link")
     const dataRows = rows.filter(cells => {
       const name = (cells[0] || '').toLowerCase();
       const link = cells[2] || '';
@@ -849,9 +800,6 @@ body.nav-open .hero {
     renderAchievements(rows);
   }
 
-  /* ─────────────────────────────────────────────
-     INIT
-  ───────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', () => {
     const body         = document.body;
     const hamburgerBtn = document.getElementById('hamburgerBtn');
@@ -863,7 +811,6 @@ body.nav-open .hero {
     const pupilLeft    = document.getElementById('pupilLeft');
     const pupilRight   = document.getElementById('pupilRight');
 
-    /* Theme */
     if (localStorage.getItem('theme') === 'light') body.classList.add('light-theme');
     applyDailyAccent();
     applyDailyEmoji();
@@ -874,7 +821,6 @@ body.nav-open .hero {
       applyDailyAccent();
     });
 
-    /* Nav */
     function openNav()  {
       sideNav.classList.add('open'); navBackdrop.classList.add('visible');
       hamburgerBtn.classList.add('open'); body.classList.add('nav-open');
@@ -892,11 +838,9 @@ body.nav-open .hero {
     navBackdrop.addEventListener('click', closeNav);
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && sideNav.classList.contains('open')) closeNav(); });
 
-    /* Achievements refresh button */
     const achievementsRefreshBtn = document.getElementById('achievementsRefreshBtn');
     achievementsRefreshBtn.addEventListener('click', loadAchievements);
 
-    /* Pet eyes */
     document.addEventListener('mousemove', e => {
       const r = petBlob.getBoundingClientRect();
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
@@ -907,7 +851,6 @@ body.nav-open .hero {
       pupilRight.style.transform = `translate(${mx}px, ${my}px)`;
     });
 
-    /* Pet click */
     const msgs = ['hi there! 👋', 'hello!', '*wiggles*', 'having a good day?', 'boop!', '✨ hey ✨'];
     let msgIdx = 0, bubbleTimer;
 
@@ -925,7 +868,6 @@ body.nav-open .hero {
     petBlob.addEventListener('click', greet);
     petBlob.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); greet(); } });
 
-    /* Kick off achievements load (servers are now static, no fetch needed) */
     loadAchievements();
   });
   </script>
