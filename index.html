@@ -588,48 +588,26 @@ body.nav-open .hero {
       </div>
     </div>
 
-    <!-- Servers (dynamic from sheet) -->
+    <!-- Servers (static, hardcoded) -->
     <div class="projects-section servers-section">
       <p class="projects-title servers-title">
         <span>Servers</span>
-        <span style="display:flex;align-items:center;gap:0.5rem;">
-          <span class="network-usage" id="networkUsage">
-            <i class="fa-solid fa-circle-notch fa-spin"></i>
-          </span>
-          <button class="refresh-btn" id="refreshBtn" aria-label="Refresh server links" title="Refresh">
-            <i class="fa-solid fa-rotate-right"></i>
-          </button>
-        </span>
       </p>
 
-      <!-- Sheet error banner -->
-      <p class="sheet-error hidden" id="sheetError">
-        <i class="fa-solid fa-triangle-exclamation"></i> Could not reach sheet
-      </p>
-
-      <!-- Server buttons injected by JS -->
+      <!-- Server buttons -->
       <div class="projects-container" id="serversContainer">
-        <!-- skeleton placeholders -->
-        <div class="project-button loading" aria-hidden="true">
-          <i class="fa-solid fa-images btn-icon"></i>
-          <span class="project-button-text">Photos</span>
-          <i class="fa-solid fa-circle-notch fa-spin project-button-status"></i>
-        </div>
-        <div class="project-button loading" aria-hidden="true">
-          <i class="fa-solid fa-music btn-icon"></i>
-          <span class="project-button-text">Music</span>
-          <i class="fa-solid fa-circle-notch fa-spin project-button-status"></i>
-        </div>
-        <div class="project-button loading" aria-hidden="true">
-          <i class="fa-solid fa-folder-open btn-icon"></i>
-          <span class="project-button-text">Files</span>
-          <i class="fa-solid fa-circle-notch fa-spin project-button-status"></i>
-        </div>
-        <div class="project-button loading" aria-hidden="true">
-          <i class="fa-solid fa-comments btn-icon"></i>
-          <span class="project-button-text">Chat</span>
-          <i class="fa-solid fa-circle-notch fa-spin project-button-status"></i>
-        </div>
+        <a href="https://photos.pranavsharma.dpdns.org" target="_blank" rel="noopener noreferrer" class="project-button">
+          <i class="fa-solid fa-images btn-icon" aria-hidden="true"></i><span class="project-button-text">Photos</span>
+        </a>
+        <a href="https://music.pranavsharma.dpdns.org/web/#/music?topParentId=7e64e319657a9516ec78490da03edccb&collectionType=music&tab=5" target="_blank" rel="noopener noreferrer" class="project-button">
+          <i class="fa-solid fa-music btn-icon" aria-hidden="true"></i><span class="project-button-text">Music</span>
+        </a>
+        <a href="https://files.pranavsharma.dpdns.org" target="_blank" rel="noopener noreferrer" class="project-button">
+          <i class="fa-solid fa-folder-open btn-icon" aria-hidden="true"></i><span class="project-button-text">Files</span>
+        </a>
+        <a href="https://vault.pranavsharma.dpdns.org" target="_blank" rel="noopener noreferrer" class="project-button">
+          <i class="fa-solid fa-shield-halved btn-icon" aria-hidden="true"></i><span class="project-button-text">Vault</span>
+        </a>
       </div>
     </div>
 
@@ -671,31 +649,9 @@ body.nav-open .hero {
   /* ─────────────────────────────────────────────
      CONFIG
   ───────────────────────────────────────────── */
-  const SHEET_ID  = '1MHjpvU0m-zOCUG59hN9JIxgfN8si_gsntl8c1w5B7Kg';
-  const SHEET_GID = '0';
-  const FETCH_TIMEOUT_MS = 8000;
-
   const ACHIEVEMENTS_SHEET_ID  = '19f2TNFoT9ny01VBJv70APTq7Y_p66jr26VPWT1sE1zQ';
   const ACHIEVEMENTS_SHEET_GID = '0';
   const DEFAULT_ACHIEVEMENT_ICON = 'fa-solid fa-trophy';
-
-  /*
-   * Server definitions — maps each UI card to a sheet label.
-   * Add or remove entries here to control what appears in the nav.
-   *
-   * jellyfin_suffix: optional path appended to the URL for that server
-   * icon           : Font Awesome class(es)
-   * label          : display name
-   * sheetLabel     : substring to look for in the sheet (case-insensitive)
-   */
-const SERVER_DEFS = [
-    { id: 'photos',    label: 'Photos',       sheetLabel: 'immich',       icon: 'fa-solid fa-images'       },
-    { id: 'music',     label: 'Music',        sheetLabel: 'jellyfin',     icon: 'fa-solid fa-music',
-      urlSuffix: '/web/#/music?topParentId=7e64e319657a9516ec78490da03edccb&collectionType=music&tab=5' },
-    { id: 'files',     label: 'Files',        sheetLabel: 'file browser', icon: 'fa-solid fa-folder-open'  },
-    { id: 'chat',      label: 'Chat',         sheetLabel: 'rocket.chat',  icon: 'fa-solid fa-comments'     },
-    { id: 'vault',     label: 'Vault',        sheetLabel: 'vaultwarden',  icon: 'fa-solid fa-shield-halved'},
-];
 
   /* ─────────────────────────────────────────────
      THEME & ACCENT
@@ -783,9 +739,10 @@ const SERVER_DEFS = [
   }
 
   /* ─────────────────────────────────────────────
-     SHEET FETCH (JSONP)
+     SHEET FETCH (JSONP) — used for Achievements only
   ───────────────────────────────────────────── */
   let jsonpSeq = 0;
+  const FETCH_TIMEOUT_MS = 8000;
 
   function fetchSheetRowsFrom(sheetId, gid) {
     return new Promise((resolve, reject) => {
@@ -824,139 +781,8 @@ const SERVER_DEFS = [
     });
   }
 
-  function fetchSheetRows() {
-    return fetchSheetRowsFrom(SHEET_ID, SHEET_GID);
-  }
-
   function fetchAchievementsRows() {
     return fetchSheetRowsFrom(ACHIEVEMENTS_SHEET_ID, ACHIEVEMENTS_SHEET_GID);
-  }
-
-  /* ─────────────────────────────────────────────
-     SHEET PARSING HELPERS
-  ───────────────────────────────────────────── */
-
-  /** Find a URL in any row that has `needle` as a label in an adjacent cell */
-  function findUrl(rows, needle) {
-    const n = needle.toLowerCase();
-    for (const cells of rows) {
-      for (let i = 0; i < cells.length - 1; i++) {
-        if ((cells[i] || '').toLowerCase().includes(n)) {
-          const url = cells[i + 1] || '';
-          if (/^https?:\/\//i.test(url)) return url;
-        }
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Find network usage values.
-   * Sheet row format: ... "Network Usage (Cumulative)"  "3.39 GB"  "10.92 GB"  "14.31 GB"  timestamp ...
-   * Returns { download, upload, total } or null.
-   */
-  function findNetworkUsage(rows) {
-    for (const cells of rows) {
-      for (let i = 0; i < cells.length; i++) {
-        if ((cells[i] || '').toLowerCase().includes('network usage')) {
-          // next three values: download, upload, total
-          const [dl, ul, total] = [cells[i+1], cells[i+2], cells[i+3]];
-          if (dl && ul) return { download: dl, upload: ul, total: total || null };
-        }
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Find a timestamp cell for a given label.
-   * E.g. "Immich Tunnel Link"  <url>  <timestamp>
-   * Returns a Date or null.
-   */
-  function findTimestamp(rows, needle) {
-    const n = needle.toLowerCase();
-    for (const cells of rows) {
-      for (let i = 0; i < cells.length - 2; i++) {
-        if ((cells[i] || '').toLowerCase().includes(n)) {
-          // timestamp is usually 2 cols after the label
-          const raw = cells[i + 2] || '';
-          if (raw) {
-            const d = new Date(raw);
-            if (!isNaN(d.getTime())) return d;
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  /** Age-based freshness: green < 2 h, orange < 12 h, red otherwise */
-  function freshnessDot(timestamp) {
-    if (!timestamp) return 'unknown';
-    const age = (Date.now() - timestamp.getTime()) / 3600000; // hours
-    if (age < 2)  return 'fresh';
-    if (age < 12) return 'stale';
-    return 'expired';
-  }
-
-  /* ─────────────────────────────────────────────
-     RENDER SERVERS
-  ───────────────────────────────────────────── */
-  function renderServers(rows) {
-    const container   = document.getElementById('serversContainer');
-    const networkEl   = document.getElementById('networkUsage');
-    const errorEl     = document.getElementById('sheetError');
-
-    // Clear skeleton
-    container.innerHTML = '';
-
-    // Network usage badge
-    const net = rows ? findNetworkUsage(rows) : null;
-    if (net) {
-      networkEl.innerHTML = `
-        <i class="fa-solid fa-arrow-down" title="Download"></i>${net.download}
-        <i class="fa-solid fa-arrow-up"   title="Upload"></i>${net.upload}
-      `;
-    } else {
-      networkEl.textContent = rows ? '' : '';
-    }
-
-    // Show/hide error banner
-    if (!rows) {
-      errorEl.classList.remove('hidden');
-    } else {
-      errorEl.classList.add('hidden');
-    }
-
-    // Render each server button
-    SERVER_DEFS.forEach(def => {
-      const url = rows ? findUrl(rows, def.sheetLabel) : null;
-      const ts  = rows ? findTimestamp(rows, def.sheetLabel) : null;
-      const dot = freshnessDot(ts);
-
-      const el = document.createElement('a');
-      el.className = 'project-button';
-      el.target   = '_blank';
-      el.rel      = 'noopener noreferrer';
-
-      if (url) {
-        const cleanUrl = url.replace(/\/+$/, '');
-        el.href = def.urlSuffix ? cleanUrl + def.urlSuffix : url;
-      } else {
-        el.classList.add('unavailable');
-        el.removeAttribute('href');
-        el.setAttribute('aria-disabled', 'true');
-        el.title = rows ? 'Link unavailable right now' : 'Could not load links';
-      }
-
-      el.innerHTML = `
-        <i class="${def.icon} btn-icon" aria-hidden="true"></i>
-        <span class="project-button-text">${def.label}</span>
-        <span class="freshness-dot ${dot}" title="${dot === 'fresh' ? 'Updated recently' : dot === 'stale' ? 'Updated >2 h ago' : dot === 'expired' ? 'Updated >12 h ago' : 'Age unknown'}"></span>
-      `;
-
-      container.appendChild(el);
-    });
   }
 
   /* ─────────────────────────────────────────────
@@ -1024,26 +850,6 @@ const SERVER_DEFS = [
   }
 
   /* ─────────────────────────────────────────────
-     WIRE + REFRESH
-  ───────────────────────────────────────────── */
-  async function loadServers() {
-    const refreshBtn = document.getElementById('refreshBtn');
-    refreshBtn.classList.add('spinning');
-
-    let rows = null;
-    try {
-      rows = await fetchSheetRows();
-    } catch (err) {
-      console.warn('Sheet fetch failed:', err.message);
-    } finally {
-      // Small delay so the spin animation is visible on fast networks
-      setTimeout(() => refreshBtn.classList.remove('spinning'), 700);
-    }
-
-    renderServers(rows);
-  }
-
-  /* ─────────────────────────────────────────────
      INIT
   ───────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', () => {
@@ -1052,7 +858,6 @@ const SERVER_DEFS = [
     const sideNav      = document.getElementById('sideNav');
     const navBackdrop  = document.getElementById('navBackdrop');
     const themeToggle  = document.getElementById('themeToggle');
-    const refreshBtn   = document.getElementById('refreshBtn');
     const petBlob      = document.getElementById('petBlob');
     const petBubble    = document.getElementById('petBubble');
     const pupilLeft    = document.getElementById('pupilLeft');
@@ -1087,9 +892,6 @@ const SERVER_DEFS = [
     navBackdrop.addEventListener('click', closeNav);
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && sideNav.classList.contains('open')) closeNav(); });
 
-    /* Refresh button */
-    refreshBtn.addEventListener('click', loadServers);
-
     /* Achievements refresh button */
     const achievementsRefreshBtn = document.getElementById('achievementsRefreshBtn');
     achievementsRefreshBtn.addEventListener('click', loadAchievements);
@@ -1123,8 +925,7 @@ const SERVER_DEFS = [
     petBlob.addEventListener('click', greet);
     petBlob.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); greet(); } });
 
-    /* Kick off initial loads */
-    loadServers();
+    /* Kick off achievements load (servers are now static, no fetch needed) */
     loadAchievements();
   });
   </script>
