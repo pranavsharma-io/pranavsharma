@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reel — Speech to Text</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #16151a;
+    --panel: #1e1d24;
+    --panel-raised: #26242c;
+    --line: #35333d;
+    --amber: #e8a33d;
+    --amber-dim: #8a6425;
+    --teal: #4fd1c5;
+    --ink: #f2efe9;
+    --ink-dim: #9b98a3;
+    --red: #e8613d;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(232,163,61,0.06), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(79,209,197,0.05), transparent 40%);
+  }
+
+  .deck {
+    width: 100%;
+    max-width: 460px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 28px 26px 24px;
+    box-shadow: 0 40px 80px -30px rgba(0,0,0,0.6);
+    position: relative;
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--ink-dim);
+    display: inline-block;
+    margin-right: 6px;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+  .dot.live { background: var(--red); box-shadow: 0 0 8px var(--red); animation: blink 1.1s infinite; }
+  @keyframes blink { 50% { opacity: 0.35; } }
+
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 42px;
+    margin: 6px 0 2px;
+    letter-spacing: 0.01em;
+  }
+
+  .sub {
+    color: var(--ink-dim);
+    font-size: 13.5px;
+    margin: 0 0 22px;
+  }
+
+  /* ---- endpoint field ---- */
+  .field {
+    margin-bottom: 20px;
+  }
+  .field label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 6px;
+  }
+  .field input[type="text"] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    outline: none;
+  }
+  .field input[type="text"]:focus {
+    border-color: var(--amber-dim);
+  }
+
+  /* ---- deck stage: reel + waveform ---- */
+  .stage {
+    background: var(--panel-raised);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .transport {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+
+  .record-btn {
+    position: relative;
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: radial-gradient(circle at 35% 30%, #2c2a33, #1a1820);
+    box-shadow: inset 0 0 0 2px var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: box-shadow 0.15s ease;
+  }
+  .record-btn:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+  }
+  .record-btn::before {
+    content: '';
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--red);
+    transition: border-radius 0.2s ease, width 0.2s ease, height 0.2s ease;
+  }
+  .record-btn.recording::before {
+    border-radius: 6px;
+    width: 20px;
+    height: 20px;
+  }
+  .record-ring {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 2px solid var(--amber);
+    opacity: 0;
+    transform: scale(1);
+    pointer-events: none;
+  }
+  .record-btn.recording .record-ring {
+    opacity: 1;
+    transition: transform 0.08s linear;
+  }
+
+  .timer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px;
+    font-variant-numeric: tabular-nums;
+    color: var(--amber);
+    text-shadow: 0 0 14px rgba(232,163,61,0.25);
+    min-width: 92px;
+  }
+
+  canvas#wave {
+    width: 100%;
+    height: 56px;
+    display: block;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .upload-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--ink-dim);
+  }
+  .upload-row label.file-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 7px 12px;
+    cursor: pointer;
+    color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  .upload-row label.file-btn:hover { border-color: var(--amber-dim); }
+  .upload-row input[type="file"] { display: none; }
+  #file-name { color: var(--ink-dim); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+  /* ---- transcript ---- */
+  .transcript-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 22px;
+    margin-bottom: 8px;
+  }
+  .transcript-head .eyebrow { margin: 0; }
+  .copy-btn {
+    background: none;
+    border: none;
+    color: var(--ink-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .copy-btn:hover { color: var(--teal); }
+
+  .transcript {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 16px 18px;
+    min-height: 110px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .transcript.placeholder { color: var(--ink-dim); font-style: italic; }
+  .transcript .cursor {
+    display: inline-block;
+    width: 7px; height: 15px;
+    background: var(--amber);
+    margin-left: 2px;
+    animation: blink 0.9s infinite;
+    vertical-align: text-bottom;
+  }
+
+  .status-line {
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-dim);
+    min-height: 14px;
+  }
+  .status-line.err { color: var(--red); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dot.live, .transcript .cursor { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <div class="eyebrow">
+    <span><span class="dot" id="dot"></span>Transcription Deck</span>
+    <span id="state-label">READY</span>
+  </div>
+  <h1>Reel</h1>
+  <p class="sub">Bolo, ya audio upload karo — Whisper isse text mein badal dega.</p>
+
+  <div class="field">
+    <label for="endpoint">Worker endpoint</label>
+    <input type="text" id="endpoint" placeholder="https://your-worker.workers.dev/transcribe" />
+  </div>
+
+  <div class="stage">
+    <div class="transport">
+      <button class="record-btn" id="record-btn" aria-label="Start recording">
+        <span class="record-ring" id="ring"></span>
+      </button>
+      <div class="timer" id="timer">00:00</div>
+    </div>
+    <canvas id="wave" width="380" height="56"></canvas>
+    <div class="divider"></div>
+    <div class="upload-row">
+      <label class="file-btn" for="file-input">Upload audio</label>
+      <input type="file" id="file-input" accept="audio/*" />
+      <span id="file-name">No file chosen</span>
+    </div>
+  </div>
+
+  <div class="transcript-head">
+    <p class="eyebrow">Transcript</p>
+    <button class="copy-btn" id="copy-btn">Copy</button>
+  </div>
+  <div class="transcript placeholder" id="transcript">Recording khatam hone ke baad yahan text aayega...</div>
+  <div class="status-line" id="status"></div>
+</div>
+
+<script>
+  const endpointInput = document.getElementById('endpoint');
+  const recordBtn = document.getElementById('record-btn');
+  const ring = document.getElementById('ring');
+  const timerEl = document.getElementById('timer');
+  const waveCanvas = document.getElementById('wave');
+  const waveCtx = waveCanvas.getContext('2d');
+  const fileInput = document.getElementById('file-input');
+  const fileNameEl = document.getElementById('file-name');
+  const transcriptEl = document.getElementById('transcript');
+  const statusEl = document.getElementById('status');
+  const copyBtn = document.getElementById('copy-btn');
+  const dot = document.getElementById('dot');
+  const stateLabel = document.getElementById('state-label');
+
+  let mediaRecorder, chunks = [], stream, audioCtx, analyser, dataArray, rafId;
+  let recording = false, startTime = 0, timerInterval;
+
+  function setState(text, isError) {
+    stateLabel.textContent = text;
+    statusEl.textContent = '';
+    statusEl.classList.remove('err');
+  }
+  function setStatus(text, isError) {
+    statusEl.textContent = text;
+    statusEl.classList.toggle('err', !!isError);
+  }
+
+  function fmtTime(ms) {
+    const s = Math.floor(ms / 1000);
+    const mm = String(Math.floor(s / 60)).padStart(2, '0');
+    const ss = String(s % 60).padStart(2, '0');
+    return mm + ':' + ss;
+  }
+
+  function drawIdleWave() {
+    const w = waveCanvas.width, h = waveCanvas.height;
+    waveCtx.clearRect(0, 0, w, h);
+    waveCtx.strokeStyle = '#35333d';
+    waveCtx.lineWidth = 2;
+    waveCtx.beginPath();
+    waveCtx.moveTo(0, h / 2);
+    waveCtx.lineTo(w, h / 2);
+    waveCtx.stroke();
+  }
+
+  function drawLiveWave() {
+    if (!analyser) return;
+    analyser.getByteFrequencyData(dataArray);
+    const w = waveCanvas.width, h = waveCanvas.height;
+    waveCtx.clearRect(0, 0, w, h);
+
+    const barCount = 48;
+    const step = Math.floor(dataArray.length / barCount);
+    const barWidth = w / barCount;
+    let sumForRing = 0;
+
+    for (let i = 0; i < barCount; i++) {
+      const value = dataArray[i * step] / 255;
+      sumForRing += value;
+      const barHeight = Math.max(2, value * h);
+      const x = i * barWidth;
+      const y = (h - barHeight) / 2;
+      waveCtx.fillStyle = value > 0.6 ? '#e8a33d' : '#4fd1c5';
+      waveCtx.fillRect(x + 1, y, barWidth - 2, barHeight);
+    }
+
+    const avg = sumForRing / barCount;
+    const scale = 1 + avg * 0.6;
+    ring.style.transform = 'scale(' + scale.toFixed(3) + ')';
+
+    rafId = requestAnimationFrame(drawLiveWave);
+  }
+
+  async function startRecording() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      setStatus('Microphone access nahi mila: ' + err.message, true);
+      return;
+    }
+
+    chunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    mediaRecorder.onstop = onRecordingStop;
+    mediaRecorder.start();
+
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaStreamSource(stream);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+    source.connect(analyser);
+
+    recording = true;
+    recordBtn.classList.add('recording');
+    recordBtn.setAttribute('aria-label', 'Stop recording');
+    dot.classList.add('live');
+    setState('RECORDING');
+
+    startTime = Date.now();
+    timerEl.textContent = '00:00';
+    timerInterval = setInterval(() => {
+      timerEl.textContent = fmtTime(Date.now() - startTime);
+    }, 250);
+
+    drawLiveWave();
+  }
+
+  function stopRecording() {
+    if (!recording) return;
+    recording = false;
+    mediaRecorder.stop();
+    stream.getTracks().forEach(t => t.stop());
+    clearInterval(timerInterval);
+    cancelAnimationFrame(rafId);
+    ring.style.transform = 'scale(1)';
+    recordBtn.classList.remove('recording');
+    recordBtn.setAttribute('aria-label', 'Start recording');
+    dot.classList.remove('live');
+    drawIdleWave();
+    if (audioCtx) audioCtx.close();
+  }
+
+  function onRecordingStop() {
+    const blob = new Blob(chunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+    sendAudio(blob);
+  }
+
+  recordBtn.addEventListener('click', () => {
+    if (recording) stopRecording();
+    else startRecording();
+  });
+
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    fileNameEl.textContent = file.name;
+    sendAudio(file);
+  });
+
+  async function sendAudio(blob) {
+    const endpoint = endpointInput.value.trim();
+    if (!endpoint) {
+      setStatus('Pehle apna Worker endpoint URL daalo.', true);
+      return;
+    }
+
+    setState('TRANSCRIBING');
+    transcriptEl.classList.remove('placeholder');
+    transcriptEl.innerHTML = 'Sun raha hun<span class="cursor"></span>';
+    setStatus('Bhej raha hun audio Worker ko...');
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': blob.type || 'application/octet-stream' },
+        body: blob
+      });
+
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.error || ('Server ne ' + res.status + ' bheja'));
+      }
+
+      const data = await res.json();
+      const text = (data.text || '').trim();
+
+      if (text) {
+        transcriptEl.textContent = text;
+        transcriptEl.classList.remove('placeholder');
+        setStatus('Transcription complete.');
+      } else {
+        transcriptEl.textContent = 'Koi text nahi mila. Dobara try karo, thoda clear bolke.';
+        transcriptEl.classList.add('placeholder');
+        setStatus('Empty response Worker se.');
+      }
+      setState('READY');
+    } catch (err) {
+      transcriptEl.textContent = 'Kuch gadbad ho gayi.';
+      transcriptEl.classList.add('placeholder');
+      setStatus(err.message, true);
+      setState('ERROR');
+    }
+  }
+
+  copyBtn.addEventListener('click', () => {
+    const text = transcriptEl.textContent;
+    if (!text || transcriptEl.classList.contains('placeholder')) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const original = copyBtn.textContent;
+      copyBtn.textContent = 'Copied';
+      setTimeout(() => (copyBtn.textContent = original), 1200);
+    });
+  });
+
+  drawIdleWave();
+</script>
+
+</body>
+</html>
