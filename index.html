@@ -1,681 +1,675 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pranav Sharma</title>
-  <meta name="description" content="Pranav Sharma — personal portfolio.">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <style>
-:root {
-  --bg-color: #121212;
-  --text-color: #e0e0e0;
-  --name-color: #ffffff;
-  --accent-color: #bb86fc;
-  --accent-soft: rgba(187, 134, 252, 0.14);
-  --accent-soft-strong: rgba(187, 134, 252, 0.28);
-  --nav-bg: #1e1e1e;
-  --shadow-color: rgba(0, 0, 0, 0.45);
-  --backdrop-color: rgba(0, 0, 0, 0.5);
-  --font-display: 'Great Vibes', cursive;
-  --font-body: 'Poppins', sans-serif;
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-body.light-theme {
-  --bg-color: #fdfaf6;
-  --text-color: #5d5d5d;
-  --name-color: #2c2c2c;
-  --nav-bg: #f9f4ef;
-  --shadow-color: rgba(44, 44, 44, 0.12);
-  --backdrop-color: rgba(44, 44, 44, 0.25);
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-
-body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  font-family: var(--font-body);
-  font-weight: 300;
-  overflow-x: hidden;
-  min-height: 100vh;
-  transition: background-color 0.5s ease, color 0.5s ease;
-}
-
-::selection { background: var(--accent-color); color: var(--bg-color); }
-a { text-decoration: none; }
-button { font-family: inherit; border: none; background: none; cursor: pointer; }
-
-a:focus-visible,
-button:focus-visible,
-.pet-blob:focus-visible {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 4px;
-  border-radius: 4px;
-}
-
-.icon-btn {
-  position: fixed;
-  top: 2rem;
-  width: 46px;
-  height: 46px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  color: var(--text-color);
-  font-size: 1.15rem;
-  z-index: 1100;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-}
-
-.icon-btn:hover {
-  background-color: var(--accent-soft);
-  color: var(--accent-color);
-  transform: translateY(-2px);
-}
-
-.hamburger { left: 2rem; }
-.theme-toggle { right: 2rem; }
-
-.hamburger {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
-
-.hamburger .bar {
-  width: 20px;
-  height: 2px;
-  background-color: var(--text-color);
-  border-radius: 2px;
-  transition: transform 0.35s var(--ease), opacity 0.25s ease, background-color 0.3s ease;
-}
-
-.hamburger:hover .bar { background-color: var(--accent-color); }
-.hamburger.open .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.hamburger.open .bar:nth-child(2) { opacity: 0; }
-.hamburger.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-.icon-moon, .icon-sun {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(0deg);
-  transition: opacity 0.45s ease, transform 0.55s var(--ease);
-}
-
-.icon-moon { opacity: 1; }
-.icon-sun  { opacity: 0; transform: translate(-50%, -50%) rotate(-90deg); }
-body.light-theme .icon-moon { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
-body.light-theme .icon-sun  { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
-
-.nav-backdrop {
-  position: fixed;
-  inset: 0;
-  background: var(--backdrop-color);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-  z-index: 999;
-}
-.nav-backdrop.visible { opacity: 1; pointer-events: auto; }
-
-.side-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 320px;
-  max-width: 85vw;
-  background-color: var(--nav-bg);
-  transform: translateX(-100%);
-  transition: transform 0.5s var(--ease), background-color 0.5s ease;
-  z-index: 1000;
-  padding: 6rem 2.2rem 2rem;
-  box-shadow: 6px 0 40px var(--shadow-color);
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent-soft-strong) transparent;
-}
-.side-nav.open { transform: translateX(0); }
-
-.side-nav::-webkit-scrollbar { width: 4px; }
-.side-nav::-webkit-scrollbar-track { background: transparent; }
-.side-nav::-webkit-scrollbar-thumb { background: var(--accent-soft-strong); border-radius: 2px; }
-
-.projects-title {
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--accent-color);
-  margin-bottom: 2rem;
-  padding-bottom: 0.9rem;
-  border-bottom: 1px solid var(--accent-soft-strong);
-}
-
-.servers-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-}
-
-.projects-container { display: flex; flex-direction: column; gap: 0.85rem; }
-
-.project-button {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  padding: 0.9rem 1.1rem;
-  border-radius: 12px;
-  color: var(--text-color);
-  font-size: 0.9rem;
-  font-weight: 300;
-  letter-spacing: 0.01em;
-  border: 1px solid transparent;
-  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s var(--ease), color 0.3s ease;
-  position: relative;
-}
-
-.project-button .btn-icon {
-  color: var(--accent-color);
-  width: 18px;
-  text-align: center;
-  font-size: 0.95rem;
-  flex-shrink: 0;
-}
-
-.project-button:hover,
-.project-button:focus-visible {
-  background-color: var(--accent-soft);
-  border-color: var(--accent-soft-strong);
-  transform: translateX(6px);
-}
-
-.servers-section { margin-top: 2.5rem; }
-.project-button-text { flex: 1; }
-
-.project-button-status {
-  font-size: 0.8rem;
-  color: var(--accent-color);
-  opacity: 0.7;
-  flex-shrink: 0;
-}
-
-.project-button.unavailable { cursor: not-allowed; opacity: 0.45; }
-.project-button.unavailable:hover,
-.project-button.unavailable:focus-visible {
-  background-color: transparent;
-  border-color: transparent;
-  transform: none;
-}
-
-.hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2.2rem;
-  padding: 2rem 1.5rem;
-  text-align: center;
-  opacity: 0;
-  transform: translateY(22px);
-  animation: heroReveal 1s var(--ease) forwards;
-  animation-delay: 0.2s;
-  transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
-}
-
-body.nav-open .hero {
-  opacity: 0.4;
-  filter: blur(1px);
-  transform: scale(0.98);
-}
-
-.hero-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: min(700px, 90vw);
-  height: min(700px, 90vw);
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: -1;
-  transition: background 0.5s ease;
-}
-
-.name {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(3rem, 11vw, 6rem);
-  line-height: 1.15;
-  color: var(--name-color);
-  transition: color 0.5s ease;
-}
-
-.daily-emoji {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 900;
-  font-size: clamp(1.1rem, 3.2vw, 1.6rem);
-  letter-spacing: 0.02em;
-  line-height: 1;
-  color: #ffffff;
-  transition: transform 0.3s var(--ease);
-  user-select: none;
-  cursor: default;
-}
-.daily-emoji:hover { transform: scale(1.08) rotate(-2deg); }
-
-.links-container {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0.9rem;
-  max-width: 620px;
-}
-
-.link-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.75rem 1.35rem;
-  border: 1.5px solid var(--accent-color);
-  border-radius: 999px;
-  color: var(--text-color);
-  font-size: 0.85rem;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  transition: background-color 0.35s var(--ease), color 0.35s var(--ease), transform 0.35s var(--ease), box-shadow 0.35s var(--ease), border-color 0.5s ease;
-}
-
-.link-button i { font-size: 0.9rem; }
-
-.link-button:hover,
-.link-button:focus-visible {
-  background-color: var(--accent-color);
-  color: var(--bg-color);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 26px var(--accent-soft-strong);
-}
-
-.pet-wrap {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 500;
-  animation: petFloat 5.5s ease-in-out infinite;
-}
-
-.pet-blob {
-  position: relative;
-  width: 60px;
-  height: 60px;
-  background-color: var(--accent-color);
-  box-shadow: 0 14px 30px var(--accent-soft-strong);
-  cursor: pointer;
-  animation: petMorph 7s ease-in-out infinite;
-  transition: transform 0.3s var(--ease), background-color 0.5s ease;
-}
-
-.pet-blob:hover { transform: scale(1.08); }
-.pet-blob.squish { animation: petMorph 7s ease-in-out infinite, petSquish 0.55s ease; }
-
-.pet-eye {
-  position: absolute;
-  top: 36%;
-  width: 11px;
-  height: 11px;
-  background-color: var(--bg-color);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.5s ease;
-}
-
-.pet-eye.left  { left: 26%; }
-.pet-eye.right { right: 26%; }
-
-.pet-pupil {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background-color: var(--name-color);
-  transition: background-color 0.5s ease, transform 0.12s ease-out;
-}
-
-.pet-bubble {
-  position: absolute;
-  bottom: 82px;
-  right: -8px;
-  min-width: max-content;
-  background-color: var(--nav-bg);
-  color: var(--text-color);
-  padding: 0.55rem 0.95rem;
-  border-radius: 14px;
-  font-size: 0.8rem;
-  font-weight: 400;
-  box-shadow: 0 10px 26px var(--shadow-color);
-  opacity: 0;
-  transform: translateY(8px) scale(0.92);
-  transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.5s ease;
-  pointer-events: none;
-}
-
-.pet-bubble.show { opacity: 1; transform: translateY(0) scale(1); }
-
-.pet-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  right: 24px;
-  width: 10px;
-  height: 10px;
-  background-color: var(--nav-bg);
-  transform: rotate(45deg);
-  transition: background-color 0.5s ease;
-}
-
-@keyframes heroReveal { to { opacity: 1; transform: translateY(0); } }
-
-@keyframes petFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-14px); }
-}
-
-@keyframes petMorph {
-  0%, 100% { border-radius: 60% 40% 55% 45% / 55% 45% 60% 40%; }
-  25%       { border-radius: 45% 55% 60% 40% / 40% 60% 45% 55%; }
-  50%       { border-radius: 50% 50% 40% 60% / 60% 40% 55% 45%; }
-  75%       { border-radius: 55% 45% 50% 50% / 45% 55% 40% 60%; }
-}
-
-@keyframes petSquish {
-  0%   { transform: scale(1, 1); }
-  30%  { transform: scale(1.22, 0.8); }
-  55%  { transform: scale(0.88, 1.12); }
-  75%  { transform: scale(1.06, 0.95); }
-  100% { transform: scale(1, 1); }
-}
-
-@media (max-width: 900px) {
-  .side-nav { width: 300px; padding: 5.5rem 2rem 2rem; }
-}
-
-@media (max-width: 600px) {
-  .icon-btn { top: 1.25rem; width: 42px; height: 42px; }
-  .hamburger { left: 1.25rem; }
-  .theme-toggle { right: 1.25rem; }
-  .hero { gap: 1.6rem; padding: 1.5rem 1.25rem; }
-  .name { font-size: clamp(2.6rem, 13vw, 3.6rem); }
-  .links-container { gap: 0.6rem; }
-  .link-button { font-size: 0.78rem; padding: 0.65rem 1.05rem; }
-  .side-nav { width: 82vw; padding: 5rem 1.5rem 2rem; }
-  .pet-wrap { bottom: 1.25rem; right: 1.25rem; }
-  .pet-blob { width: 50px; height: 50px; }
-  .pet-eye { width: 9px; height: 9px; }
-  .pet-pupil { width: 4px; height: 4px; }
-  .pet-bubble { font-size: 0.75rem; bottom: 70px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="light" />
+<title>Pranav Sharma — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --background:#fafafa;
+    --background-solid:#ffffff;
+    --foreground:#0f0f10;
+    --border-rgb:15,15,16;
+    --border-alpha:.12;
+    --muted:#525a67;
+    --muted-strong:#374151;
+    --muted-faint:#9ca3af;
+    --muted-bg:#f4f4f5;
+    --muted-bg-2:#ececee;
+    --surface-rgb:255,255,255;
+    --link:#0255fa;
+    --primary:#0255fa;
+    --primary-rgb:2,85,250;
+    --shadow-rgb:15,23,42;
+    --glass-btn-alpha:.05;
+    --glass-card-alpha:.72;
+    --glass-row-alpha:.82;
+    --glass-strong-alpha:.90;
+    --field-border:#cbd5e1;
+    --field-border-focus:#94a3b8;
+    --success-bg:#f0fdf4;
+    --success-border:#bbf7d0;
+    --success-text:#15803d;
   }
-}
-  </style>
+
+  /* Theme is locked to light — no dark-mode overrides. */
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;color-scheme:light;}
+  body{
+    margin:0;
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    background:transparent;
+    color:var(--foreground);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  section{padding:96px 24px;}
+  .wrap{max-width:1100px;margin:0 auto;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--foreground);background:var(--muted-bg);
+    padding:6px 14px;border-radius:999px;
+  }
+  h1,h2,h3{margin:0;letter-spacing:-0.02em;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* ---------- Fixed CSS-only background (no external image required) ---------- */
+  .bg-fixed{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    background:
+      radial-gradient(1100px 700px at 8% -10%, rgba(2,85,250,.16), transparent 60%),
+      radial-gradient(900px 650px at 100% 0%, rgba(2,85,250,.12), transparent 55%),
+      radial-gradient(1000px 800px at 50% 120%, rgba(2,85,250,.10), transparent 60%),
+      linear-gradient(180deg, #f5f7fb 0%, #fafbfd 45%, #f6f8fc 100%);
+  }
+  .bg-fixed::before{
+    content:"";
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(2,85,250,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(2,85,250,.05) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(circle at 50% 0%, black, transparent 70%);
+  }
+  .bg-overlay{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    background:rgba(255,255,255,.06);
+  }
+
+  .glass-ring{position:relative;isolation:isolate;}
+  .glass-ring::before{
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:5;
+    box-shadow:
+      0 0 6px rgba(var(--shadow-rgb),.05),
+      0 2px 10px rgba(var(--shadow-rgb),.10),
+      inset 1.5px 1.5px .5px -1px rgba(255,255,255,.9),
+      inset -1.5px -1.5px .5px -1px rgba(var(--shadow-rgb),.35),
+      inset 0 0 6px 6px rgba(var(--shadow-rgb),.04),
+      0 0 16px rgba(var(--primary-rgb),.12);
+  }
+  .glass-ring::after{
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:6;
+    background:radial-gradient(120% 55% at 50% -12%, rgba(255,255,255,.5), transparent 62%);
+    mix-blend-mode:soft-light;
+    opacity:.85;
+  }
+
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    background:rgba(var(--surface-rgb),.7);
+    border-bottom:1px solid rgba(var(--border-rgb),var(--border-alpha));
+  }
+  .nav-inner{
+    max-width:1100px;margin:0 auto;padding:14px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .brand{font-weight:800;font-size:17px;letter-spacing:-0.01em;color:var(--foreground);}
+  nav.links{display:flex;gap:28px;font-size:14px;font-weight:500;color:var(--muted-strong);}
+  nav.links a{transition:color .15s ease;}
+  nav.links a:hover{color:var(--link);}
+  .burger{display:none;background:none;border:none;cursor:pointer;padding:6px;color:var(--foreground);}
+  .burger svg{width:22px;height:22px;}
+
+  @media(max-width:720px){
+    nav.links{display:none;}
+    .burger{display:block;}
+  }
+
+  .liquid-btn{
+    position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:48px;padding:0 26px;border-radius:999px;border:none;cursor:pointer;
+    font-size:14px;font-weight:600;letter-spacing:.02em;color:var(--foreground);
+    background:transparent;transition:transform .3s ease;text-decoration:none;
+  }
+  .liquid-btn:hover{transform:scale(1.045);}
+  .liquid-btn:active{transform:scale(.98);}
+  .liquid-btn::before{
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;
+    background:radial-gradient(140% 70% at 50% -25%, rgba(255,255,255,.6), transparent 60%);
+    mix-blend-mode:soft-light;
+  }
+  .liquid-btn .lb-shell{
+    position:absolute;inset:0;border-radius:999px;pointer-events:none;z-index:0;
+    box-shadow:0 0 6px rgba(var(--shadow-rgb),.06),0 4px 16px rgba(var(--shadow-rgb),.14),
+      inset 1.5px 1.5px .5px -1px rgba(255,255,255,.85), inset -1.5px -1.5px .5px -1px rgba(var(--shadow-rgb),.3),
+      inset 0 0 8px 6px rgba(255,255,255,.06);
+  }
+  .liquid-btn .lb-glass{
+    position:absolute;inset:0;z-index:-1;border-radius:999px;overflow:hidden;pointer-events:none;
+    backdrop-filter:url(#glass-distort) blur(10px);-webkit-backdrop-filter:blur(10px);
+    background:rgba(var(--surface-rgb),var(--glass-btn-alpha));
+    border:1px solid rgba(var(--surface-rgb),.14);
+  }
+  .liquid-btn .lb-label{position:relative;z-index:2;display:flex;align-items:center;gap:8px;}
+  .liquid-btn.liquid-btn--sm{height:40px;padding:0 20px;font-size:13px;}
+  .liquid-btn.liquid-btn--block{width:100%;}
+  .liquid-btn.liquid-btn--icon{height:36px;width:36px;padding:0;border-radius:50%;}
+
+  .hero-section{padding-top:56px;position:relative;overflow:hidden;}
+  .hero-bg-glow{
+    position:absolute;top:-120px;left:50%;transform:translateX(-50%);
+    width:700px;height:400px;border-radius:50%;
+    background:radial-gradient(closest-side, rgba(var(--primary-rgb),.10), transparent);
+    filter:blur(10px);pointer-events:none;
+  }
+  .glass-card{
+    position:relative;overflow:hidden;
+    border:1px solid rgba(var(--border-rgb),var(--border-alpha));
+    background:rgba(var(--surface-rgb),var(--glass-card-alpha));
+    backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+    border-radius:28px;padding:40px 28px;
+  }
+  @media(min-width:768px){.glass-card{padding:56px;}}
+  .glass-grid{display:grid;gap:48px;grid-template-columns:1fr;}
+  @media(min-width:960px){.glass-grid{grid-template-columns:1.1fr .9fr;}}
+
+  .hero-name{font-size:34px;font-weight:800;margin-top:22px;}
+  @media(min-width:768px){.hero-name{font-size:42px;}}
+  .hero-tagline{margin-top:10px;font-size:16.5px;font-weight:600;color:var(--muted-strong);}
+  .hero-bio{margin-top:16px;max-width:560px;color:var(--muted);font-size:15.5px;line-height:1.75;}
+
+  .tech-strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;}
+  .tech-chip{
+    font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;
+    border:1px solid rgba(var(--border-rgb),var(--border-alpha));color:var(--muted-strong);background:var(--muted-bg);
+  }
+
+  .highlights{display:grid;gap:14px;margin-top:32px;}
+  .highlight{
+    border:1px solid rgba(var(--border-rgb),var(--border-alpha));background:rgba(var(--surface-rgb),var(--glass-row-alpha));
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-radius:18px;padding:18px 20px;transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .highlight:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(var(--shadow-rgb),.10);border-color:rgba(var(--border-rgb),.24);}
+  .highlight p.h-title{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-faint);margin:0 0 6px;}
+  .highlight p.h-desc{font-size:14px;color:var(--muted-strong);margin:0;line-height:1.55;}
+
+  .hero-cta{margin-top:32px;}
+
+  .profile-card{
+    position:relative;border:1px solid rgba(var(--border-rgb),var(--border-alpha));
+    background:rgba(var(--surface-rgb),var(--glass-row-alpha));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border-radius:24px;padding:34px 28px;text-align:center;
+  }
+  .avatar-wrap{position:relative;width:128px;height:128px;margin:0 auto 20px;}
+  .avatar-glow{position:absolute;inset:-16px;border-radius:50%;background:rgba(var(--primary-rgb),.12);filter:blur(24px);}
+  .avatar{
+    position:relative;width:128px;height:128px;border-radius:50%;object-fit:cover;
+    border:1px solid rgba(var(--border-rgb),var(--border-alpha));box-shadow:0 25px 60px rgba(var(--shadow-rgb),.22);
+  }
+  .profile-role{font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--muted-faint);margin-top:6px;}
+  .profile-blurb{margin-top:14px;font-size:14px;color:var(--muted-strong);line-height:1.6;}
+  .social-list{margin-top:26px;display:flex;flex-direction:column;gap:10px;}
+  .social-row{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    border:1px solid rgba(var(--border-rgb),var(--border-alpha));background:rgba(var(--surface-rgb),var(--glass-strong-alpha));
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-radius:16px;padding:12px 16px;transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .social-row:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(var(--shadow-rgb),.12);border-color:rgba(var(--border-rgb),.24);}
+  .social-left{display:flex;align-items:center;gap:12px;}
+  .social-icon{
+    width:38px;height:38px;border-radius:50%;border:1px solid rgba(var(--border-rgb),var(--border-alpha));
+    display:flex;align-items:center;justify-content:center;background:var(--background-solid);color:var(--muted-strong);
+  }
+  .social-name{font-size:13.5px;font-weight:600;margin:0;}
+  .social-handle{font-size:12px;color:var(--muted);margin:2px 0 0;}
+
+  .section-head{margin-bottom:44px;}
+  .section-head h2{font-size:30px;font-weight:700;margin-top:14px;}
+  .section-head p{
+    color:var(--muted-strong);
+    font-weight:500;
+    margin-top:10px;max-width:560px;font-size:15px;line-height:1.6;
+  }
+
+  .gallery-frame{
+    border:1px solid rgba(var(--border-rgb),var(--border-alpha));
+    border-radius:24px;overflow:hidden;
+    background:rgba(var(--surface-rgb),var(--glass-card-alpha));
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    box-shadow:0 20px 50px rgba(var(--shadow-rgb),.10);
+  }
+  .gallery-desktop{display:none;position:relative;overflow:hidden;padding:64px 0 96px;}
+  @media(min-width:860px){.gallery-desktop{display:flex;}}
+  .gallery-desktop-track{display:flex;justify-content:center;align-items:flex-end;margin:0 auto;}
+  .g-card{
+    flex-shrink:0;cursor:pointer;margin:0 -34px;
+    perspective:1400px;
+  }
+  .g-card-inner{
+    position:relative;width:260px;aspect-ratio:4/3;border-radius:14px;overflow:hidden;
+    transform:rotateY(-38deg);
+    box-shadow:0 .8px .8px rgba(var(--shadow-rgb),.03),2.4px 0 2.4px rgba(var(--shadow-rgb),.08),
+      6px 0 6px rgba(var(--shadow-rgb),.14), 20px 0 24px rgba(var(--shadow-rgb),.32);
+    transition:transform .18s cubic-bezier(.25,.1,.25,1);
+  }
+  .g-card img{width:100%;height:100%;object-fit:cover;}
+  .g-caption{
+    position:absolute;inset:auto 0 0 0;padding:14px 14px 12px;
+    background:linear-gradient(to top, rgba(0,0,0,.78), transparent);
+    color:#fff;opacity:0;transform:translateY(8px);
+    transition:opacity .1s ease, transform .1s ease;
+  }
+  .g-caption .g-title{font-size:13.5px;font-weight:700;margin:0;}
+  .g-caption .g-tag{font-size:11px;color:#d1d5db;margin:2px 0 0;}
+  .g-card:hover .g-caption{opacity:1;transform:translateY(0);}
+  .g-card:hover .g-card-inner{transform:rotateY(-38deg) scale(1.045);}
+
+  .gallery-mobile{display:block;overflow:hidden;padding:36px 0;}
+  @media(min-width:860px){.gallery-mobile{display:none;}}
+  .marquee-track{display:flex;gap:16px;width:max-content;animation:marquee 34s linear infinite;}
+  .marquee-track:hover{animation-play-state:paused;}
+  @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .m-card{position:relative;flex-shrink:0;width:230px;aspect-ratio:4/3;border-radius:12px;overflow:hidden;}
+  .m-card img{width:100%;height:100%;object-fit:cover;}
+  .m-card .g-caption{opacity:1;transform:none;padding:10px 12px;}
+  .m-card .g-title{font-size:12.5px;}
+
+  /* ---------- Empty states: shown when there's nothing to load yet ---------- */
+  .empty-state{
+    width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:10px;padding:56px 24px;text-align:center;color:var(--muted);
+  }
+  .empty-state .empty-icon{
+    width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:var(--muted-bg);color:var(--muted-faint);
+  }
+  .empty-state .empty-title{font-size:14.5px;font-weight:700;color:var(--muted-strong);}
+  .empty-state .empty-desc{font-size:13px;max-width:320px;line-height:1.55;color:var(--muted);}
+  .empty-state code{
+    background:var(--muted-bg);padding:1px 6px;border-radius:6px;font-size:12px;color:var(--muted-strong);
+  }
+
+  /* ---------- Certificates: card is the certificate PNG itself, clicking opens the link directly ---------- */
+  .cert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
+  .cert-grid.is-empty{
+    display:block;border:1px solid rgba(var(--border-rgb),var(--border-alpha));border-radius:18px;
+    background:rgba(var(--surface-rgb),var(--glass-card-alpha));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  }
+  .cert-card{
+    display:block;
+    border:1px solid rgba(var(--border-rgb),var(--border-alpha));border-radius:18px;overflow:hidden;
+    background:rgba(var(--surface-rgb),var(--glass-strong-alpha));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    cursor:pointer;transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .cert-card:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(var(--shadow-rgb),.12);border-color:rgba(var(--border-rgb),.24);}
+  .cert-thumb{
+    aspect-ratio:4/3;
+    background:#f4f4f5;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .cert-thumb img{width:100%;height:100%;object-fit:contain;}
+  .cert-body{padding:16px 18px 20px;}
+  .cert-title{font-size:14.5px;font-weight:700;margin:0 0 4px;}
+  .cert-issuer{font-size:12.5px;color:var(--muted);margin:0;}
+  .cert-meta{display:flex;align-items:center;justify-content:space-between;margin-top:14px;}
+  .cert-date{font-size:11.5px;color:var(--muted-faint);font-weight:600;letter-spacing:.05em;text-transform:uppercase;}
+  .cert-view{font-size:12.5px;font-weight:700;color:var(--link);display:flex;align-items:center;gap:4px;}
+
+  .contact-section{
+    background:rgba(var(--surface-rgb),var(--glass-card-alpha));
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border-top:1px solid rgba(var(--border-rgb),var(--border-alpha));
+  }
+  .contact-inner{display:flex;flex-direction:column;align-items:center;text-align:center;}
+  .contact-title{font-size:34px;font-weight:800;padding:14px 0;}
+  .contact-sub{max-width:480px;color:var(--muted);font-size:14.5px;padding-bottom:36px;}
+  .contact-sub a{color:var(--link);}
+  .contact-sub a:hover{text-decoration:underline;}
+  form.contact-form{max-width:420px;width:100%;padding:0 8px;text-align:left;}
+  form.contact-form label{font-weight:600;font-size:13.5px;}
+  .field{
+    display:flex;align-items:center;margin-top:8px;margin-bottom:18px;height:44px;
+    padding-left:14px;border:1px solid var(--field-border);border-radius:999px;overflow:hidden;
+    background:rgba(var(--surface-rgb),var(--glass-row-alpha));
+    transition:box-shadow .2s ease, border-color .2s ease;
+  }
+  .field:focus-within{box-shadow:0 0 0 3px rgba(var(--primary-rgb),.15);border-color:var(--field-border-focus);}
+  .field svg{flex-shrink:0;color:var(--muted-strong);}
+  .field input{height:100%;padding:0 10px;width:100%;border:none;outline:none;background:transparent;font-size:14px;font-family:inherit;color:var(--foreground);}
+  textarea.msg{
+    width:100%;margin-top:8px;padding:12px;background:rgba(var(--surface-rgb),var(--glass-row-alpha));border:1px solid var(--field-border);
+    border-radius:14px;resize:none;outline:none;font-size:14px;font-family:inherit;color:var(--foreground);
+    transition:box-shadow .2s ease, border-color .2s ease;
+  }
+  textarea.msg:focus{box-shadow:0 0 0 3px rgba(var(--primary-rgb),.15);border-color:var(--field-border-focus);}
+  .form-success{display:none;margin-top:18px;font-size:13.5px;color:var(--success-text);background:var(--success-bg);border:1px solid var(--success-border);padding:12px 16px;border-radius:12px;}
+  .form-success.show{display:block;}
+
+  footer{padding:34px 24px;text-align:center;font-size:12.5px;color:var(--muted-faint);}
+
+  @media(prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
+  }
+</style>
 </head>
 <body>
 
-  <div class="nav-backdrop" id="navBackdrop"></div>
+<svg style="position:absolute;width:0;height:0;">
+  <defs>
+    <filter id="glass-distort" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.008 0.008" numOctaves="1" seed="2" result="turbulence"/>
+      <feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise"/>
+      <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="16" xChannelSelector="R" yChannelSelector="B"/>
+    </filter>
+  </defs>
+</svg>
 
-  <button class="icon-btn hamburger" id="hamburgerBtn" aria-label="Open navigation" aria-expanded="false" aria-controls="sideNav">
-    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-  </button>
+<!-- Fixed background: pure CSS gradient + grid, no external image needed -->
+<div class="bg-fixed" id="bgFixed"></div>
+<div class="bg-overlay"></div>
 
-  <button class="icon-btn theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme">
-    <i class="fa-solid fa-moon icon-moon" aria-hidden="true"></i>
-    <i class="fa-solid fa-sun icon-sun"  aria-hidden="true"></i>
-  </button>
+<div id="siteRoot" class="ready">
 
-  <nav class="side-nav" id="sideNav" aria-hidden="true">
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand">Pranav Sharma</div>
+    <nav class="links">
+      <a href="#work">Work</a>
+      <a href="#certificates">Credentials</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="#contact" class="liquid-btn liquid-btn--sm">
+      <span class="lb-glass"></span>
+      <span class="lb-shell"></span>
+      <span class="lb-label">Get in touch</span>
+    </a>
+  </div>
+</header>
 
-    <div class="projects-section">
-      <p class="projects-title">My Projects</p>
-      <div class="projects-container">
-        <a href="https://tictactoebypranavsharma.pages.dev/" target="_blank" rel="noopener noreferrer" class="project-button">
-          <i class="fa-solid fa-hashtag btn-icon"></i><span class="project-button-text">Tic Tac Toe</span>
-        </a>
-        <a href="https://tictactoe-live-by-pranav-sharma-ren.onrender.com/" target="_blank" rel="noopener noreferrer" class="project-button">
-          <i class="fa-solid fa-users btn-icon"></i><span class="project-button-text">Tic Tac Toe Live</span>
-        </a>
-        <a href="https://urlshortenerz.pages.dev/" target="_blank" rel="noopener noreferrer" class="project-button">
-          <i class="fa-solid fa-link btn-icon"></i><span class="project-button-text">URL Shortener</span>
-        </a>
-        <a href="https://pranav-sharma.pages.dev/attractor/" target="_blank" rel="noopener noreferrer" class="project-button">
-          <i class="fa-solid fa-atom btn-icon"></i><span class="project-button-text">Attractor</span>
-        </a>
-        <a href="https://pranav-sharma.pages.dev/birthday/" target="_blank" rel="noopener noreferrer" class="project-button">
-          <i class="fa-solid fa-cake-candles btn-icon"></i><span class="project-button-text">Birthday</span>
-        </a>
+<section class="hero-section" id="about">
+  <div class="hero-bg-glow"></div>
+  <div class="wrap">
+    <div class="glass-card glass-ring reveal">
+      <div class="glass-grid">
+        <div>
+          <span class="eyebrow">Portfolio</span>
+          <h1 class="hero-name">Pranav Sharma</h1>
+          <p class="hero-tagline">A High School Student Exploring the Depths of Code and Cloud.</p>
+          <p class="hero-bio">
+            I'm Pranav, a high school student with a passion for building things that live on the internet.
+            While I spend my weekdays diving deep into the worlds of Physics, Chemistry, and Mathematics for
+            the JEE, my weekends are for a different kind of problem-solving: architecting scalable cloud
+            infrastructure and crafting beautiful, user-centric web experiences. I'm fascinated by the
+            intersection of robust backend systems and intuitive frontend design. This portfolio is a small
+            glimpse into my journey.
+          </p>
+
+          <div class="tech-strip">
+            <span class="tech-chip">React</span>
+            <span class="tech-chip">AWS Lambda</span>
+            <span class="tech-chip">DynamoDB</span>
+            <span class="tech-chip">AWS CDK</span>
+            <span class="tech-chip">Route 53</span>
+          </div>
+
+          <div class="highlights">
+            <div class="highlight glass-ring">
+              <p class="h-title">Weekdays</p>
+              <p class="h-desc">Deep in Physics, Chemistry, and Mathematics — preparing for the JEE.</p>
+            </div>
+            <div class="highlight glass-ring">
+              <p class="h-title">Weekends</p>
+              <p class="h-desc">Architecting scalable cloud infrastructure and crafting user-centric web experiences.</p>
+            </div>
+            <div class="highlight glass-ring">
+              <p class="h-title">Interested in</p>
+              <p class="h-desc">The intersection of robust backend systems and intuitive frontend design.</p>
+            </div>
+          </div>
+
+          <div class="hero-cta">
+            <button class="liquid-btn" onclick="document.getElementById('work').scrollIntoView({behavior:'smooth'})">
+              <span class="lb-glass"></span>
+              <span class="lb-shell"></span>
+              <span class="lb-label">
+                View my work
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4 10h11M10 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div class="profile-card glass-ring">
+          <div class="avatar-wrap">
+            <div class="avatar-glow"></div>
+            <img class="avatar" src="assets/pranavsharma_logo.png" alt="Pranav Sharma" />
+          </div>
+          <h3>Pranav Sharma</h3>
+          <p class="profile-role">Full-Stack Developer (Web &amp; Cloud)</p>
+          <p class="profile-blurb">A curious mind turning complex problems into elegant software solutions. I thrive on learning, from acing mock tests to deploying serverless applications on AWS.</p>
+
+          <div class="social-list">
+            <a class="social-row glass-ring" href="https://github.com/pranavsharma-io" target="_blank" rel="noopener noreferrer">
+              <div class="social-left">
+                <span class="social-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2.2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C18.6 5 19.6 5.3 19.6 5.3c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12c0-6.3-5.2-11.5-11.5-11.5Z"/></svg>
+                </span>
+                <div>
+                  <p class="social-name">GitHub</p>
+                  <p class="social-handle">@pranavsharma-io</p>
+                </div>
+              </div>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M5 15 15 5M8 5h7v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="social-row glass-ring" href="https://linkedin.com/in/pranavsharma" target="_blank" rel="noopener noreferrer">
+              <div class="social-left">
+                <span class="social-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.1c.5-.9 1.9-1.9 3.9-1.9 4.2 0 5 2.7 5 6.3V21h-4v-5.4c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V21h-4V9Z"/></svg>
+                </span>
+                <div>
+                  <p class="social-name">LinkedIn</p>
+                  <p class="social-handle">Pranav Sharma</p>
+                </div>
+              </div>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M5 15 15 5M8 5h7v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="social-row glass-ring" href="https://x.com/pranavsharma_io" target="_blank" rel="noopener noreferrer">
+              <div class="social-left">
+                <span class="social-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-6.9l-5.4-6.6L4.8 22H1.7l8.1-9.3L1 2h7l4.9 6.1L18.9 2Zm-1.2 18h1.9L7.4 4h-2l12.3 16Z"/></svg>
+                </span>
+                <div>
+                  <p class="social-name">X / Twitter</p>
+                  <p class="social-handle">@pranavsharma_io</p>
+                </div>
+              </div>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M5 15 15 5M8 5h7v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div class="projects-section servers-section">
-      <p class="projects-title servers-title">
-        <span>Servers</span>
-      </p>
-
-      <div class="projects-container" id="serversContainer">
-        <a href="https://photos.pranavsharma.dpdns.org" target="_blank" rel="noopener noreferrer" class="project-button">
-          <i class="fa-solid fa-images btn-icon" aria-hidden="true"></i><span class="project-button-text">Photos</span>
-        </a>
-        <a href="https://music.pranavsharma.dpdns.org/web/#/music?topParentId=7e64e319657a9516ec78490da03edccb&collectionType=music&tab=5" target="_blank" rel="noopener noreferrer" class="project-button">
-          <i class="fa-solid fa-music btn-icon" aria-hidden="true"></i><span class="project-button-text">Music</span>
-        </a>
-        <a href="https://vault.pranavsharma.dpdns.org" target="_blank" rel="noopener noreferrer" class="project-button">
-          <i class="fa-solid fa-shield-halved btn-icon" aria-hidden="true"></i><span class="project-button-text">Vault</span>
-        </a>
-          <a href="https://chat.pranavsharma.dpdns.org/#/chat" target="_blank" rel="noopener noreferrer" class="project-button">
-          <i class="fa-solid fa-comments btn-icon" aria-hidden="true"></i><span class="project-button-text">Chat</span>
-        </a>
-        <a href="https://youtube.pranavsharma.dpdns.org" target="_blank" rel="noopener noreferrer" class="project-button">
-          <i class="fa-brands fa-youtube btn-icon" aria-hidden="true"></i><span class="project-button-text">YouTube Downloader</span>
-        </a>
-      </div>
-    </div>
-
-    <div class="projects-section">
-      <p class="projects-title">Personal Stuffs</p>
-      <div class="projects-container">
-        <a href="https://project-alpha.z3957759.workers.dev/" target="_blank" rel="noopener noreferrer" class="project-button">
-          <i class="fa-solid fa-a btn-icon"></i><span class="project-button-text">Project Alpha</span>
-        </a>
-      </div>
-    </div>
-
-  </nav>
-
-  <main class="hero" id="hero">
-    <div class="hero-glow" aria-hidden="true"></div>
-    <h1 class="name">Pranav Sharma</h1>
-    <div class="links-container">
-      <a href="mailto:pranavsharma2009@cloud.com" class="link-button"><i class="fa-solid fa-envelope"></i> Email</a>
-      <a href="https://x.com/pranavsharma_io" target="_blank" rel="noopener noreferrer" class="link-button"><i class="fa-brands fa-x-twitter"></i> Twitter / X</a>
-      <a href="https://instagram.com/pranavsharma.io" target="_blank" rel="noopener noreferrer" class="link-button"><i class="fa-brands fa-instagram"></i> Instagram</a>
-      <a href="https://t.me/pranavsharmahere" target="_blank" rel="noopener noreferrer" class="link-button"><i class="fa-brands fa-telegram"></i> Telegram</a>
-    </div>
-    <div class="daily-emoji" id="dailyEmoji" aria-hidden="true"></div>
-  </main>
-
-  <div class="pet-wrap" id="petWrap">
-    <div class="pet-bubble" id="petBubble"></div>
-    <div class="pet-blob" id="petBlob" role="button" tabindex="0" aria-label="A little companion. Click to say hi.">
-      <div class="pet-eye left"><span class="pet-pupil" id="pupilLeft"></span></div>
-      <div class="pet-eye right"><span class="pet-pupil" id="pupilRight"></span></div>
     </div>
   </div>
+</section>
 
-  <script>
-  const dailyAccents = [
-    '#FF3B7F','#FF6B35','#FFB800','#7CFF6B','#20C997','#00D4FF','#3B82F6',
-    '#7C4DFF','#D946EF','#FF2E63','#FF9F1C','#2EC4B6','#06D6A0','#118AB2',
-    '#EF476F','#FFD166','#8338EC','#3A86FF','#FB5607','#FF006E','#00F5D4',
-    '#F72585','#4CC9F0','#7209B7','#F94144','#F3722C','#90BE6D','#43AA8B',
-    '#577590','#FFCA3A','#C77DFF','#39FF14','#FF61A6','#00E5FF','#FFD23F',
-    '#FF073A','#00FFAB','#FF4D6D','#9D4EDD','#FFA62B','#00B4D8','#B5179E',
-    '#FF9E00','#40C9A2','#FF477E','#4EA8DE','#FFEA00','#7400B8','#FF7B00',
-    '#38B000','#E4FF1A','#FF1E56','#00C2D1','#845EC2','#FF9671',
-  ];
+<section id="work">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Selected Work</span>
+      <h2>Selected Work</h2>
+      <p>A quick look at some of my projects. Each one was a new learning adventure. Hover a card for details — on mobile it scrolls by itself, tap to pause.</p>
+    </div>
 
-  function hexToRgb(hex) {
-    const v = hex.replace('#','');
-    return { r: parseInt(v.slice(0,2),16), g: parseInt(v.slice(2,4),16), b: parseInt(v.slice(4,6),16) };
+    <div class="gallery-frame reveal">
+      <div class="gallery-desktop">
+        <div class="gallery-desktop-track" id="galleryDesktopTrack"></div>
+      </div>
+      <div class="gallery-mobile">
+        <div class="marquee-track" id="galleryMobileTrack"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certificates">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Credentials</span>
+      <h2>Credentials &amp; Learning Milestones</h2>
+      <p>I believe in validating my skills. Tap a certificate to open the credential.</p>
+    </div>
+    <div class="cert-grid reveal" id="certGrid"></div>
+  </div>
+</section>
+
+<section class="contact-section" id="contact">
+  <div class="wrap contact-inner">
+    <span class="eyebrow">Contact</span>
+    <h2 class="contact-title">Let's Get In Touch.</h2>
+    <p class="contact-sub">I'm always open to new ideas, collaborations, or just a chat about technology. You can reach out manually to me at <a href="mailto:pranavsharma2009@icloud.com">pranavsharma2009@icloud.com</a></p>
+
+    <form class="contact-form" id="contactForm">
+      <label for="name">Full Name</label>
+      <div class="field">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M18.311 16.406a9.64 9.64 0 0 0-4.748-4.158 5.938 5.938 0 1 0-7.125 0 9.64 9.64 0 0 0-4.749 4.158.937.937 0 1 0 1.623.938c1.416-2.447 3.916-3.906 6.688-3.906 2.773 0 5.273 1.46 6.689 3.906a.938.938 0 0 0 1.622-.938M5.938 7.5a4.063 4.063 0 1 1 8.125 0 4.063 4.063 0 0 1-8.125 0" fill="currentColor"/></svg>
+        <input id="name" type="text" placeholder="Enter your full name" required />
+      </div>
+
+      <label for="email">Email Address</label>
+      <div class="field">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M17.5 3.438h-15a.937.937 0 0 0-.937.937V15a1.563 1.563 0 0 0 1.562 1.563h13.75A1.563 1.563 0 0 0 18.438 15V4.375a.94.94 0 0 0-.938-.937m-2.41 1.874L10 9.979 4.91 5.313zM3.438 14.688v-8.18l5.928 5.434a.937.937 0 0 0 1.268 0l5.929-5.435v8.182z" fill="currentColor"/></svg>
+        <input id="email" type="email" placeholder="Enter your email address" required />
+      </div>
+
+      <label for="message">Message</label>
+      <textarea id="message" class="msg" rows="4" placeholder="Enter your message" required></textarea>
+
+      <button type="submit" class="liquid-btn liquid-btn--block" style="margin-top:22px;">
+        <span class="lb-glass"></span>
+        <span class="lb-shell"></span>
+        <span class="lb-label">
+          Submit Form
+          <svg width="18" height="18" viewBox="0 0 21 20" fill="none"><path d="m18.038 10.663-5.625 5.625a.94.94 0 0 1-1.328-1.328l4.024-4.023H3.625a.938.938 0 0 1 0-1.875h11.484l-4.022-4.025a.94.94 0 0 1 1.328-1.328l5.625 5.625a.935.935 0 0 1-.002 1.33" fill="currentColor"/></svg>
+        </span>
+      </button>
+      <div class="form-success" id="formSuccess">Thanks — your message has been noted. I'll get back to you soon.</div>
+    </form>
+  </div>
+</section>
+
+<footer>© <span id="year"></span> Pranav Sharma. Built with care.</footer>
+
+</div><!-- /#siteRoot -->
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+function emptyStateHTML(title, desc, jsonPath){
+  return `
+    <div class="empty-state">
+      <span class="empty-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8M12 8v8"/>
+        </svg>
+      </span>
+      <p class="empty-title">${title}</p>
+      <p class="empty-desc">${desc} Add entries to <code>${jsonPath}</code> to populate this section.</p>
+    </div>`;
+}
+
+function projectCardHTML(w, isMobile){
+  const inner = `
+      <img src="${w.image}" alt="${w.title || ''}" loading="lazy" />
+      <div class="g-caption">
+        <p class="g-title">${w.title || ''}</p>
+        <p class="g-tag">${w.tag || ''}</p>
+      </div>`;
+  const wrapped = w.link
+    ? `<a href="${w.link}" target="_blank" rel="noopener noreferrer" style="display:block;width:100%;height:100%;">${inner}</a>`
+    : inner;
+  return `
+    <div class="${isMobile ? 'm-card glass-ring' : 'g-card'}">
+      <div class="${isMobile ? '' : 'g-card-inner glass-ring'}">
+        ${wrapped}
+      </div>
+    </div>`;
+}
+
+async function loadProjects(){
+  const desktopTrack = document.getElementById('galleryDesktopTrack');
+  const mobileTrack = document.getElementById('galleryMobileTrack');
+  try{
+    const res = await fetch('assets/proj.json');
+    if(!res.ok) throw new Error('proj.json not found');
+    const works = await res.json();
+    if(!Array.isArray(works) || works.length === 0) throw new Error('proj.json empty');
+    desktopTrack.innerHTML = works.map(w=>projectCardHTML(w,false)).join('');
+    const mobileSet = [...works, ...works];
+    mobileTrack.innerHTML = mobileSet.map(w=>projectCardHTML(w,true)).join('');
+  }catch(err){
+    console.error('Could not load assets/proj.json', err);
+    const empty = emptyStateHTML('Projects coming soon', 'Nothing to show here yet.', 'assets/proj.json');
+    desktopTrack.innerHTML = empty;
+    mobileTrack.innerHTML = empty;
   }
+}
 
-  function applyDailyAccent() {
-    const color = dailyAccents[dayOfYear(new Date()) % dailyAccents.length];
-    const { r, g, b } = hexToRgb(color);
-    const light = document.body.classList.contains('light-theme');
-    const sa = light ? 0.10 : 0.14, ss = light ? 0.20 : 0.28;
-    document.documentElement.style.setProperty('--accent-color', color);
-    document.documentElement.style.setProperty('--accent-soft',       `rgba(${r},${g},${b},${sa})`);
-    document.documentElement.style.setProperty('--accent-soft-strong',`rgba(${r},${g},${b},${ss})`);
+// Certificate card = the certificate PNG itself. Clicking it redirects
+// straight to c.link, as-is — no modal, no colored placeholder box.
+function certCardHTML(c){
+  const inner = `
+    <div class="cert-thumb">
+      <img src="${c.image}" alt="${c.title || ''}" loading="lazy" />
+    </div>
+    <div class="cert-body">
+      <p class="cert-title">${c.title || ''}</p>
+      <p class="cert-issuer">${c.issuer || ''}</p>
+      <div class="cert-meta">
+        <span class="cert-date">${c.date || ''}</span>
+        ${c.link ? `<span class="cert-view">View
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M4 10h11M10 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>` : ''}
+      </div>
+    </div>`;
+  return c.link
+    ? `<a class="cert-card glass-ring" href="${c.link}" target="_blank" rel="noopener noreferrer">${inner}</a>`
+    : `<div class="cert-card glass-ring">${inner}</div>`;
+}
+
+async function loadCertificates(){
+  const certGrid = document.getElementById('certGrid');
+  try{
+    const res = await fetch('assets/cert.json');
+    if(!res.ok) throw new Error('cert.json not found');
+    const certsData = await res.json();
+    if(!Array.isArray(certsData) || certsData.length === 0) throw new Error('cert.json empty');
+    certGrid.classList.remove('is-empty');
+    certGrid.innerHTML = certsData.map(c=>certCardHTML(c)).join('');
+  }catch(err){
+    console.error('Could not load assets/cert.json', err);
+    certGrid.classList.add('is-empty');
+    certGrid.innerHTML = emptyStateHTML('Credentials coming soon', 'No certificates listed yet.', 'assets/cert.json');
   }
+}
 
-  const happyEmoticons = [
-    "ヾ(≧▽≦*)o","φ(￣0￣)q","(≧▽≦q)","ψ(｀∇´)ψ","（￣︶￣）↗","^_^^","(～￣▽￣)～",
-    "( •̀ ω •́ )✧","[]\\(￣▽￣)","φ(゜▽゜*)♪","o(*^＠^*)o","O(∩_∩)O","(✿◡‿◡)","(*^▽^)",
-    "（*＾-＾）","(*^_^)","(❁´◡`❁)","(≧∇≦)ﾉ","(´▽`ʃ♡ƪ)","(●ˇ∀ˇ●)","○( ＾皿＾)っ","Hehehe…",
-    "(￣y▽￣)╭","Ohohoho.....","^o^/","(‾◡◝)","╰(*°▽°*)╯","(〃￣︶￣)人(￣︶￣〃)","o(*^▽^*)┛",
-    "o(*￣▽￣*)ブ","(^_-)db(-_^)","♪(^∇^)","(≧∀≦)ゞ","o(*￣︶￣*)o","--<-<-<@","(oﾟvﾟ)ノ",
-    "o(*≧▽≦)ツ┏━┓","(/≧▽≦)/","( $ _ $ )","(☆▽☆)","ヾ(＠⌒ー⌒＠)ノ","ㄟ(≧◇≦)ㄏ","o((>ω< ))o",
-    "( *︾▽︾)","ヾ(≧ ▽ ≦)ゝ","☆*: .｡. o(≧▽≦)o .｡.:☆","(((o(*ﾟ▽ﾟ*)o)))","＼(((￣(￣(￣▽￣)￣)￣)))／",
-    "♪(´▽｀)","( *^-^)ρ(^0^* )","~///(^v^)\\\\~","(^///^)","(p≧w≦q)","o(*￣▽￣*)o","( •̀ ω •́ )y",
-    "(o゜▽゜)o☆","ƪ(˘⌣˘)ʃ","ヾ(•ω•`)o","\\(￣︶￣*\\))","(* ￣3)(ε￣ *)","－O－","(*￣3￣)╭",
-    "( ´･･)ﾉ(._.``*)","(｡･∀･)ﾉﾞ","o(\\*￣▽￣\\*)ブ","(_　_)","。゜zｚＺ","(∪.∪ )...zzz",
-    "!(*￣(￣　*)(￣o￣) . z Z","(づ￣ 3￣)づ","（＾∀＾●）ﾉｼ","（づ￣3￣）づ","╭❤️～","\\(@^0^@)/",
-    "ヾ(^▽^*)))","(～﹃～)~zZ","☆⌒(*＾-゜)v","(￣o￣) . z Z","(*￣;(￣ *)","||ヽ(*￣▽￣*)ノミ|Ю",
-    "(＾Ｕ＾)ノ~ＹＯ","o(*°▽°*)o","ヾ(￣▽￣) Bye~Bye~","( ﾟдﾟ)つ Bye","(๑•̀ㅂ•́)و✧",
-    "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧","(∩^o^)⊃━☆","✪ ω ✪","d=====(￣▽￣*)b","＜（＾－＾）＞","o(*￣▽￣*)oo",
-    "(￣▽￣)ｄ","(╹ڡ╹ )","(u‿ฺu✿ฺ)","ヽ(✿ﾟ▽ﾟ)ノ","( •̀ .̫ •́ )✧","(^^ゞ","(＠＾０＾)","（。＾▽＾）",
-    "Ψ(￣∀￣)Ψ","*★,°:.☆(￣▽￣)/$:\\*.°★* 。","o(≧∀≦)o","(。・∀・)ノ","\\(≧▽≦)/","~b(￣▽￣)d",
-    "o(^▽^)o","(👉ﾟヮﾟ)👉","👈(ﾟヮﾟ👈)","👈(⌒▽⌒)👉","(¬‿¬)","(•_•)","( •_•)>⌐■-■","(⌐■_■)",
-    "ヾ(⌐■_■)ノ♪","(▀̿Ĺ̯▀̿ ̿)","＼(ﾟｰﾟ＼)( ﾉ ﾟｰﾟ)ﾉ","(￣y▽,￣)╭","(o|o)","(^人^)","§(￣▽￣)§",
-    "ψ(._. )>","(/▽＼)","(o′┏▽┓｀o)","(*≧︶≦))","(￣▽￣* )ゞ","(　o=^•ェ•)o　┏━┓","ผ(•̀_•́ผ)",
-    "(○｀ 3′○)","(❤️´艸｀❤️)","（〃｀ 3′〃）","(ง •_•)ง","(●'◡'●)","(. ❛ ᴗ ❛.)","ლ(╹◡╹ლ)",
-    "o(〃＾▽＾〃)o","(✿◠‿◠)","(>'-'<)","(。・ω・。)","(ﾉФωФ)ﾉ","ˋ( ° ▽、° )","=￣ω￣=",
-    "ο(=•ω＜=)ρ⌒☆","(✿◕‿◕✿)","✍️(◔◡◔)","(★‿★)","╰(￣ω￣ｏ)","~(￣▽￣)~","*〜(￣▽￣〜)",
-    "(〜￣▽￣)〜","(～o￣3￣)～","ԅ(¯﹃¯ԅ)","(￣﹃￣)","༼ つ ◕_◕ ༽つ","o(*////▽////)q","(/ω＼*)",
-    "………","(/ω•＼)","( ‵▽′)ψ","(❤️ ω ❤️)","(★ ω ★)","ヽ(￣ω￣(￣ω￣〃)ゝ","*(੭*ˊᵕˋ)੭",
-    "ଘ┏ (゜ω゜)=👉","U•ェ•U","（￣。。￣）","m( =∩王∩= )m","o(=•ェ•=)m","(‧‧)nnn","\\(0^◇^0)/~",
-    "o( =∩ω∩= )m","--\\(˙<>˙)/--","ﾉ≡[。。]≡","ฅʕ•̫͡•ʔฅ","( ◍•㉦•◍ )","(◉Θ◉)","ϵ( ‘Θ’ )϶",
-    "( ⓛ ω ⓛ )","(✧×✧)","(^◕.◕^)","ᓚᘏᗢ","~(=^‥^)ノ","/ᐠ｡ꞈ｡ᐟ\\","(^._.^)ﾉ","(^・ω・^ )",
-    "(ʘᴥʘ)","( ¯(∞)¯ )","(￣(工)￣)","<。)#)))≦","^(￣(oo)￣)^","(ʘ ͜ʖ ʘ)","( ͡• ͜ʖ ͡• )",
-    "( ͡° ͜ʖ ͡°)","( ͡~ ͜ʖ ͡°)","¯\\_(ツ)_/¯","（*゜ー゜）","（⊙ｏ⊙）","(*￣０￣)ノ","＼（〇_ｏ）／",
-    "(⊙o⊙)","¯\\(°_o)/¯","m( _ _ )m","(+_+)?","(o_ _)ﾉ","(￣▽￣)\"","(´ｰ∀ｰ`*)","(☆-ｖ-)",
-    "(。・・)ノ","♨︎_♨︎","◉_◉","(●__●)","(⊙_◎)","⚆_⚆","(•ˋ _ ˊ•)","^*^","╰(°▽°)╯",
-    ":-)",":-D","ᓚᘏᗢ",";)^","*~",";-):",")^*^","\\:D","^0^","\\:P",":-P",";P","OwO","UwU",
-    "~*~","^o^","<3","^3^",":-x","+*+","O_O","\\:O","¬*¬",";*","=.=",";]","^*+",";O","):-]",
-    "^.^","=)","):-3","=D","*<","(*_*)"
-  ];
+loadProjects();
+loadCertificates();
 
-  function dayOfYear(date) {
-    const start = new Date(date.getFullYear(), 0, 0);
-    const diff = date - start;
-    return Math.floor(diff / 86400000);
-  }
-
-  function applyDailyEmoji() {
-    const el = document.getElementById('dailyEmoji');
-    if (!el) return;
-    el.textContent = happyEmoticons[dayOfYear(new Date()) % happyEmoticons.length];
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const body         = document.body;
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const sideNav      = document.getElementById('sideNav');
-    const navBackdrop  = document.getElementById('navBackdrop');
-    const themeToggle  = document.getElementById('themeToggle');
-    const petBlob      = document.getElementById('petBlob');
-    const petBubble    = document.getElementById('petBubble');
-    const pupilLeft    = document.getElementById('pupilLeft');
-    const pupilRight   = document.getElementById('pupilRight');
-
-    if (localStorage.getItem('theme') === 'light') body.classList.add('light-theme');
-    applyDailyAccent();
-    applyDailyEmoji();
-
-    themeToggle.addEventListener('click', () => {
-      body.classList.toggle('light-theme');
-      localStorage.setItem('theme', body.classList.contains('light-theme') ? 'light' : 'dark');
-      applyDailyAccent();
-    });
-
-    function openNav()  {
-      sideNav.classList.add('open'); navBackdrop.classList.add('visible');
-      hamburgerBtn.classList.add('open'); body.classList.add('nav-open');
-      hamburgerBtn.setAttribute('aria-expanded','true');
-      sideNav.setAttribute('aria-hidden','false');
-    }
-    function closeNav() {
-      sideNav.classList.remove('open'); navBackdrop.classList.remove('visible');
-      hamburgerBtn.classList.remove('open'); body.classList.remove('nav-open');
-      hamburgerBtn.setAttribute('aria-expanded','false');
-      sideNav.setAttribute('aria-hidden','true');
-    }
-
-    hamburgerBtn.addEventListener('click', () => sideNav.classList.contains('open') ? closeNav() : openNav());
-    navBackdrop.addEventListener('click', closeNav);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && sideNav.classList.contains('open')) closeNav(); });
-
-    document.addEventListener('mousemove', e => {
-      const r = petBlob.getBoundingClientRect();
-      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-      const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
-      const dist  = Math.min(3, Math.hypot(e.clientX - cx, e.clientY - cy) / 40);
-      const mx = Math.cos(angle) * dist, my = Math.sin(angle) * dist;
-      pupilLeft.style.transform  = `translate(${mx}px, ${my}px)`;
-      pupilRight.style.transform = `translate(${mx}px, ${my}px)`;
-    });
-
-    const msgs = ['hi there! 👋', 'hello!', '*wiggles*', 'having a good day?', 'boop!', '✨ hey ✨'];
-    let msgIdx = 0, bubbleTimer;
-
-    function greet() {
-      petBlob.classList.remove('squish');
-      void petBlob.offsetWidth;
-      petBlob.classList.add('squish');
-      petBubble.textContent = msgs[msgIdx];
-      msgIdx = (msgIdx + 1) % msgs.length;
-      petBubble.classList.add('show');
-      clearTimeout(bubbleTimer);
-      bubbleTimer = setTimeout(() => petBubble.classList.remove('show'), 1800);
-    }
-
-    petBlob.addEventListener('click', greet);
-    petBlob.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); greet(); } });
-  });
-  </script>
+document.getElementById('contactForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  document.getElementById('formSuccess').classList.add('show');
+  this.reset();
+});
+</script>
 </body>
 </html>
