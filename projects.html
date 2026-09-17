@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — Pranav Sharma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cyprus:#004741;
+    --sand:#F0EDE4;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--sand);
+    color:var(--cyprus);
+    font-family:'Archivo', sans-serif;
+    line-height:1.5;
+  }
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+  .nav{
+    border-bottom:2px solid var(--cyprus);
+    padding:18px 0;
+  }
+  .nav-inner{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .back{
+    text-decoration:none;
+    font-weight:700;
+    font-size:14px;
+  }
+  .nav-mark{
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    opacity:0.6;
+  }
+  header{
+    padding:72px 0 48px;
+    border-bottom:2px solid var(--cyprus);
+  }
+  .tag{
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:24px;
+  }
+  .tag::before{
+    content:"";
+    width:28px;
+    height:2px;
+    background:var(--cyprus);
+    display:inline-block;
+  }
+  h1{
+    font-size:clamp(36px,7vw,58px);
+    font-weight:900;
+    letter-spacing:-0.02em;
+  }
+  .sub{
+    margin-top:16px;
+    max-width:60ch;
+    font-size:16px;
+    opacity:0.85;
+  }
+
+  .list{
+    padding:20px 0 80px;
+  }
+  .item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    padding:28px 0;
+    border-bottom:2px solid var(--cyprus);
+    text-decoration:none;
+    color:var(--cyprus);
+  }
+  .item:first-child{
+    border-top:2px solid var(--cyprus);
+  }
+  .item-left{
+    display:flex;
+    align-items:baseline;
+    gap:20px;
+  }
+  .item-num{
+    font-family:'Space Mono', monospace;
+    font-size:14px;
+    opacity:0.55;
+    width:28px;
+  }
+  .item-name{
+    font-size:22px;
+    font-weight:700;
+  }
+  .item-arrow{
+    font-family:'Space Mono', monospace;
+    font-size:14px;
+    border:2px solid var(--cyprus);
+    padding:8px 14px;
+    white-space:nowrap;
+    transition:background .15s ease, color .15s ease;
+  }
+  .item:hover .item-arrow{
+    background:var(--cyprus);
+    color:var(--sand);
+  }
+
+  .empty-note{
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    opacity:0.5;
+    padding:20px 0;
+    border-top:2px dashed var(--cyprus);
+    margin-top:10px;
+  }
+
+  @media (max-width:600px){
+    .item-name{ font-size:18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="back">← Back</a>
+    <div class="nav-mark">PROJECTS</div>
+  </div>
+</div>
+
+<header>
+  <div class="wrap">
+    <div class="tag">PERSONAL PROJECTS</div>
+    <h1>Everything I've built.</h1>
+    <p class="sub">A running list of things I've made — some finished, some half-broken, all worth a look.</p>
+  </div>
+</header>
+
+<div class="wrap list">
+
+
+  <a href="#" class="item" target="_blank">
+    <div class="item-left">
+      <span class="item-num">01</span>
+      <span class="item-name">Project Name One</span>
+    </div>
+    <span class="item-arrow">Open →</span>
+  </a>
+
+  <a href="#" class="item" target="_blank">
+    <div class="item-left">
+      <span class="item-num">02</span>
+      <span class="item-name">Project Name Two</span>
+    </div>
+    <span class="item-arrow">Open →</span>
+  </a>
+
+  <a href="#" class="item" target="_blank">
+    <div class="item-left">
+      <span class="item-num">03</span>
+      <span class="item-name">Project Name Three</span>
+    </div>
+    <span class="item-arrow">Open →</span>
+  </a>
+
+
+</div>
+
+</body>
+</html>
