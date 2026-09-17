@@ -11,6 +11,9 @@
   :root{
     --cyprus:#004741;
     --sand:#F0EDE4;
+    --ok:#1f7a4a;
+    --down:#a13a2e;
+    --warn:#a37a1c;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
@@ -27,6 +30,10 @@
   .nav{
     border-bottom:2px solid var(--cyprus);
     padding:18px 0;
+    position:sticky;
+    top:0;
+    background:var(--sand);
+    z-index:10;
   }
   .nav-inner{
     max-width:920px;
@@ -77,15 +84,30 @@
     opacity:0.85;
   }
 
-  .list{
-    padding:20px 0 80px;
+  .section{
+    padding:56px 0;
+    border-bottom:2px solid var(--cyprus);
   }
+  .section-title{
+    font-size:clamp(22px,4vw,30px);
+    font-weight:800;
+    letter-spacing:-0.02em;
+    margin-bottom:8px;
+  }
+  .section-note{
+    font-family:'Space Mono', monospace;
+    font-size:12.5px;
+    opacity:0.55;
+    margin-bottom:28px;
+  }
+
+  .list{}
   .item{
     display:flex;
     justify-content:space-between;
     align-items:center;
     gap:20px;
-    padding:28px 0;
+    padding:26px 0;
     border-bottom:2px solid var(--cyprus);
     text-decoration:none;
     color:var(--cyprus);
@@ -121,17 +143,74 @@
     color:var(--sand);
   }
 
-  .empty-note{
+  /* ---------- STATUS ---------- */
+  .status-box{
+    border:2px solid var(--cyprus);
+  }
+  .status-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 20px;
+    gap:16px;
+  }
+  .status-row:not(:last-child){
+    border-bottom:2px solid var(--cyprus);
+  }
+  .status-name{
+    font-weight:700;
+    font-size:15px;
+  }
+  .status-meta{
+    font-family:'Space Mono', monospace;
+    font-size:12.5px;
+    opacity:0.6;
+    margin-top:2px;
+  }
+  .status-pill{
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    font-weight:700;
+    padding:6px 12px;
+    border:2px solid currentColor;
+    white-space:nowrap;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .status-dot{
+    width:8px; height:8px;
+    background:currentColor;
+    display:inline-block;
+  }
+  .status-pill.ok{ color:var(--ok); }
+  .status-pill.down{ color:var(--down); }
+  .status-pill.warn{ color:var(--warn); }
+  .status-pill.unknown{ color:var(--cyprus); opacity:0.6; }
+
+  .status-loading, .status-error{
     font-family:'Space Mono', monospace;
     font-size:13px;
-    opacity:0.5;
-    padding:20px 0;
+    padding:20px;
+    border:2px dashed var(--cyprus);
+    opacity:0.7;
+  }
+  .status-raw{
+    margin-top:16px;
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    opacity:0.55;
+    white-space:pre-wrap;
+    word-break:break-word;
+    max-height:200px;
+    overflow:auto;
     border-top:2px dashed var(--cyprus);
-    margin-top:10px;
+    padding-top:14px;
   }
 
   @media (max-width:600px){
     .item-name{ font-size:18px; }
+    .status-row{ flex-direction:column; align-items:flex-start; gap:8px; }
   }
 </style>
 </head>
@@ -152,35 +231,160 @@
   </div>
 </header>
 
-<div class="wrap list">
+<section class="section">
+  <div class="wrap">
+    <div class="section-title">Projects</div>
+    <div class="section-note">THINGS I'VE BUILT</div>
+    <div class="list">
 
+      <a href="https://pranav-sharma.pages.dev" class="item" target="_blank">
+        <div class="item-left">
+          <span class="item-num">01</span>
+          <span class="item-name">Birthday Extractor</span>
+        </div>
+        <span class="item-arrow">Open →</span>
+      </a>
 
-  <a href="#" class="item" target="_blank">
-    <div class="item-left">
-      <span class="item-num">01</span>
-      <span class="item-name">Project Name One</span>
+      <a href="#" class="item" target="_blank">
+        <div class="item-left">
+          <span class="item-num">02</span>
+          <span class="item-name">Project Name Two</span>
+        </div>
+        <span class="item-arrow">Open →</span>
+      </a>
+
+      <a href="#" class="item" target="_blank">
+        <div class="item-left">
+          <span class="item-num">03</span>
+          <span class="item-name">Project Name Three</span>
+        </div>
+        <span class="item-arrow">Open →</span>
+      </a>
+
     </div>
-    <span class="item-arrow">Open →</span>
-  </a>
+  </div>
+</section>
 
-  <a href="#" class="item" target="_blank">
-    <div class="item-left">
-      <span class="item-num">02</span>
-      <span class="item-name">Project Name Two</span>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-title">Servers</div>
+    <div class="section-note">SELF-HOSTED SERVICES</div>
+    <div class="list">
+
+      <a href="https://photos.pranavsharma.dpdns.org" class="item" target="_blank">
+        <div class="item-left">
+          <span class="item-num">01</span>
+          <span class="item-name">Photos</span>
+        </div>
+        <span class="item-arrow">Open →</span>
+      </a>
+
+      <a href="https://vault.pranavsharma.dpdns.org" class="item" target="_blank">
+        <div class="item-left">
+          <span class="item-num">02</span>
+          <span class="item-name">Vault</span>
+        </div>
+        <span class="item-arrow">Open →</span>
+      </a>
+
+      <a href="https://music.pranavsharma.dpdns.org" class="item" target="_blank">
+        <div class="item-left">
+          <span class="item-num">03</span>
+          <span class="item-name">Music</span>
+        </div>
+        <span class="item-arrow">Open →</span>
+      </a>
+
     </div>
-    <span class="item-arrow">Open →</span>
-  </a>
+  </div>
+</section>
 
-  <a href="#" class="item" target="_blank">
-    <div class="item-left">
-      <span class="item-num">03</span>
-      <span class="item-name">Project Name Three</span>
+
+<section class="section" style="border-bottom:none;">
+  <div class="wrap">
+    <div class="section-title">Status</div>
+    <div class="section-note">LIVE — FETCHED FROM STATUS.PRANAVSHARMA.DPDNS.ORG</div>
+    <div id="statusContainer">
+      <div class="status-loading">Checking services…</div>
     </div>
-    <span class="item-arrow">Open →</span>
-  </a>
+  </div>
+</section>
 
+<script>
+  const STATUS_URL = "https://status.pranavsharma.dpdns.org/status.json";
+  const container = document.getElementById('statusContainer');
 
-</div>
+  function pillClass(state){
+    if(!state) return 'unknown';
+    const s = String(state).toLowerCase();
+    if(['up','online','ok','operational','healthy','pass'].includes(s)) return 'ok';
+    if(['down','offline','fail','error','outage'].includes(s)) return 'down';
+    if(['degraded','warn','warning','partial'].includes(s)) return 'warn';
+    return 'unknown';
+  }
+
+  function pillLabel(state){
+    return state ? String(state).toUpperCase() : 'UNKNOWN';
+  }
+
+  function renderServices(services){
+    const box = document.createElement('div');
+    box.className = 'status-box';
+
+    services.forEach(svc => {
+      const name = svc.name || svc.service || svc.id || 'Service';
+      const state = svc.status || svc.state || (svc.up === true ? 'up' : svc.up === false ? 'down' : null);
+      const meta = svc.url || svc.uptime || svc.responseTime || svc.latency;
+
+      const row = document.createElement('div');
+      row.className = 'status-row';
+
+      const left = document.createElement('div');
+      left.innerHTML = `<div class="status-name">${name}</div>` +
+        (meta ? `<div class="status-meta">${meta}</div>` : '');
+
+      const cls = pillClass(state);
+      const pill = document.createElement('div');
+      pill.className = `status-pill ${cls}`;
+      pill.innerHTML = `<span class="status-dot"></span>${pillLabel(state)}`;
+
+      row.appendChild(left);
+      row.appendChild(pill);
+      box.appendChild(row);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(box);
+  }
+
+  function findServiceArray(data){
+    if(Array.isArray(data)) return data;
+    for(const key of ['services','status','monitors','sites','items']){
+      if(Array.isArray(data[key])) return data[key];
+    }
+    return null;
+  }
+
+  fetch(STATUS_URL, { cache: 'no-store' })
+    .then(res => {
+      if(!res.ok) throw new Error('Request failed: ' + res.status);
+      return res.json();
+    })
+    .then(data => {
+      const services = findServiceArray(data);
+      if(services && services.length){
+        renderServices(services);
+      } else {
+        container.innerHTML =
+          '<div class="status-loading">Connected, but the response format wasn\'t recognized.</div>' +
+          '<div class="status-raw">' + JSON.stringify(data, null, 2) + '</div>';
+      }
+    })
+    .catch(err => {
+      container.innerHTML = `<div class="status-error">Couldn't load status right now (${err.message}). The endpoint may be offline or blocking cross-origin requests.</div>`;
+    });
+</script>
 
 </body>
 </html>
