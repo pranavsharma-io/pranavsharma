@@ -214,6 +214,53 @@
     padding-top:14px;
   }
 
+  /* ---------- LIVE SERVER STATS ---------- */
+  .live-box{
+    border:2px solid var(--cyprus);
+    margin-bottom:28px;
+  }
+  .live-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    padding:18px 20px;
+    border-bottom:2px solid var(--cyprus);
+  }
+  .live-row{
+    display:grid;
+    grid-template-columns:90px 1fr 170px;
+    align-items:center;
+    gap:20px;
+    padding:14px 20px;
+  }
+  .live-row:not(:last-child){
+    border-bottom:2px solid var(--cyprus);
+  }
+  .live-label{
+    font-weight:700;
+    font-size:15px;
+  }
+  .live-row canvas{
+    width:100%;
+    height:34px;
+    display:block;
+  }
+  .live-val{
+    text-align:right;
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    font-weight:700;
+    white-space:nowrap;
+  }
+  .live-val small{
+    display:block;
+    font-size:11.5px;
+    font-weight:400;
+    opacity:0.6;
+    margin-top:2px;
+  }
+
   /* ---------- FOOTER NOTE (unlabeled, low-key) ---------- */
   .footnote{
     padding:40px 0 60px;
@@ -262,6 +309,8 @@
   @media (max-width:600px){
     .item-name{ font-size:18px; }
     .status-row{ flex-direction:column; align-items:flex-start; gap:8px; }
+    .live-row{ grid-template-columns:64px 1fr 110px; gap:12px; padding:12px 14px; }
+    .live-head{ padding:14px; }
   }
 </style>
 </head>
@@ -381,6 +430,37 @@
   <div class="wrap">
     <div class="section-title">Status</div>
     <div class="section-note">LIVE</div>
+
+    <div class="live-box" id="liveBox">
+      <div class="live-head">
+        <div>
+          <div class="status-name">Server</div>
+          <div class="status-meta" id="liveMeta">Waiting for data…</div>
+        </div>
+        <div class="status-pill unknown" id="livePill"><span class="status-dot"></span>CONNECTING</div>
+      </div>
+      <div class="live-row">
+        <span class="live-label">CPU</span>
+        <canvas id="lc-cpu"></canvas>
+        <div class="live-val"><span id="lv-cpu">-</span><small id="lv-cpu-s"></small></div>
+      </div>
+      <div class="live-row">
+        <span class="live-label">RAM</span>
+        <canvas id="lc-ram"></canvas>
+        <div class="live-val"><span id="lv-ram">-</span><small id="lv-ram-s"></small></div>
+      </div>
+      <div class="live-row">
+        <span class="live-label">Disk</span>
+        <canvas id="lc-dio"></canvas>
+        <div class="live-val"><span id="lv-dr">-</span><small id="lv-dw"></small></div>
+      </div>
+      <div class="live-row">
+        <span class="live-label">Network</span>
+        <canvas id="lc-net"></canvas>
+        <div class="live-val"><span id="lv-rx">-</span><small id="lv-tx"></small></div>
+      </div>
+    </div>
+
     <div id="statusContainer">
       <div class="status-loading">Checking services…</div>
     </div>
@@ -507,6 +587,89 @@
     .catch(err => {
       container.innerHTML = `<div class="status-error">Couldn't load status right now (${err.message}). The endpoint may be offline or blocking cross-origin requests.</div>`;
     });
+
+  // ---------- live server stats (websocket) ----------
+  (function(){
+    const WS_URL = 'wss://monitor.pranavsharma.dpdns.org/ws';
+    const N = 60;
+    const H = {cpu:[], ram:[], dr:[], dw:[], rx:[], tx:[]};
+    const $ = id => document.getElementById(id);
+    const INK = '#004741';
+
+    const fmt = b => b>=1e9 ? (b/1e9).toFixed(2)+' GB/s'
+                  : b>=1e6 ? (b/1e6).toFixed(2)+' MB/s'
+                  : b>=1e3 ? (b/1e3).toFixed(1)+' KB/s'
+                  : Math.round(b)+' B/s';
+    const gb = b => (b/2**30).toFixed(1)+' GB';
+    const push = (k,v) => { H[k].push(v); if(H[k].length>N) H[k].shift(); };
+
+    function setPill(cls, label){
+      const p = $('livePill');
+      p.className = 'status-pill ' + cls;
+      p.innerHTML = '<span class="status-dot"></span>' + label;
+    }
+
+    // Primary series solid, secondary series faded
+    function draw(id, series, fixedMax){
+      const c = $(id), d = window.devicePixelRatio || 1;
+      const w = c.clientWidth, h = c.clientHeight;
+      if(!w || !h) return;
+      c.width = w*d; c.height = h*d;
+      const g = c.getContext('2d');
+      g.scale(d,d);
+      const max = fixedMax || Math.max(1, ...series.flat());
+      const step = w/(N-1);
+      series.forEach((s,i) => {
+        g.beginPath();
+        s.forEach((v,j) => {
+          const x = w - (s.length-1-j)*step;
+          const y = h - 2 - (v/max)*(h-4);
+          j ? g.lineTo(x,y) : g.moveTo(x,y);
+        });
+        g.strokeStyle = INK;
+        g.globalAlpha = i === 0 ? 1 : 0.4;
+        g.lineWidth = 2;
+        g.lineJoin = 'miter';
+        g.stroke();
+      });
+      g.globalAlpha = 1;
+    }
+
+    function onData(d){
+      push('cpu', d.cpu); push('ram', d.ram.percent);
+      push('dr', d.disk.r); push('dw', d.disk.w);
+      push('rx', d.net.rx); push('tx', d.net.tx);
+
+      $('lv-cpu').textContent = d.cpu.toFixed(0) + '%';
+      $('lv-cpu-s').textContent = d.cores.length + ' cores' + (d.temp ? ' · ' + d.temp.toFixed(0) + '°C' : '');
+      $('lv-ram').textContent = d.ram.percent.toFixed(0) + '%';
+      $('lv-ram-s').textContent = gb(d.ram.used) + ' / ' + gb(d.ram.total);
+      $('lv-dr').textContent = 'R ' + fmt(d.disk.r);
+      $('lv-dw').textContent = 'W ' + fmt(d.disk.w);
+      $('lv-rx').textContent = '↓ ' + fmt(d.net.rx);
+      $('lv-tx').textContent = '↑ ' + fmt(d.net.tx);
+      $('liveMeta').textContent = 'Load ' + d.load.map(x => x.toFixed(2)).join(' / ') + ' · up ' + Math.floor(d.uptime/3600) + 'h';
+
+      draw('lc-cpu', [H.cpu], 100);
+      draw('lc-ram', [H.ram], 100);
+      draw('lc-dio', [H.dr, H.dw]);
+      draw('lc-net', [H.rx, H.tx]);
+    }
+
+    function connect(){
+      let ws;
+      try{ ws = new WebSocket(WS_URL); }
+      catch(e){ setPill('down','OFFLINE'); return setTimeout(connect, 5000); }
+      ws.onopen = () => setPill('ok','LIVE');
+      ws.onmessage = e => { try{ onData(JSON.parse(e.data)); }catch(_){} };
+      ws.onclose = () => {
+        setPill('down','OFFLINE');
+        $('liveMeta').textContent = 'Reconnecting…';
+        setTimeout(connect, 3000);
+      };
+    }
+    connect();
+  })();
 
   // ---------- footer note field ----------
   const NOTE_WORKER_URL = "https://report.z3957759.workers.dev/";
