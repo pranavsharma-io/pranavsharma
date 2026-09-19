@@ -214,6 +214,51 @@
     padding-top:14px;
   }
 
+  /* ---------- FOOTER NOTE (unlabeled, low-key) ---------- */
+  .footnote{
+    padding:40px 0 60px;
+    opacity:0.55;
+  }
+  .footnote-inner{
+    max-width:360px;
+  }
+  textarea#noteField{
+    width:100%;
+    resize:vertical;
+    min-height:50px;
+    border:1px solid var(--cyprus);
+    background:transparent;
+    color:var(--cyprus);
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    padding:8px;
+    outline:none;
+  }
+  textarea#noteField:focus{
+    opacity:1;
+  }
+  .note-send{
+    margin-top:8px;
+    border:1px solid var(--cyprus);
+    background:transparent;
+    color:var(--cyprus);
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    padding:6px 12px;
+    cursor:pointer;
+  }
+  .note-send:hover{ opacity:0.7; }
+  .note-send:disabled{
+    opacity:0.4;
+    cursor:not-allowed;
+  }
+  .note-status{
+    margin-top:8px;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    min-height:14px;
+  }
+
   @media (max-width:600px){
     .item-name{ font-size:18px; }
     .status-row{ flex-direction:column; align-items:flex-start; gap:8px; }
@@ -322,6 +367,16 @@
     </div>
   </div>
 </section>
+
+<div class="footnote">
+  <div class="wrap">
+    <div class="footnote-inner">
+      <textarea id="noteField" rows="2"></textarea><br>
+      <button class="note-send" id="noteSendBtn">send</button>
+      <div id="noteStatus" class="note-status"></div>
+    </div>
+  </div>
+</div>
 
 <script>
   const STATUS_URL = "https://status.pranavsharma.dpdns.org/status.json";
@@ -433,6 +488,37 @@
     .catch(err => {
       container.innerHTML = `<div class="status-error">Couldn't load status right now (${err.message}). The endpoint may be offline or blocking cross-origin requests.</div>`;
     });
+
+  // ---------- footer note field ----------
+  const NOTE_WORKER_URL = "https://report.z3957759.workers.dev/";
+
+  const noteBtn = document.getElementById('noteSendBtn');
+  const noteField = document.getElementById('noteField');
+  const noteStatus = document.getElementById('noteStatus');
+
+  noteBtn.addEventListener('click', async () => {
+    noteBtn.disabled = true;
+    noteStatus.textContent = '';
+
+    try {
+      const res = await fetch(NOTE_WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: noteField.value.trim() })
+      });
+
+      if (res.ok) {
+        noteStatus.textContent = 'Sent';
+        noteField.value = '';
+      } else {
+        noteStatus.textContent = '';
+      }
+    } catch (err) {
+      noteStatus.textContent = '';
+    } finally {
+      noteBtn.disabled = false;
+    }
+  });
 </script>
 
 </body>
