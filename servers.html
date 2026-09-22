@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Servers</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{
+    --bg-primary:#FFFFFF;
+    --bg-secondary:#F5F5F7;
+    --bg-tertiary:#E8E8ED;
+    --bg-elevated:#FFFFFF;
+
+    --text-primary:#1D1D1F;
+    --text-secondary:#6E6E73;
+    --text-tertiary:#AEAEB2;
+
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.15);
+
+    --accent:#007AFF;
+    --accent-hover:#0066D6;
+
+    --surface-hover: rgba(0,0,0,0.04);
+    --surface-active: rgba(0,0,0,0.08);
+
+    --ok:#34C759;
+    --down:#FF3B30;
+    --warn:#FF9500;
+    --unknown:#AEAEB2;
+
+    --sidebar-vibrancy: rgba(246,246,246,0.72);
+
+    --shadow-sm: 0 0 0 0.5px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 0 0 0.5px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.1);
+    --shadow-window:
+      0 0 0 0.5px rgba(0,0,0,0.1),
+      0 2px 8px rgba(0,0,0,0.08),
+      0 8px 30px rgba(0,0,0,0.14),
+      0 24px 60px rgba(0,0,0,0.08);
+
+    --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --dur-fast: 150ms;
+    --dur-normal: 250ms;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg-primary:#1C1C1E;
+      --bg-secondary:#2C2C2E;
+      --bg-tertiary:#3A3A3C;
+      --bg-elevated:#2C2C2E;
+
+      --text-primary:#F5F5F7;
+      --text-secondary:#98989D;
+      --text-tertiary:#636366;
+
+      --border: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.15);
+
+      --accent:#0A84FF;
+      --accent-hover:#409CFF;
+
+      --surface-hover: rgba(255,255,255,0.06);
+      --surface-active: rgba(255,255,255,0.1);
+
+      --ok:#30D158;
+      --down:#FF453A;
+      --warn:#FF9F0A;
+      --unknown:#636366;
+
+      --sidebar-vibrancy: rgba(30,30,30,0.72);
+
+      --shadow-sm: 0 0 0 0.5px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md: 0 0 0 0.5px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.4);
+      --shadow-window:
+        0 0 0 0.5px rgba(0,0,0,0.6),
+        0 2px 8px rgba(0,0,0,0.3),
+        0 8px 30px rgba(0,0,0,0.4),
+        0 24px 60px rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"]{
+      --bg-primary:#1C1C1E; --bg-secondary:#2C2C2E; --bg-tertiary:#3A3A3C; --bg-elevated:#2C2C2E;
+      --text-primary:#F5F5F7; --text-secondary:#98989D; --text-tertiary:#636366;
+      --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.15);
+      --accent:#0A84FF; --accent-hover:#409CFF;
+      --surface-hover: rgba(255,255,255,0.06); --surface-active: rgba(255,255,255,0.1);
+      --ok:#30D158; --down:#FF453A; --warn:#FF9F0A; --unknown:#636366;
+      --sidebar-vibrancy: rgba(30,30,30,0.72);
+      --shadow-sm: 0 0 0 0.5px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md: 0 0 0 0.5px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.4);
+      --shadow-window: 0 0 0 0.5px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.3), 0 8px 30px rgba(0,0,0,0.4), 0 24px 60px rgba(0,0,0,0.3);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:var(--text-primary);
+    background-image: linear-gradient(160deg, #e9f0fb 0%, #dbe7f5 35%, #cfe0ef 65%, #e4eef8 100%);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    -webkit-font-smoothing:antialiased;
+    padding:0;
+    font-size:13px;
+    transition: background-image var(--dur-normal) var(--ease-out);
+    overflow:hidden;
+  }
+
+  /* ===== Window (fullscreen) ===== */
+  .window{
+    width:100vw; height:100vh;
+    height:100dvh;
+    background:var(--bg-primary);
+    border-radius:0;
+    box-shadow:none;
+    overflow:hidden;
+    display:grid;
+    grid-template-columns:220px 1fr;
+    grid-template-rows:auto 1fr;
+    transition:transform var(--dur-normal) var(--ease-out), opacity var(--dur-normal) var(--ease-out);
+  }
+
+  .titlebar{
+    grid-column:1 / -1;
+    display:flex; align-items:center; gap:10px;
+    padding:env(safe-area-inset-top,0px) 16px 0; height:calc(52px + env(safe-area-inset-top,0px));
+    background:var(--sidebar-vibrancy);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-bottom:0.5px solid var(--border);
+    user-select:none;
+    position:relative;
+  }
+  .traffic{display:flex; gap:8px; width:56px;}
+  .tdot{
+    width:12px; height:12px; border-radius:50%; position:relative; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:filter var(--dur-fast) ease;
+  }
+  .tdot.r{background:#FF5F57;} .tdot.y{background:#FEBC2E;} .tdot.g{background:#28C840;}
+  .tdot::before{ content:''; position:absolute; inset:0; border-radius:50%; box-shadow:inset 0 0 0 0.5px rgba(0,0,0,.15); }
+  .tdot i{ font-size:7px; color:rgba(0,0,0,.5); opacity:0; transition:opacity var(--dur-fast) ease; }
+  .window:hover .tdot i{opacity:1;}
+
+  .titlebar-title{
+    position:absolute; left:50%; transform:translateX(-50%);
+    font-size:13px; font-weight:590; color:var(--text-secondary);
+    letter-spacing:-.01em;
+  }
+  .titlebar-search{
+    margin-left:auto; display:flex; align-items:center; gap:6px;
+    background:var(--bg-tertiary); border:0.5px solid var(--border);
+    border-radius:6px; padding:4px 8px; width:170px;
+    transition:width var(--dur-normal) var(--ease-out);
+  }
+  .titlebar-search i{flex:0 0 auto; color:var(--text-tertiary); font-size:11px;}
+  .titlebar-search input{
+    border:none; background:none; outline:none; font-size:12px;
+    color:var(--text-primary); width:100%; font-family:inherit;
+  }
+  .titlebar-search input::placeholder{color:var(--text-tertiary);}
+  .titlebar-clock{ font-size:11px; color:var(--text-tertiary); font-variant-numeric:tabular-nums; white-space:nowrap; }
+
+  .wallpaper-btn{
+    width:26px; height:26px; border-radius:6px; border:0.5px solid var(--border);
+    background:var(--bg-tertiary); color:var(--text-secondary);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    transition:background var(--dur-fast) ease; flex:0 0 auto; font-size:12px;
+  }
+  .wallpaper-btn:hover{background:var(--surface-hover);}
+  .wallpaper-pop{
+    position:absolute; top:44px; right:16px; z-index:50;
+    width:260px; padding:14px;
+    background:var(--bg-elevated);
+    border:0.5px solid var(--border);
+    border-radius:10px;
+    box-shadow:var(--shadow-md);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    display:none;
+    flex-direction:column; gap:10px;
+    animation:paneIn var(--dur-fast) var(--ease-out);
+  }
+  .wallpaper-pop.open{display:flex;}
+  .wallpaper-pop label{font-size:11px; font-weight:600; color:var(--text-tertiary); letter-spacing:.02em; text-transform:uppercase;}
+  .wallpaper-pop input[type="text"]{
+    width:100%; font-size:12px; padding:6px 8px; border-radius:6px;
+    border:0.5px solid var(--border); background:var(--bg-tertiary);
+    color:var(--text-primary); outline:none; font-family:inherit;
+  }
+  .wallpaper-pop input[type="text"]:focus{border-color:var(--accent);}
+  .wp-row{display:flex; gap:6px;}
+  .wp-btn{
+    flex:1; font-size:11.5px; font-weight:500; padding:6px 8px; border-radius:6px;
+    border:0.5px solid var(--border); background:var(--bg-tertiary); color:var(--text-primary);
+    cursor:pointer; transition:background var(--dur-fast) ease; text-align:center;
+  }
+  .wp-btn:hover{background:var(--surface-hover);}
+  .wp-btn.primary{background:var(--accent); color:#fff; border-color:transparent;}
+  .wp-btn.primary:hover{background:var(--accent-hover);}
+  .wp-divider{height:0.5px; background:var(--border); margin:2px 0;}
+  .wp-swatches{display:flex; gap:6px;}
+  .wp-swatch{
+    width:32px; height:32px; border-radius:6px; cursor:pointer;
+    border:0.5px solid var(--border-strong); flex:0 0 auto; background-size:cover; background-position:center;
+    transition:transform var(--dur-fast) ease;
+  }
+  .wp-swatch:hover{transform:scale(1.08);}
+  .wp-swatch.none{
+    background:var(--bg-tertiary);
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:var(--text-tertiary);
+  }
+
+  .sidebar{
+    background:var(--sidebar-vibrancy);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-right:0.5px solid var(--border);
+    padding:8px 10px;
+    display:flex; flex-direction:column; gap:1px;
+    overflow-y:auto;
+  }
+  .sb-label{ font-size:11px; font-weight:600; color:var(--text-tertiary); letter-spacing:.02em; padding:14px 8px 4px; text-transform:uppercase; }
+  .sb-item{
+    display:flex; align-items:center; gap:8px;
+    padding:0 8px; height:28px; border-radius:6px;
+    font-size:13px; font-weight:450; color:var(--text-primary);
+    cursor:pointer; transition:background var(--dur-fast) ease, color var(--dur-fast) ease;
+    border:none; background:none; width:100%; text-align:left;
+  }
+  .sb-item:hover{background:var(--surface-hover);}
+  .sb-item.active{background:var(--accent); color:#fff; font-weight:590;}
+  .sb-icon{font-size:13px; width:16px; text-align:center; color:var(--text-secondary);}
+  .sb-item.active .sb-icon{color:#fff;}
+  .sb-kbd{
+    margin-left:auto; font-size:11px; font-weight:500; color:var(--text-tertiary);
+    background:var(--surface-hover); padding:2px 6px; border-radius:4px;
+    border:0.5px solid var(--border); opacity:.7;
+  }
+  .sb-item.active .sb-kbd{background:rgba(255,255,255,.22); color:#fff; border-color:transparent;}
+
+  .content{ overflow-y:auto; padding:20px 24px 28px; background:var(--bg-primary); }
+  .pane{display:none;}
+  .pane.active{display:block; animation:paneIn var(--dur-normal) var(--ease-out);}
+  @keyframes paneIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .content-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;}
+  .content-title{font-size:22px; font-weight:700; letter-spacing:-.02em;}
+  .content-sub{font-size:11px; color:var(--text-tertiary); font-weight:600; letter-spacing:.04em;}
+
+  .card{ background:var(--bg-elevated); border:0.5px solid var(--border); border-radius:8px; box-shadow:var(--shadow-sm); overflow:hidden; }
+  .list{display:flex; flex-direction:column;}
+  .item{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 14px; height:44px;
+    text-decoration:none; color:var(--text-primary);
+    border-bottom:0.5px solid var(--border);
+    transition:background var(--dur-fast) ease, transform var(--dur-fast) ease;
+  }
+  .item:last-child{border-bottom:none;}
+  .item:hover{background:var(--surface-hover);}
+  .item:active{transform:scale(.995); background:var(--surface-active);}
+  .item-left{display:flex; align-items:center; gap:12px;}
+  .item-num{font-size:11px; font-weight:600; color:var(--text-tertiary); width:16px; font-variant-numeric:tabular-nums;}
+  .item-icon{ width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:12.5px; color:#fff; flex:0 0 auto; }
+  .item-name{font-size:13px; font-weight:500;}
+  .item-arrow{ font-size:12px; font-weight:500; color:var(--accent); opacity:0; transform:translateX(-4px); transition:opacity var(--dur-fast) ease, transform var(--dur-fast) ease; display:flex; align-items:center; gap:5px; }
+  .item:hover .item-arrow{opacity:1; transform:translateX(0);}
+
+  .live-box{padding:14px 16px 4px;}
+  .live-head{display:flex; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:0.5px solid var(--border); margin-bottom:6px;}
+  .status-name{font-size:13px; font-weight:600;}
+  .status-meta{font-size:11px; color:var(--text-tertiary); margin-top:2px;}
+  .status-pill{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:10px; font-weight:600; letter-spacing:.03em;
+    padding:3px 8px; border-radius:20px; background:var(--surface-hover);
+    transition:background var(--dur-normal) ease, color var(--dur-normal) ease;
+  }
+  .status-dot{width:6px; height:6px; border-radius:50%; background:currentColor;}
+  .status-pill.ok{color:var(--ok); background:color-mix(in srgb, var(--ok) 16%, transparent);}
+  .status-pill.down{color:var(--down); background:color-mix(in srgb, var(--down) 16%, transparent);}
+  .status-pill.warn{color:var(--warn); background:color-mix(in srgb, var(--warn) 16%, transparent);}
+  .status-pill.unknown{color:var(--unknown); background:color-mix(in srgb, var(--unknown) 20%, transparent);}
+
+  .live-row{display:grid; grid-template-columns:48px 1fr 100px; align-items:center; gap:10px; padding:8px 0;}
+  .live-label{font-size:11px; font-weight:600; color:var(--text-tertiary);}
+  .live-row canvas{width:100%; height:26px; display:block;}
+  .live-val{text-align:right; font-size:12px; font-weight:600; font-variant-numeric:tabular-nums;}
+  .live-val small{display:block; font-size:10px; font-weight:500; color:var(--text-tertiary);}
+
+  .status-list{border-top:0.5px solid var(--border);}
+  .status-row{display:flex; align-items:center; justify-content:space-between; padding:0 14px; height:44px; border-bottom:0.5px solid var(--border);}
+  .status-row:last-child{border-bottom:none;}
+  .status-loading, .status-error{padding:16px; font-size:12px; color:var(--text-tertiary); text-align:center;}
+  .status-error{color:var(--down);}
+  .status-footer{padding:8px 14px 12px; font-size:10px; color:var(--text-tertiary); text-align:center;}
+  .status-raw{margin:0 14px 12px; padding:10px; background:var(--surface-hover); border-radius:6px; font-size:10px; white-space:pre-wrap; word-break:break-all; max-height:180px; overflow:auto;}
+
+  .hint{ margin-top:10px; font-size:11px; color:var(--text-tertiary); display:flex; align-items:center; gap:6px; }
+  .hint .kbd{
+    display:inline-flex; align-items:center; padding:1px 5px; font-size:10px;
+    background:var(--surface-hover); border-radius:4px; border:0.5px solid var(--border); opacity:.8;
+  }
+
+  ::-webkit-scrollbar{width:9px; height:9px;}
+  ::-webkit-scrollbar-thumb{background:var(--text-tertiary); border-radius:8px; border:2px solid transparent; background-clip:content-box;}
+  ::-webkit-scrollbar-track{background:transparent;}
+
+  .empty-state{ display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 20px; text-align:center; color:var(--text-tertiary); }
+  .empty-state i{font-size:22px; margin-bottom:10px; opacity:.5;}
+  .empty-state p{margin:0; font-size:12.5px;}
+</style>
+</head>
+<body>
+
+<div class="window" id="win">
+
+  <div class="titlebar">
+    <div class="traffic">
+      <span class="tdot r" id="btnClose" title="Close"><i class="fa-solid fa-xmark"></i></span>
+      <span class="tdot y" id="btnMin" title="Minimize"><i class="fa-solid fa-minus"></i></span>
+      <span class="tdot g" id="btnZoom" title="Zoom"><i class="fa-solid fa-plus"></i></span>
+    </div>
+    <div class="titlebar-title" id="titleText">Servers</div>
+    <div class="titlebar-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="filterInput" placeholder="Search  ⌘F">
+    </div>
+    <div class="titlebar-clock" id="clock"></div>
+    <button class="wallpaper-btn" id="wallpaperToggle" title="Background">
+      <i class="fa-solid fa-image"></i>
+    </button>
+    <div class="wallpaper-pop" id="wallpaperPop">
+      <label>Background image</label>
+      <input type="text" id="wpUrlInput" placeholder="Paste image URL…">
+      <div class="wp-row">
+        <button class="wp-btn primary" id="wpApplyUrl">Apply URL</button>
+        <button class="wp-btn" id="wpUploadBtn">Upload…</button>
+      </div>
+      <input type="file" id="wpFileInput" accept="image/*" style="display:none;">
+      <div class="wp-divider"></div>
+      <label>Quick picks</label>
+      <div class="wp-swatches">
+        <div class="wp-swatch none" id="wpNone" title="No image"><i class="fa-solid fa-ban"></i></div>
+        <div class="wp-swatch" id="wpSample1" title="Sky" style="background-image:linear-gradient(160deg, #e9f0fb 0%, #dbe7f5 35%, #cfe0ef 65%, #e4eef8 100%);"></div>
+        <div class="wp-swatch" id="wpSample2" title="Blush" style="background-image:linear-gradient(135deg,#fbc2eb,#a6c1ee);"></div>
+        <div class="wp-swatch" id="wpSample3" title="Mint" style="background-image:linear-gradient(135deg,#d4fc79,#96e6a1);"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="sb-label">Self-Hosted</div>
+    <button class="sb-item active" data-pane="servers">
+      <i class="fa-solid fa-server sb-icon"></i> Servers <span class="sb-kbd">⌘1</span>
+    </button>
+    <button class="sb-item" data-pane="tools">
+      <i class="fa-solid fa-toolbox sb-icon"></i> Tools <span class="sb-kbd">⌘2</span>
+    </button>
+    <button class="sb-item" data-pane="status">
+      <i class="fa-solid fa-chart-line sb-icon"></i> Status <span class="sb-kbd">⌘3</span>
+    </button>
+  </div>
+
+  <div class="content">
+
+    <div class="pane active" id="pane-servers">
+      <div class="content-head">
+        <div class="content-title">Servers</div>
+        <div class="content-sub">SELF-HOSTED SERVICES</div>
+      </div>
+      <div class="card">
+        <div class="list" id="serverList">
+          <a href="https://photos.pranavsharma.dpdns.org" class="item" target="_blank" data-name="photos">
+            <div class="item-left">
+              <span class="item-num">01</span>
+              <div class="item-icon" style="background:linear-gradient(140deg,#FF9F0A,#FF3B30);"><i class="fa-solid fa-image"></i></div>
+              <span class="item-name">Photos</span>
+            </div>
+            <span class="item-arrow">Open <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+          <a href="https://vault.pranavsharma.dpdns.org" class="item" target="_blank" data-name="vault">
+            <div class="item-left">
+              <span class="item-num">02</span>
+              <div class="item-icon" style="background:linear-gradient(140deg,#0A84FF,#0040DD);"><i class="fa-solid fa-lock"></i></div>
+              <span class="item-name">Vault</span>
+            </div>
+            <span class="item-arrow">Open <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+          <a href="https://music.pranavsharma.dpdns.org" class="item" target="_blank" data-name="music">
+            <div class="item-left">
+              <span class="item-num">03</span>
+              <div class="item-icon" style="background:linear-gradient(140deg,#FF375F,#AF52DE);"><i class="fa-solid fa-music"></i></div>
+              <span class="item-name">Music</span>
+            </div>
+            <span class="item-arrow">Open <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+          <a href="https://chat.pranavsharma.dpdns.org" class="item" target="_blank" data-name="chat">
+            <div class="item-left">
+              <span class="item-num">04</span>
+              <div class="item-icon" style="background:linear-gradient(140deg,#30D158,#248A3D);"><i class="fa-solid fa-comment"></i></div>
+              <span class="item-name">Chat</span>
+            </div>
+            <span class="item-arrow">Open <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+          <a href="https://blog.pranavsharma.dpdns.org/" class="item" target="_blank" data-name="blog">
+            <div class="item-left">
+              <span class="item-num">05</span>
+              <div class="item-icon" style="background:linear-gradient(140deg,#5E5CE6,#3634A3);"><i class="fa-solid fa-pen-nib"></i></div>
+              <span class="item-name">Blog</span>
+            </div>
+            <span class="item-arrow">Open <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </div>
+      </div>
+      <div class="hint"><span class="kbd">⌘2</span> for tools · <span class="kbd">⌘3</span> for live status · <span class="kbd">⌘F</span> to search</div>
+    </div>
+
+    <div class="pane" id="pane-tools">
+      <div class="content-head">
+        <div class="content-title">Tools</div>
+        <div class="content-sub">QUICK ACTIONS</div>
+      </div>
+      <div class="card">
+        <div class="list" id="toolsList">
+          <a href="https://blog.pranavsharma.dpdns.org/ghost" class="item" target="_blank" data-name="write a blog">
+            <div class="item-left">
+              <span class="item-num">01</span>
+              <div class="item-icon" style="background:linear-gradient(140deg,#FF9F0A,#FF375F);"><i class="fa-solid fa-feather-pointed"></i></div>
+              <span class="item-name">Write a blog</span>
+            </div>
+            <span class="item-arrow">Open <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane" id="pane-status">
+      <div class="content-head">
+        <div class="content-title">Status</div>
+        <div class="content-sub">LIVE</div>
+      </div>
+
+      <div class="card">
+        <div class="live-box" id="liveBox">
+          <div class="live-head">
+            <div>
+              <div class="status-name">Server</div>
+              <div class="status-meta" id="liveMeta">Waiting for data…</div>
+            </div>
+            <div class="status-pill unknown" id="livePill"><span class="status-dot"></span>CONNECTING</div>
+          </div>
+
+          <div class="live-row">
+            <span class="live-label">CPU</span>
+            <canvas id="lc-cpu"></canvas>
+            <div class="live-val"><span id="lv-cpu">-</span><small id="lv-cpu-s"></small></div>
+          </div>
+          <div class="live-row">
+            <span class="live-label">RAM</span>
+            <canvas id="lc-ram"></canvas>
+            <div class="live-val"><span id="lv-ram">-</span><small id="lv-ram-s"></small></div>
+          </div>
+          <div class="live-row">
+            <span class="live-label">Disk</span>
+            <canvas id="lc-dio"></canvas>
+            <div class="live-val"><span id="lv-dr">-</span><small id="lv-dw"></small></div>
+          </div>
+          <div class="live-row">
+            <span class="live-label">Network</span>
+            <canvas id="lc-net"></canvas>
+            <div class="live-val"><span id="lv-rx">-</span><small id="lv-tx"></small></div>
+          </div>
+        </div>
+
+        <div id="statusContainer" class="status-list">
+          <div class="status-loading">Checking services…</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const sbItems = document.querySelectorAll('.sb-item');
+  const panes = { servers: document.getElementById('pane-servers'), tools: document.getElementById('pane-tools'), status: document.getElementById('pane-status') };
+  const titleText = document.getElementById('titleText');
+  const titles = { servers:'Servers', tools:'Tools', status:'Status' };
+  const filterInput = document.getElementById('filterInput');
+
+  function activate(key){
+    sbItems.forEach(b => b.classList.toggle('active', b.dataset.pane === key));
+    Object.entries(panes).forEach(([k,el]) => el.classList.toggle('active', k === key));
+    titleText.textContent = titles[key];
+  }
+  sbItems.forEach(b => b.addEventListener('click', () => activate(b.dataset.pane)));
+
+  window.addEventListener('keydown', e => {
+    if((e.metaKey || e.ctrlKey) && e.key === '1'){ e.preventDefault(); activate('servers'); }
+    if((e.metaKey || e.ctrlKey) && e.key === '2'){ e.preventDefault(); activate('tools'); }
+    if((e.metaKey || e.ctrlKey) && e.key === '3'){ e.preventDefault(); activate('status'); }
+    if((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'f'){ e.preventDefault(); filterInput.focus(); }
+    if(e.key === 'Escape'){ filterInput.value=''; filterInput.blur(); filterRows(''); }
+  });
+
+  function filterRows(q){
+    q = q.trim().toLowerCase();
+    document.querySelectorAll('#serverList .item, #toolsList .item').forEach(row => {
+      const match = !q || row.dataset.name.includes(q);
+      row.style.display = match ? '' : 'none';
+    });
+  }
+  filterInput.addEventListener('input', e => filterRows(e.target.value));
+
+  document.getElementById('btnClose').addEventListener('click', () => {
+    const win = document.getElementById('win');
+    win.style.transform = 'scale(.92)'; win.style.opacity = '.3';
+    setTimeout(() => { win.style.transform = ''; win.style.opacity = ''; }, 400);
+  });
+  document.getElementById('btnMin').addEventListener('click', () => {
+    const win = document.getElementById('win');
+    win.style.transform = 'scale(.85) translateY(40px)'; win.style.opacity = '.4';
+    setTimeout(() => { win.style.transform = ''; win.style.opacity = ''; }, 350);
+  });
+  document.getElementById('btnZoom').addEventListener('click', () => {
+    const win = document.getElementById('win');
+    win.style.transform = win.style.transform === 'scale(1.01)' ? '' : 'scale(1.01)';
+  });
+
+  function tickClock(){
+    const el = document.getElementById('clock');
+    const d = new Date();
+    el.textContent = d.toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'}) + '  ' +
+      d.toLocaleTimeString(undefined,{hour:'2-digit', minute:'2-digit'});
+  }
+  tickClock(); setInterval(tickClock, 1000*30);
+
+  /* ===== wallpaper control ===== */
+  (function(){
+    const toggleBtn = document.getElementById('wallpaperToggle');
+    const pop = document.getElementById('wallpaperPop');
+    const urlInput = document.getElementById('wpUrlInput');
+    const applyUrlBtn = document.getElementById('wpApplyUrl');
+    const uploadBtn = document.getElementById('wpUploadBtn');
+    const fileInput = document.getElementById('wpFileInput');
+    const noneSwatch = document.getElementById('wpNone');
+    const DEFAULT_BG = 'linear-gradient(160deg, #e9f0fb 0%, #dbe7f5 35%, #cfe0ef 65%, #e4eef8 100%)';
+    const samples = {
+      wpSample1: DEFAULT_BG,
+      wpSample2: 'linear-gradient(135deg,#fbc2eb,#a6c1ee)',
+      wpSample3: 'linear-gradient(135deg,#d4fc79,#96e6a1)'
+    };
+
+    function setBackground(value, isGradient){
+      if(!value){
+        document.body.style.backgroundImage = '';
+      } else if(isGradient){
+        document.body.style.backgroundImage = value;
+      } else {
+        document.body.style.backgroundImage = `url("${value}")`;
+      }
+      try{
+        localStorage.setItem('bg-value', value || '');
+        localStorage.setItem('bg-is-gradient', isGradient ? '1' : '0');
+      }catch(_){}
+    }
+
+    // restore saved background, else keep the pre-set default already in CSS
+    try{
+      const savedVal = localStorage.getItem('bg-value');
+      const savedGrad = localStorage.getItem('bg-is-gradient') === '1';
+      if(savedVal){ setBackground(savedVal, savedGrad); if(!savedGrad) urlInput.value = savedVal; }
+    }catch(_){}
+
+    toggleBtn.addEventListener('click', e => { e.stopPropagation(); pop.classList.toggle('open'); });
+    document.addEventListener('click', e => { if(!pop.contains(e.target) && e.target !== toggleBtn){ pop.classList.remove('open'); } });
+
+    applyUrlBtn.addEventListener('click', () => { if(urlInput.value.trim()) setBackground(urlInput.value.trim(), false); });
+    urlInput.addEventListener('keydown', e => { if(e.key === 'Enter') applyUrlBtn.click(); });
+
+    uploadBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = () => { setBackground(reader.result, false); urlInput.value = ''; };
+      reader.readAsDataURL(file);
+    });
+
+    noneSwatch.addEventListener('click', () => { setBackground('', false); urlInput.value=''; });
+    Object.entries(samples).forEach(([id, grad]) => {
+      document.getElementById(id).addEventListener('click', () => setBackground(grad, true));
+    });
+  })();
+
+  /* ===== status.json ===== */
+  const STATUS_URL = "https://status.pranavsharma.dpdns.org/status.json";
+  const container = document.getElementById('statusContainer');
+  const STALE_THRESHOLD_SECONDS = 24 * 60 * 60;
+
+  function pillClass(state){
+    if(!state) return 'unknown';
+    const s = String(state).toLowerCase();
+    if(['up','online','ok','operational','healthy','pass','success'].includes(s)) return 'ok';
+    if(['down','offline','fail','error','outage','failed'].includes(s)) return 'down';
+    if(['degraded','warn','warning','partial','stale'].includes(s)) return 'warn';
+    return 'unknown';
+  }
+  function pillLabel(state){ return state ? String(state).toUpperCase() : 'UNKNOWN'; }
+  function formatAgo(seconds){
+    if(seconds === undefined || seconds === null || isNaN(seconds)) return null;
+    seconds = Number(seconds);
+    if(seconds < 60) return `${Math.round(seconds)}s ago`;
+    const mins = seconds / 60;
+    if(mins < 60) return `${Math.round(mins)}m ago`;
+    const hrs = mins / 60;
+    if(hrs < 24) return `${Math.round(hrs)}h ago`;
+    const days = hrs / 24;
+    return `${days.toFixed(1)}d ago`;
+  }
+  function renderServices(services, generatedAt){
+    if(!services.length){
+      container.innerHTML = '<div class="empty-state"><i class="fa-solid fa-satellite-dish"></i><p>No services reporting yet.</p></div>';
+      return;
+    }
+    const box = document.createElement('div');
+    services.forEach(svc => {
+      const name = svc.name || svc.service || svc.id || 'Service';
+      let state = svc.status || svc.state || (svc.up === true ? 'up' : svc.up === false ? 'down' : null);
+      const secondsAgo = svc.seconds_ago ?? svc.secondsAgo;
+      if(!state && secondsAgo !== undefined){
+        state = secondsAgo > STALE_THRESHOLD_SECONDS ? 'stale' : 'ok';
+      }
+      const agoText = formatAgo(secondsAgo);
+      const meta = agoText || svc.url || svc.uptime || svc.responseTime || svc.latency;
+      const row = document.createElement('div');
+      row.className = 'status-row';
+      const left = document.createElement('div');
+      left.innerHTML = `<div class="status-name">${name}</div>` +
+        (meta ? `<div class="status-meta">Last backup: ${meta}</div>` : '');
+      const cls = pillClass(state);
+      const pill = document.createElement('div');
+      pill.className = `status-pill ${cls}`;
+      pill.innerHTML = `<span class="status-dot"></span>${pillLabel(state)}`;
+      row.appendChild(left);
+      row.appendChild(pill);
+      box.appendChild(row);
+    });
+    container.innerHTML = '';
+    container.appendChild(box);
+    if(generatedAt){
+      const footer = document.createElement('div');
+      footer.className = 'status-footer';
+      try{ footer.textContent = `Report generated ${new Date(generatedAt).toLocaleString()}`; }
+      catch(e){ footer.textContent = `Report generated ${generatedAt}`; }
+      container.appendChild(footer);
+    }
+  }
+  function findServiceArray(data){
+    if(Array.isArray(data)) return data;
+    for(const key of ['services','status','monitors','sites','items','backups']){
+      if(Array.isArray(data[key])) return data[key];
+    }
+    return null;
+  }
+
+  fetch(STATUS_URL, { cache: 'no-store' })
+    .then(res => { if(!res.ok) throw new Error('Request failed: ' + res.status); return res.json(); })
+    .then(data => {
+      const services = findServiceArray(data);
+      if(services){ renderServices(services, data.generated_at || data.generatedAt); }
+      else {
+        container.innerHTML = '<div class="status-loading">Connected, but the response format wasn\'t recognized.</div>' +
+          '<div class="status-raw">' + JSON.stringify(data, null, 2) + '</div>';
+      }
+    })
+    .catch(err => {
+      container.innerHTML = `<div class="status-error">Couldn't load status right now (${err.message}). The endpoint may be offline or blocking cross-origin requests.</div>`;
+    });
+
+  /* ===== live server stats (websocket) ===== */
+  (function(){
+    const WS_URL = 'wss://monitor.pranavsharma.dpdns.org/ws';
+    const N = 60;
+    const H = {cpu:[], ram:[], dr:[], dw:[], rx:[], tx:[]};
+    const $ = id => document.getElementById(id);
+    const fmt = b => b>=1e9 ? (b/1e9).toFixed(2)+' GB/s' : b>=1e6 ? (b/1e6).toFixed(2)+' MB/s' : b>=1e3 ? (b/1e3).toFixed(1)+' KB/s' : Math.round(b)+' B/s';
+    const gb = b => (b/2**30).toFixed(1)+' GB';
+    const push = (k,v) => { H[k].push(v); if(H[k].length>N) H[k].shift(); };
+
+    function ink(){ return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#007AFF'; }
+
+    function setPill(cls, label){
+      const p = $('livePill');
+      p.className = 'status-pill ' + cls;
+      p.innerHTML = '<span class="status-dot"></span>' + label;
+    }
+
+    function draw(id, series, fixedMax){
+      const c = $(id), d = window.devicePixelRatio || 1;
+      const w = c.clientWidth, h = c.clientHeight;
+      if(!w || !h) return;
+      c.width = w*d; c.height = h*d;
+      const g = c.getContext('2d');
+      g.scale(d,d);
+      const max = fixedMax || Math.max(1, ...series.flat());
+      const step = w/(N-1);
+      series.forEach((s,i) => {
+        g.beginPath();
+        s.forEach((v,j) => {
+          const x = w - (s.length-1-j)*step;
+          const y = h - 2 - (v/max)*(h-4);
+          j ? g.lineTo(x,y) : g.moveTo(x,y);
+        });
+        g.strokeStyle = ink();
+        g.globalAlpha = i === 0 ? 1 : 0.4;
+        g.lineWidth = 2;
+        g.lineJoin = 'round';
+        g.lineCap = 'round';
+        g.stroke();
+      });
+      g.globalAlpha = 1;
+    }
+
+    function onData(d){
+      try{
+        push('cpu', d.cpu);
+        push('ram', d.ram.percent);
+        push('dr', d.disk.r);
+        push('dw', d.disk.w);
+        push('rx', d.net.rx);
+        push('tx', d.net.tx);
+        $('lv-cpu').textContent = d.cpu.toFixed(0) + '%';
+        $('lv-cpu-s').textContent = d.cores.length + ' cores' + (d.temp ? ' · ' + d.temp.toFixed(0) + '°C' : '');
+        $('lv-ram').textContent = d.ram.percent.toFixed(0) + '%';
+        $('lv-ram-s').textContent = gb(d.ram.used) + ' / ' + gb(d.ram.total);
+        $('lv-dr').textContent = 'R ' + fmt(d.disk.r);
+        $('lv-dw').textContent = 'W ' + fmt(d.disk.w);
+        $('lv-rx').textContent = '↓ ' + fmt(d.net.rx);
+        $('lv-tx').textContent = '↑ ' + fmt(d.net.tx);
+        $('liveMeta').textContent = 'Load ' + d.load.map(x => x.toFixed(2)).join(' / ') + ' · up ' + Math.floor(d.uptime/3600) + 'h';
+        draw('lc-cpu', [H.cpu], 100);
+        draw('lc-ram', [H.ram], 100);
+        draw('lc-dio', [H.dr, H.dw]);
+        draw('lc-net', [H.rx, H.tx]);
+      }catch(_){}
+    }
+
+    function connect(){
+      let ws;
+      try{ ws = new WebSocket(WS_URL); }
+      catch(e){ setPill('down','OFFLINE'); return setTimeout(connect, 5000); }
+      ws.onopen = () => setPill('ok','LIVE');
+      ws.onmessage = e => { try{ onData(JSON.parse(e.data)); }catch(_){} };
+      ws.onclose = () => { setPill('down','OFFLINE'); $('liveMeta').textContent = 'Reconnecting…'; setTimeout(connect, 3000); };
+      ws.onerror = () => setPill('down','OFFLINE');
+    }
+    connect();
+  })();
+</script>
+
+</body>
+</html>
