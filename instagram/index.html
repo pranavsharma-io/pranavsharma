@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Add username to watchlist</title>
+<style>
+  :root {
+    --page: #f0f0f0;
+    --surface: #ffffff;
+    --heading: #2d3e50;
+    --text: #516f90;
+    --muted: #b0c1d4;
+    --line: #cbd6e2;
+    --accent: #ff7a59;
+    --accent-hover: #ff8f73;
+    --teal: #00bda5;
+    --focus: #00a4bd;
+    --red: #f2545b;
+    --btn-off: #eaf0f6;
+    --badge: #f5c26b;
+    --badge-dark: #e9ad4a;
+    --badge-ink: #2d3e50;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: #12171d;
+      --surface: #1b232c;
+      --heading: #eaf0f6;
+      --text: #a9bbd0;
+      --muted: #5f748b;
+      --line: #3c4b5b;
+      --btn-off: #26323e;
+      --badge-ink: #1b232c;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--page);
+    color: var(--text);
+    font-family: "Avenir Next", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .frame {
+    position: relative;
+    min-height: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+  }
+  @media (min-width: 1100px) {
+    body { padding: 56px 48px; }
+    .frame { min-height: calc(100% - 0px); }
+  }
+
+  .progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: transparent;
+  }
+  .progress span {
+    display: block;
+    height: 100%;
+    width: 40%;
+    background: var(--accent);
+    transition: width 0.35s ease;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 34px 40px 0 64px;
+    color: var(--heading);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .brand i {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border: 5px solid var(--accent);
+    border-radius: 50%;
+    position: relative;
+  }
+  .brand i::after {
+    content: "";
+    position: absolute;
+    right: -11px;
+    top: -9px;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 0 64px 90px;
+  }
+
+  .panel {
+    width: 100%;
+    max-width: 408px;
+    margin-left: auto;
+    margin-right: 6%;
+  }
+
+  h1 {
+    margin: 0 0 30px;
+    color: var(--heading);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .field {
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid var(--line);
+    transition: border-color 0.15s ease;
+  }
+  .field:focus-within { border-color: var(--focus); }
+  .field.bad { border-color: var(--red); }
+  .field.good { border-color: var(--teal); }
+  .field .at {
+    padding-bottom: 9px;
+    font-size: 20px;
+    color: var(--muted);
+    user-select: none;
+  }
+  .field input {
+    flex: 1;
+    min-width: 0;
+    padding: 0 0 9px 6px;
+    font: inherit;
+    font-size: 20px;
+    letter-spacing: 0.01em;
+    color: var(--heading);
+    background: transparent;
+    border: 0;
+    outline: none;
+  }
+  .field input::placeholder { color: var(--muted); }
+
+  .rules {
+    margin: 34px 0 34px;
+    padding: 0;
+    list-style: none;
+  }
+  .rules li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 7px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text);
+  }
+  .rules .dot {
+    flex: none;
+    position: relative;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--line);
+    border-radius: 50%;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .rules li.ok .dot {
+    background: var(--teal);
+    border-color: var(--teal);
+  }
+  .rules li.ok .dot::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(40deg);
+  }
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 17px 20px;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent);
+    border: 0;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  button:hover:not(:disabled) { background: var(--accent-hover); }
+  button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  button:disabled {
+    color: var(--muted);
+    background: var(--btn-off);
+    cursor: default;
+  }
+
+  .error {
+    min-height: 20px;
+    margin: 14px 0 0;
+    font-size: 14px;
+    color: var(--red);
+  }
+
+  .done-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 18px;
+    background: var(--teal);
+    border-radius: 50%;
+  }
+  .done-mark::after {
+    content: "";
+    width: 9px;
+    height: 18px;
+    margin-top: -4px;
+    border: solid #fff;
+    border-width: 0 3px 3px 0;
+    transform: rotate(40deg);
+  }
+  .done-text {
+    margin: 0 0 30px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .done h1 { margin-bottom: 12px; letter-spacing: 0.02em; }
+
+  .art {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .art svg { width: 150px; height: auto; overflow: visible; }
+
+  [hidden] { display: none !important; }
+
+  @media (max-width: 860px) {
+    main { grid-template-columns: 1fr; padding: 0 24px 64px; }
+    .panel { margin: 0 auto; }
+    .art { display: none; }
+    .brand { padding: 26px 24px 0; }
+    h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+
+    <div class="brand"><i aria-hidden="true"></i>usernames</div>
+
+    <main>
+      <section class="panel" id="formView">
+        <h1>Add a username</h1>
+        <form id="form" novalidate>
+          <label class="sr-only" for="u">Username</label>
+          <div class="field" id="field">
+            <span class="at" aria-hidden="true">@</span>
+            <input id="u" type="text" placeholder="username" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="go" maxlength="32" aria-describedby="rules">
+          </div>
+
+          <ul class="rules" id="rules"></ul>
+
+          <button id="btn" type="submit" disabled>Add username</button>
+          <div class="error" id="error" role="alert" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <section class="panel done" id="doneView" hidden>
+        <span class="done-mark" aria-hidden="true"></span>
+        <h1>DONE.</h1>
+        <p class="done-text">The username was added to the list.</p>
+        <button id="again" type="button">Add another</button>
+      </section>
+
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 150 190" xmlns="http://www.w3.org/2000/svg">
+          <path d="M45 78 V52 a30 30 0 0 1 60 0 V78" fill="none" stroke="var(--badge)" stroke-width="15" stroke-linecap="round"/>
+          <rect x="14" y="76" width="122" height="104" rx="9" fill="var(--badge)"/>
+          <rect x="14" y="160" width="122" height="20" rx="9" fill="var(--badge-dark)" opacity="0.55"/>
+          <text id="glyph" x="75" y="146" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="68" font-weight="700" fill="var(--badge-ink)">@</text>
+        </svg>
+      </div>
+    </main>
+  </div>
+
+<script>
+  const WORKER_URL = "https://insta-add.z3957759.workers.dev";
+
+  const RULES = [
+    { text: "1 to 30 characters", test: function (v) { return v.length >= 1 && v.length <= 30; } },
+    { text: "Letters, numbers, periods and underscores only", test: function (v) { return v.length > 0 && /^[A-Za-z0-9._]+$/.test(v); } },
+    { text: "Does not start or end with a period", test: function (v) { return v.length > 0 && v[0] !== "." && v[v.length - 1] !== "."; } },
+    { text: "No two periods in a row", test: function (v) { return v.length > 0 && v.indexOf("..") === -1; } }
+  ];
+
+  const input = document.getElementById("u");
+  const field = document.getElementById("field");
+  const list = document.getElementById("rules");
+  const btn = document.getElementById("btn");
+  const bar = document.getElementById("bar");
+  const errBox = document.getElementById("error");
+  const form = document.getElementById("form");
+  const formView = document.getElementById("formView");
+  const doneView = document.getElementById("doneView");
+  const again = document.getElementById("again");
+  const glyph = document.getElementById("glyph");
+
+  let busy = false;
+
+  RULES.forEach(function (r) {
+    const li = document.createElement("li");
+    li.innerHTML = '<span class="dot"></span><span></span>';
+    li.lastChild.textContent = r.text;
+    list.appendChild(li);
+  });
+
+  function clean(v) {
+    return v.trim().replace(/^@/, "");
+  }
+
+  function update() {
+    const v = clean(input.value);
+    let passed = 0;
+    RULES.forEach(function (r, i) {
+      const ok = r.test(v);
+      list.children[i].classList.toggle("ok", ok);
+      if (ok) passed++;
+    });
+    const valid = passed === RULES.length;
+    field.classList.toggle("good", valid);
+    field.classList.toggle("bad", v.length > 0 && !valid);
+    btn.disabled = !valid || busy;
+    bar.style.width = (40 + passed * 15) + "%";
+    errBox.textContent = "";
+    return valid;
+  }
+
+  async function submit(e) {
+    e.preventDefault();
+    if (busy || !update()) return;
+    busy = true;
+    btn.disabled = true;
+    errBox.textContent = "";
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: clean(input.value) })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        bar.style.width = "100%";
+        glyph.textContent = "\u2713";
+        formView.hidden = true;
+        doneView.hidden = false;
+        again.focus();
+        input.value = "";
+      } else {
+        errBox.textContent = data.error || "Something went wrong. Try again.";
+      }
+    } catch (err) {
+      errBox.textContent = "Could not reach the server. Check your connection and try again.";
+    } finally {
+      busy = false;
+      update();
+    }
+  }
+
+  again.addEventListener("click", function () {
+    doneView.hidden = true;
+    formView.hidden = false;
+    glyph.textContent = "@";
+    update();
+    input.focus();
+  });
+
+  input.addEventListener("input", update);
+  form.addEventListener("submit", submit);
+  update();
+</script>
+</body>
+</html>
